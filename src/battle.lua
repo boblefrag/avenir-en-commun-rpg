@@ -4,13 +4,15 @@
 battle={}
 
 function battle.init(m)
- mo,mhp,bt,shd=m,m[2],0,0  -- shd : bouclier actif
+ -- shd : bouclier actif, hid : voleur cache (prochain coup x3)
+ mo,mhp,bt,shd,hid=m,m[2],0,0,false
  jingle(40,m[8]==15 and 32 or 24)
  msg(m[1].." surgit !",bmenu)
 end
 
 function bmenu()
- menu(split("attaque,magie,objet,fuir"),4,74,bact,true)
+ -- le voleur n'a pas de magie : il se cache a la place
+ menu(split("attaque,"..(h.cl==4 and "se cacher" or "magie")..",objet,fuir"),4,74,bact,true)
 end
 
 function bact(i)
@@ -18,8 +20,9 @@ function bact(i)
  if i==1 then
   turn()
  elseif i==2 then
-  bmagic()
+  if h.cl==4 then hide() else bmagic() end
  elseif i==3 then
+  hid=false
   if h.pot+h.eth<1 then
    msg("aucun objet !",bmenu)
   else
@@ -34,11 +37,28 @@ function bact(i)
    end,true)
   end
  elseif i==4 then
-  if rnd(h.agi+mo[5])<h.agi then
+  -- cache, le voleur fuit bien plus facilement (agi x6)
+  local a=h.agi*(hid and 6 or 1)
+  hid=false
+  if rnd(a+mo[5])<a then
    msg("vous prenez la fuite !",back)
   else
    msg("impossible de fuir !",function() monster_turn(bmenu) end)
   end
+ end
+end
+
+-- voleur : test agi contre agi du monstre, bonus x1.5 en donjon
+-- (plus sombre). reussi : pas de coup ce tour, et le suivant est
+-- une attaque sournoise x3 ou une fuite presque sure.
+-- rate : le monstre le repere et frappe x2
+function hide()
+ local a=h.agi*(prev==dungeon and 1.5 or 1)
+ if rnd(a+mo[5])<a then
+  hid=true
+  msg("vous vous cachez !\n"..mo[1].."\nne vous trouve pas.",bmenu)
+ else
+  msg("pas de cachette !\n"..mo[1].."\nvous a repere !",function() monster_turn(bmenu,2) end)
  end
 end
 
@@ -88,18 +108,20 @@ function dmg(a,d,k)
 end
 
 function hero_turn(k)
- local n=dmg(h.att,mo[4])
+ local n=dmg(h.att,mo[4])*(hid and 3 or 1)
  mhp-=n
- local a=hatk[h.cl] or "coup d'epee"
- local s="vous donnez un "..a.." !\n"..mo[1]..(#mo[1]>14 and "\nperd " or " perd ")..n.." pv"
+ local s=hid and "attaque sournoise !" or "vous donnez un "..(hatk[h.cl] or "coup d'epee").." !"
+ hid=false
+ s..="\n"..mo[1]..(#mo[1]>14 and "\nperd " or " perd ")..n.." pv"
  msg(s,function()
   if mhp<=0 then win() else (k or bmenu)() end
  end)
 end
 
-function monster_turn(k)
+-- x : multiplicateur des degats (2 si le voleur rate sa cachette)
+function monster_turn(k,x)
  bt+=1
- local sp,n,s,c=mo[12],dmg(mo[3],h.def,4),"",bt%3==0
+ local sp,n,s,c=mo[12],dmg(mo[3],h.def,4)*(x or 1),"",bt%3==0
  if sp==4 and bt%3==2 then
   n,s=0,"le minotaure gratte le sol..."
  elseif sp==5 then
@@ -128,7 +150,8 @@ function monster_turn(k)
 end
 
 function turn()
- if h.agi+rnd(4)>=mo[5]+rnd(4) then
+ -- cache, le voleur frappe toujours en premier
+ if hid or h.agi+rnd(4)>=mo[5]+rnd(4) then
   hero_turn(function() monster_turn(bmenu) end)
  else
   monster_turn(function() hero_turn(bmenu) end)

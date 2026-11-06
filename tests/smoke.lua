@@ -125,6 +125,16 @@ rep=10
 ok(enc(17)!=nil and rep==9,"repousse : compteur de pas")
 rep=0
 
+-- voleur : se cacher puis attaque sournoise
+new_hero(4)
+mo,mhp,prev,wins=mons[1],1000,world,{}
+h.agi=1000
+hide()
+ok(hid,"voleur cache (agi enorme)")
+hero_turn()
+ok(not hid and mhp<1000,"attaque sournoise : "..(1000-mhp).." degats")
+wins={}
+
 -- donjons : sortie et boss presents
 px,py=0,0
 for d=1,5 do
