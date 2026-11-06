@@ -28,10 +28,11 @@ TILES = {
     22: ["00000000", "04444440", "49999994", "44444444", "4999a994", "49999994", "44444444", "00000000"],  # coffre
     23: ["44444444", "48c9b2a4", "44444444", "4a2c8b94", "44444444", "4b98c2a4", "44444444", "40000004"],  # etagere
     # heros (le 8 est recolore selon la classe)
-    # heros de profil : cape et tunique en 8 (couleur de la classe), epee
-    32: ["..4444..", ".44fff..", ".4ff0f..", "..fff..6", ".88888f6", "8888886.", "8.8..8..", "..4..4.."],
+    # heros chevalier de face : casque argent, epaulettes, tunique en 8
+    # (couleur de la classe), bottes grises
+    32: ["..6666..", ".666666.", ".60ff06.", "..ffff..", "68688686", ".f8888f.", "..8..8..", "..5..5.."],
     # heros marche (enjambee, bras en mouvement)
-    33: ["..4444..", ".44fff..", ".4ff0f..", "..fff..6", "888888f6", ".888886.", ".8...8..", ".4....4."],
+    33: ["..6666..", ".666666.", ".60ff06.", "..ffff..", "68688686", ".f8888f.", ".8...8..", "5.....5."],
 }
 
 MONSTERS = {

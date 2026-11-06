@@ -9,7 +9,7 @@ end
 
 -- classes : nom, couleur de tunique,
 -- pv,pm,att,def,agi de depart, puis gain par niveau
-classes=tbl("guerrier,8,30,0,8,6,4,6,0,3,2,1|mage,12,18,12,3,3,5,3,4,1,1,1|clerc,7,24,8,5,6,4,4,3,2,2,1|voleur,11,22,0,6,4,9,4,0,2,1,3")
+classes=tbl("guerrier,8,30,0,8,6,4,6,0,3,2,1|mage,12,18,12,3,3,5,3,4,1,1,1|clerc,7,24,8,5,6,4,4,3,2,2,1|voleur,5,22,0,6,4,9,4,0,2,1,3")
 
 -- monstres : nom,pv,att,def,agi,xp,or,zone,sprite,couleur1,couleur2,special
 -- zones : 1 plaine, 2 foret, 3 plaine du nord, 4 foret du nord, 5 cote,

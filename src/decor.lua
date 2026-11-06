@@ -95,7 +95,10 @@ function shop()
   end
  end
  for y=76,127,7 do line(0,y,127,y,2) end
+ -- cheveux gris : le brun (4) se confondait avec le mur
+ pal(4,6)
  sspr(0,48,16,16,40,20,48,48)
+ pal()
  rectfill(0,60,127,75,2)
  line(0,60,127,60,15)
  line(0,61,127,61,9)
