@@ -5,3 +5,4 @@ pico-8/
 preview/
 __pycache__/
 .DS_Store
+*.p8.png

@@ -35,3 +35,7 @@ Ces décisions priment sur le PDF quand les deux divergent.
 - 5 musiques distinctes : ville, extérieur, donjon, combat, boss final.
 - Elles occupent les zones `__sfx__` (64 SFX) et `__music__` (64 patterns). Rien d'autre n'y est stocké.
 - Budget indicatif : ~8-10 SFX par musique → ~45 SFX, il en reste ~19 pour les bruitages (menu, coup, sort, montée de niveau…).
+
+### Console cible
+- **TrimUI Brick Pro (TG4040)**, firmware d'origine TrimUI (github.com/trimui/firmware_brickpro), et non la Smart Pro du PDF.
+- Licence PICO-8 achetée : binaires disponibles, y compris Raspberry Pi.

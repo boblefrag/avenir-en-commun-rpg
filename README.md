@@ -1,6 +1,7 @@
 # Legend of the Gems
 
 RPG PICO-8. Specs : `Specs — RPG PICO-8 (v1).pdf`, décisions : `decisions.md`.
+Jouer sur la console : [docs/trimui.md](docs/trimui.md).
 
 ## Arborescence
 - `main.p8` : le cart (généré, sauf les sprites).
