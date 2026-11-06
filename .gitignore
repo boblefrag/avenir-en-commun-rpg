@@ -1,0 +1,7 @@
+# binaires PICO-8 (licence personnelle, non redistribuables)
+pico-8/
+*.zip
+# generes
+preview/
+__pycache__/
+.DS_Store
