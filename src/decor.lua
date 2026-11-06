@@ -109,7 +109,7 @@ end
 -- cinematique de fin : une scene par message de ending
 -- 1 trone vide, 2 la princesse en ombre chinoise derriere un paravent
 -- (ses habits changes en crapauds), 3 cachee derriere le trone, 4 la serviette brandie, 5 princesse en serviette,
--- 6-7 lever du soleil sur ostrel
+-- 6-7 lever du soleil sur ostrel ; puis le generique (credits)
 epilog={mus=8}
 
 function epilog.init()
@@ -120,7 +120,7 @@ end
 function epi_next()
  fi+=1
  ft=0
- if ending[fi] then msg(ending[fi],epi_next) else go(title) end
+ if ending[fi] then msg(ending[fi],epi_next) else go(credits) end
 end
 
 function epilog.update() end

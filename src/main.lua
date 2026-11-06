@@ -109,20 +109,45 @@ function intro.update()
 end
 
 function intro.draw()
- cls(0)
- for s in all(stars) do pset(s.x,s.y,s.c) end
  if #wins>0 then
+  cls(0)
+  stars_draw()
   print("choisis ta classe :",30,48,10)
   return
  end
- for i,l in ipairs(intro_lines) do
+ crawl(intro_lines)
+ print("o: accelerer  x: passer",16,122,5)
+end
+
+function stars_draw()
+ for s in all(stars) do pset(s.x,s.y,s.c) end
+end
+
+-- texte qui defile vers le haut sur fond etoile, et s'estompe en haut
+-- les lignes "- titre -" sont en jaune
+function crawl(t)
+ cls(0)
+ stars_draw()
+ for i,l in ipairs(t) do
   local y=flr(sy)+(i-1)*8
   if y>=-8 and y<=128 then
-   local c=y<16 and 5 or (y<28 and 6 or 7)
+   local c=y<16 and 5 or (y<28 and 6 or (sub(l,1,1)=="-" and 10 or 7))
    if (l!="") print(l,64-#l*2,y,c)
   end
  end
- print("o: accelerer  x: passer",16,122,5)
+end
+
+-- generique de fin, apres la cinematique
+credits={mus=8}
+credits.init=intro.init
+
+function credits.update()
+ sy-=btn(4) and 2 or .4
+ if (btnp(5) or sy<-#credits_lines*8-10) go(title)
+end
+
+function credits.draw()
+ crawl(credits_lines)
 end
 
 function choose_class()

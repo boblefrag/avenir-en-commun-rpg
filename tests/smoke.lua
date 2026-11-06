@@ -166,7 +166,10 @@ ok(fini and #ending==7,"fin : "..#ending.." messages enchaines")
 h.cl=1
 go(epilog)
 for i=1,#ending do epilog.draw() wins[#wins].cb() end
-ok(st==title,"cinematique de fin : retour au titre")
+ok(st==credits,"cinematique de fin : puis le generique")
+-- generique : defile jusqu'au bout puis retour au titre
+for i=1,2000 do if (st==credits) credits.update() credits.draw() end
+ok(st==title,"generique : retour au titre")
 wins={}
 
 -- donjons : sortie et boss presents
