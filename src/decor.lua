@@ -110,7 +110,7 @@ end
 -- 1 trone vide, 2 la princesse en ombre chinoise derriere un paravent
 -- (ses habits changes en crapauds), 3 cachee derriere le trone, 4 la serviette brandie, 5 princesse en serviette,
 -- 6-7 lever du soleil sur ostrel ; puis le generique (credits)
-epilog={mus=8}
+epilog={mus=48}
 
 function epilog.init()
  fi=0

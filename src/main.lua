@@ -3,7 +3,7 @@
 -- chaque etat : init(...), update(), draw(), mus (musique)
 
 -- musiques (patterns de depart, voir tools/gen_music.py)
--- 0 exterieur, 8 ville, 16 donjon, 24 combat, 32 boss
+-- 0 exterieur, 8 ville, 16 donjon, 24 combat, 32 boss, 48 fin
 -- jingles : 40 debut de combat, 41 victoire, 42 defaite, 43 niveau
 -- sfx : 53 alerte pv, 54 texte de l'intro, 55 impact
 mus_cur=-1
@@ -138,7 +138,7 @@ function crawl(t)
 end
 
 -- generique de fin, apres la cinematique
-credits={mus=8}
+credits={mus=48}
 credits.init=intro.init
 
 function credits.update()

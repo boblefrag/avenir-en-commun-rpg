@@ -195,6 +195,26 @@ TRACKS.append(dict(name="jingle danger", speed=4, jingle=True, sfx={
     "m": voice("a5*2 .*2 a5*2 .*26", "sqr", 6, tr=0),
 }, patterns=[["m"]]))
 
+# ---------------------------------------------------------------- fin
+# 48. Fin : reprise triomphale en do majeur. C G / Am F / C G / F G C
+# Pattern 48 (start), et ses sfx viennent APRES les sfx 53-55
+# (late=True) pour ne pas decaler les numeros deja utilises dans le code.
+lead = dict(wave="pulse", vol=5, tr=12)
+TRACKS.append(dict(name="fin", speed=14, start=48, late=True, sfx={
+    "m0": voice("c4*4 e4*4 g4*6 e4*2 d4*4 b3*4 d4*8", **lead),
+    "m1": voice("c4*4 e4*4 a4*6 g4*2 f4*4 a4*4 c5*8", **lead),
+    "m3": voice("a4*4 c5*4 b4*4 d5*4 c5*16", **lead),
+    "b_cg": voice("c3*4 g3*4 e3*4 g3*4 g2*4 d3*4 b2*4 d3*4", "tri", 5),
+    "b_amf": voice("a2*4 e3*4 c3*4 e3*4 f2*4 c3*4 a2*4 c3*4", "tri", 5),
+    "b_fgc": voice("f2*4 c3*4 g2*4 d3*4 c3*8 g2*4 c3*4", "tri", 5),
+    "dr": drums(rep("k . h . s . h .", 4)),
+}, patterns=[
+    ["m0", "b_cg", "dr"],
+    ["m1", "b_amf", "dr"],
+    ["m0", "b_cg", "dr"],
+    ["m3", "b_fgc", "dr"],
+]))
+
 # ---------------------------------------------------------------- export
 
 PATTERN_STRIDE = 8  # piste i commence au pattern 8*i (marge pour allonger)
@@ -205,27 +225,13 @@ def build():
     sfx_lines, music_lines = [], [None] * 64
     lua_tracks = []
     nj = 0
+    late = [t for t in TRACKS if t.get("late")]
     for i, t in enumerate(TRACKS):
-        ids = {}
-        for name, notes in t["sfx"].items():
-            ids[name] = len(sfx_lines)
-            head = f"01{t['speed']:02x}0000"
-            body = "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in notes)
-            sfx_lines.append(head + body)
-        n = len(t["patterns"])
+        if t.get("late"):
+            continue
+        add_track(i, t, sfx_lines, music_lines, nj)
         if t.get("jingle"):
-            start = JINGLE_START + nj
-            nj += n
-        else:
-            start = i * PATTERN_STRIDE
-            assert n <= PATTERN_STRIDE
-        for j, chans in enumerate(t["patterns"]):
-            if t.get("jingle"):
-                flags = 4 if j == n - 1 else 0  # 4 = s'arrete apres ce pattern
-            else:
-                flags = (1 if j == 0 else 0) | (2 if j == n - 1 else 0)
-            ch = [f"{ids[c]:02x}" for c in chans] + [f"{0x41 + k:02x}" for k in range(len(chans), 4)]
-            music_lines[start + j] = f"{flags:02x} " + "".join(ch)
+            nj += len(t["patterns"])
     # sfx 54 : petit bruit de texte defilant (typewriter blip)
     text_sfx = "01020000" + "2a023" + "00000" * 31
     sfx_lines.append(text_sfx)
@@ -233,11 +239,39 @@ def build():
     hit = [(24, 6, 7, 0), (16, 6, 6, 3), (10, 0, 5, 3), (6, 0, 3, 5)]
     sfx_lines.append("01030000" + "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in hit)
                      + "00000" * (32 - len(hit)))
+    # pistes ajoutees apres coup (sfx 56+)
+    for t in late:
+        add_track(None, t, sfx_lines, music_lines, nj)
     assert len(sfx_lines) <= 64, f"{len(sfx_lines)} sfx, max 64"
     used = len(sfx_lines)
     sfx_lines += ["01100000" + "0" * 160] * (64 - used)
     music_lines = [m or "00 41424344" for m in music_lines]
     return sfx_lines, music_lines, lua_tracks, used
+
+
+def add_track(i, t, sfx_lines, music_lines, nj):
+    ids = {}
+    for name, notes in t["sfx"].items():
+        ids[name] = len(sfx_lines)
+        head = f"01{t['speed']:02x}0000"
+        body = "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in notes)
+        sfx_lines.append(head + body)
+    n = len(t["patterns"])
+    if "start" in t:
+        start = t["start"]
+    elif t.get("jingle"):
+        start = JINGLE_START + nj
+    else:
+        start = i * PATTERN_STRIDE
+        assert n <= PATTERN_STRIDE
+    for j, chans in enumerate(t["patterns"]):
+        if t.get("jingle"):
+            flags = 4 if j == n - 1 else 0  # 4 = s'arrete apres ce pattern
+        else:
+            flags = (1 if j == 0 else 0) | (2 if j == n - 1 else 0)
+        ch = [f"{ids[c]:02x}" for c in chans] + [f"{0x41 + k:02x}" for k in range(len(chans), 4)]
+        assert music_lines[start + j] is None, f"pattern {start + j} deja pris"
+        music_lines[start + j] = f"{flags:02x} " + "".join(ch)
 
 
 LUA = """-- legend of the gems : test des musiques
