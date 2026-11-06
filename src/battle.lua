@@ -4,7 +4,7 @@
 battle={}
 
 function battle.init(m)
- mo,mhp,bt=m,m[2],0
+ mo,mhp,bt,shd=m,m[2],0,0  -- shd : bouclier actif
  jingle(40,m[8]==15 and 32 or 24)
  msg(m[1].." surgit !",bmenu)
 end
@@ -17,25 +17,19 @@ function bact(i)
  close()
  if i==1 then
   turn()
+ elseif i==2 then
+  bmagic()
  elseif i==3 then
-  if (h.pot or 0)<=0 then
+  if h.pot+h.eth<1 then
    msg("aucun objet !",bmenu)
   else
-   menu(split("potion (x"..h.pot.."),retour"),4,74,function(o)
+   menu(items(),4,60,function(o)
     close()
-    if o==1 then
-     if h.hp>=h.pv then
-      msg("pv deja au maximum !",bmenu)
-     else
-      h.pot-=1
-      local g=min(20,h.pv-h.hp)
-      h.hp+=g
-      msg("vous buvez une potion !\n+"..g.." pv (pv "..h.hp.."/"..h.pv..")",function()
-       monster_turn(bmenu)
-      end)
-     end
-    else
+    local t,u=use_item(o)
+    if not t then
      bmenu()
+    else
+     msg(t,u and function() monster_turn(bmenu) end or bmenu)
     end
    end,true)
   end
@@ -45,13 +39,52 @@ function bact(i)
   else
    msg("impossible de fuir !",function() monster_turn(bmenu) end)
   end
- else
-  msg("bientot !",bmenu)
  end
 end
 
-function dmg(a,d)
- return max(1,flr(a-d/2+rnd(a/4)))
+-- magie en combat : attaque, bouclier, soin, invocation
+function bmagic()
+ local it,ids=spell_list(function(e) return e<3 or e>5 end)
+ if #it==0 then
+  msg("vous ne connaissez\naucun sort !",bmenu)
+  return
+ end
+ add(it,"retour")
+ menu(it,4,40,function(o)
+  close()
+  local s=ids[o] and sp(ids[o])
+  local e=s and s[2]
+  if not s then
+   bmenu()
+  elseif h.mp<s[4] then
+   msg("pas assez de pm !",bmenu)
+  elseif e==6 and h.hp>=h.pv then
+   msg("pv deja au maximum !",bmenu)
+  else
+   h.mp-=s[4]
+   local t=s[1].." !\n"
+   if e==1 or e==7 then
+    local n=s[3]+flr(rnd(s[3]/4))
+    mhp-=n
+    if (e==7) t..="un ange descend du ciel,\nfrappe, et s'en va.\n"
+    t..=mo[1].." perd "..n.." pv"
+   elseif e==6 then
+    t..=heal(s[3])
+   else
+    shd=max(shd,s[3])
+    t..="les coups sont reduits de "..shd
+   end
+   msg(t,function()
+    if mhp<=0 then win() else monster_turn(bmenu) end
+   end)
+  end
+ end,true)
+end
+
+-- k : diviseur de la def (2 pour le heros qui frappe, 4 pour les
+-- monstres : la def du heros protege moins, les monstres font mal)
+function dmg(a,d,k)
+ return max(1,flr(a-d/(k or 2)+rnd(a/4)))
 end
 
 function hero_turn(k)
@@ -66,7 +99,7 @@ end
 
 function monster_turn(k)
  bt+=1
- local sp,n,s,c=mo[12],dmg(mo[3],h.def),"",bt%3==0
+ local sp,n,s,c=mo[12],dmg(mo[3],h.def,4),"",bt%3==0
  if sp==4 and bt%3==2 then
   n,s=0,"le minotaure gratte le sol..."
  elseif sp==5 then
@@ -81,6 +114,7 @@ function monster_turn(k)
   n*=sp==1 and 2 or 3
   s=spn[sp]
  end
+ if (n>0) n=max(1,n-shd)
  h.hp=max(0,h.hp-n)
  if s=="" then
   s=mo[1].."\n"..(matk[mo[9]] or "vous attaque").." !\n"
@@ -108,11 +142,20 @@ function win()
   msg("grumdor est vaincu !\nla princesse elwyne\nest libre. fin !",function() go(title) end)
   return
  end
+ local olv=h.lv
  local up=gain(mo[6],mo[7])
  local function fin()
   if up then
    jingle(43,-1)
-   msg("niveau "..h.lv.." !\npv "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,back)
+   -- nouveaux sorts appris avec ce(s) niveau(x)
+   local t=""
+   for i=olv+1,nspells() do
+    local s=sp(i)
+    t..="nouveau sort : "..s[1].."\n"..sdesc[s[2]]..", "..s[4].." pm\n"
+   end
+   msg("niveau "..h.lv.." !\npv "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,function()
+    if t>"" then msg(t,back) else back() end
+   end)
   else
    back()
   end

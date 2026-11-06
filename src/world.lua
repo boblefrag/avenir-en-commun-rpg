@@ -41,6 +41,7 @@ end
 dx,dy,mv=split("-1,1,0,0"),split("0,0,-1,1"),0
 walk_f=0   -- frame marche : 0 ou 1 (alterne a chaque pas)
 safe=0     -- pas restants sans rencontre apres un combat
+rep=0      -- pas restants sous le sort repousse
 
 function pass(s)
  local n=need[s]
@@ -80,34 +81,68 @@ function field_menu()
  menu(split("statut,objets,magie"),4,12,function(i)
   close()
   if i==1 then
-   local wep=h.wep>0 and wep1[h.cl] or wep0[h.cl]
+   local wep=wep_name(h.wep)
    local arm_cnt=0
    for p=1,5 do
     if (h.arm[p] or 0)>0 then arm_cnt+=1 end
    end
    msg(classes[h.cl][1].." niv "..h.lv.."  xp "..h.xp.."\npv "..h.hp.."/"..h.pv.." pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | arm "..arm_cnt.."/5")
   elseif i==2 then
-   if (h.pot or 0)<=0 then
+   if h.pot+h.eth<1 then
     msg("aucun objet !")
    else
-    menu(split("potion (x"..h.pot.."),retour"),4,12,function(o)
+    menu(items(),4,12,function(o)
      close()
-     if o==1 then
-      if h.hp>=h.pv then
-       msg("pv deja au maximum !")
-      else
-       h.pot-=1
-       local g=min(20,h.pv-h.hp)
-       h.hp+=g
-       msg("vous buvez une potion.\n+"..g.." pv (pv "..h.hp.."/"..h.pv..")")
-      end
-     end
+     local t=use_item(o)
+     if (t) msg(t)
     end)
    end
   else
-   msg("bientot !")
+   field_magic()
   end
  end)
+end
+
+-- magie hors combat : evasion, retour, repousse, soin
+function field_magic()
+ local it,ids=spell_list(function(e) return e>2 and e<7 end)
+ if #it==0 then
+  msg("aucun sort utilisable\nici !")
+  return
+ end
+ menu(it,4,12,function(o)
+  close()
+  local s=sp(ids[o])
+  local e=s[2]
+  if h.mp<s[4] then
+   msg("pas assez de pm !")
+  elseif e==6 and h.hp>=h.pv then
+   msg("pv deja au maximum !")
+  elseif e==3 and st!=dungeon then
+   msg("vous n'etes pas\ndans un donjon !")
+  else
+   h.mp-=s[4]
+   if e==3 then
+    px,py=wx,wy
+    go(world)
+   elseif e==4 then
+    start()
+   elseif e==5 then
+    rep=s[3]
+   end
+   msg(s[1].." !"..(e==5 and "\nles monstres vous evitent." or e==6 and "\n"..heal(s[3]) or ""))
+  end
+ end)
+end
+
+-- rencontre aleatoire sur la tuile s (4 fois moins sous repousse)
+function enc(s)
+ local r=rate[s]
+ if rep>0 then
+  rep-=1
+  r/=4
+ end
+ return rnd(100)<r
 end
 
 world={mus=0}
@@ -130,7 +165,7 @@ function world.update()
   -- au nord de la grande chaine (y<27) : zones 3 et 4, plus fortes
   if safe>0 then
    safe-=1
-  elseif rnd(100)<rate[s] then
+  elseif enc(s) then
    fight(zone[s]+(py<27 and zone[s]<3 and 2 or 0))
   end
  end

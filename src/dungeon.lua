@@ -36,7 +36,7 @@ function dungeon.update()
    for m in all(mons) do
     if (m[8]==10+dp.d) go(battle,m)
    end
-  elseif rnd(100)<rate[s] then
+  elseif enc(s) then
    fight(20+dp.d)
   end
  end
