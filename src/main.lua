@@ -39,7 +39,14 @@ end
 function _init()
  cartdata("legend_of_the_gems_v1")
  map_init()
- go(title)
+ -- raccourci de test : pico8 -run legend_of_the_gems.p8 -p fin
+ -- lance directement la cinematique de fin (avec un guerrier)
+ if stat(6)=="fin" then
+  new_hero(1)
+  go(epilog)
+ else
+  go(title)
+ end
 end
 
 function _update()
