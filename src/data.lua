@@ -52,6 +52,9 @@ towel=split("c'est une serviette.|vous etes bien essuye.|vous vous epongez le fr
 -- fin du jeu, une boite de message par element
 ending=split("grumdor est vaincu !|vous trouvez la princesse\nelwyne... sans ses habits.\ngrumdor les a changes en\ncrapauds. ils coassent.|'je ne sortirai pas comme\nca !' dit-elle, rouge\ncomme un rubis.|heureusement, un aventurier\nsait toujours ou est\nsa serviette.|elle s'enroule dedans,\ndigne comme une reine.\n'bon. on y va ?'|le jour se leve sur ostrel.|le heros a la serviette\nentre dans la legende.\nfin !","|")
 
+-- message d'entree des donjons 1..5 (sous le nom du lieu)
+dtxt=split("le vent siffle entre\nles pierres.|l'eau goutte du plafond.\nca sent le poisson.|la chaleur est ecrasante.\nle sol fume.|des racines percent\nles murs. ca sent l'humus.|un panneau : 'chato de\ngrumdor. sonai svp.'","|")
+
 -- attaques de base du heros selon sa classe
 hatk=split("coup d'epee,coup de baton,coup de masse,coup de dague")
 

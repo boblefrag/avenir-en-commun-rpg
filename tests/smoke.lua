@@ -150,6 +150,7 @@ h=nil
 load_game()
 ok(h.tr[3]==2,"tresors sauvegardes")
 ok(#tres==6,"table des tresors")
+ok(#dtxt==5,"messages d'entree des donjons")
 
 -- serviette : toujours la, un message, rien de consomme
 local t,u=use_item(4)
