@@ -110,7 +110,7 @@ function hud()
  if pct<0.25 then
   hcol=8
   bip_cd-=1
-  if bip_cd<=0 then sfx(44) bip_cd=90 end
+  if bip_cd<=0 then sfx(53) bip_cd=90 end
  else
   bip_cd=0
  end

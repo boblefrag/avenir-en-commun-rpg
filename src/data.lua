@@ -15,10 +15,10 @@ classes=tbl("guerrier,8,30,0,8,6,4,6,0,3,2,1|mage,12,18,12,3,3,5,3,4,1,1,1|clerc
 -- zones : 1 plaine, 2 foret, 3 plaine du nord, 4 foret du nord, 5 cote,
 -- 21..25 donjon 1..5, 11..15 boss du donjon 1..5
 -- sprites : 64 harpie, 66 satyre, 68 sanglier, 70 spartoi, 72 sirene,
--- 74 cyclope, 76 chien, 78 ombre, 98 diablotin ; 128+ boss en 32x32
+-- 74 cyclope, 76 chien, 78 ombre, 98 diablotin, 100 serpent ; 128+ boss en 32x32
 -- couleurs : remplacent le 11 et le 3 du sprite (pal)
 -- special (boss) : voir spn plus bas
-mons=tbl("harpie,14,5,1,6,5,3,1,64,4,2,0|loup,16,7,2,5,6,4,1,76,3,6,0|sanglier,20,8,2,3,7,5,1,68,4,2,0|satyre,26,10,3,6,10,7,2,66,4,2,0|chauve-souris,10,4,1,8,4,3,2,64,13,1,0|serpent,22,9,2,4,9,6,2,66,3,8,0|satyre ivre,30,12,3,2,13,10,2,66,14,2,0|chien d'orthros,24,9,4,7,12,8,2,76,5,1,0|sanglier d'erymanthe,40,13,6,5,25,15,3,68,6,5,0|cyclope,55,16,6,3,32,20,3,74,15,4,0|cyclope,55,16,6,3,32,20,4,74,15,4,0|harpie des tempetes,38,14,5,10,28,18,4,64,12,1,0|sirene,20,8,3,6,10,8,5,72,12,1,0|harpie,10,4,1,6,4,3,5,64,4,2,0|harpie des tempetes,38,14,5,10,28,18,21,64,12,1,0|spartoi,30,11,7,4,18,12,21,70,9,4,0|hoplite noye,34,16,8,4,22,14,22,70,3,1,0|nereide,30,15,5,8,22,16,22,72,14,2,0|sirene,20,11,3,6,10,8,22,72,12,1,0|cyclope forgeron,70,24,9,4,45,30,23,74,9,4,0|molosse de braise,50,22,7,9,40,25,23,76,8,2,0|spartoi,34,16,7,4,18,12,23,70,9,4,0|ombre,45,22,8,10,40,25,24,78,13,1,0|empuse,60,24,9,8,50,35,24,78,8,2,0|spartoi,40,18,8,4,24,16,24,70,9,4,0|diablotin,60,28,10,9,55,40,25,98,8,2,0|grand diablotin,90,32,12,7,70,55,25,98,2,1,0|empuse,60,26,9,8,50,35,25,78,8,2,0|celeno,90,14,6,12,80,60,11,128,11,3,1|l'hydre,120,15,8,5,100,80,12,132,11,3,2|la chimere,150,18,9,8,130,100,13,136,11,3,3|le minotaure,200,22,12,6,160,120,14,140,11,3,4|grumdor,300,26,14,10,0,0,15,192,11,3,5")
+mons=tbl("harpie,14,5,1,6,5,3,1,64,4,2,0|loup,16,7,2,5,6,4,1,76,3,6,0|sanglier,20,8,2,3,7,5,1,68,4,2,0|satyre,26,10,3,6,10,7,2,66,4,2,0|chauve-souris,10,4,1,8,4,3,2,64,13,1,0|serpent,22,9,2,4,9,6,2,100,11,3,0|satyre ivre,30,12,3,2,13,10,2,66,14,2,0|chien d'orthros,24,9,4,7,12,8,2,76,5,1,0|sanglier d'erymanthe,40,13,6,5,25,15,3,68,6,5,0|cyclope,55,16,6,3,32,20,3,74,15,4,0|cyclope,55,16,6,3,32,20,4,74,15,4,0|harpie des tempetes,38,14,5,10,28,18,4,64,12,1,0|sirene,20,8,3,6,10,8,5,72,12,1,0|harpie,10,4,1,6,4,3,5,64,4,2,0|harpie des tempetes,38,14,5,10,28,18,21,64,12,1,0|spartoi,30,11,7,4,18,12,21,70,9,4,0|hoplite noye,34,16,8,4,22,14,22,70,3,1,0|nereide,30,15,5,8,22,16,22,72,14,2,0|sirene,20,11,3,6,10,8,22,72,12,1,0|cyclope forgeron,70,24,9,4,45,30,23,74,9,4,0|molosse de braise,50,22,7,9,40,25,23,76,8,2,0|spartoi,34,16,7,4,18,12,23,70,9,4,0|ombre,45,22,8,10,40,25,24,78,13,1,0|empuse,60,24,9,8,50,35,24,78,8,2,0|spartoi,40,18,8,4,24,16,24,70,9,4,0|diablotin,60,28,10,9,55,40,25,98,8,2,0|grand diablotin,90,32,12,7,70,55,25,98,2,1,0|empuse,60,26,9,8,50,35,25,78,8,2,0|celeno,90,14,6,12,80,60,11,128,11,3,1|l'hydre,120,15,8,5,100,80,12,132,11,3,2|la chimere,150,18,9,8,130,100,13,136,11,3,3|le minotaure,200,22,12,6,160,120,14,140,11,3,4|grumdor,300,26,14,10,0,0,15,192,11,3,5")
 
 -- attaques speciales des boss, au 3e tour puis tous les 3 tours :
 -- 1 frappe double, 2 se soigne, 3 frappe triple,
@@ -37,9 +37,9 @@ gems=tbl("du vent#les cols du nord s'ouvrent\ndesormais devant vous.|de l'eau#vo
 -- 3 sortie de donjon, 4 retour a l'auberge, 5 repousse (puissance = pas)
 -- 6 soin (rend puissance pv), 7 invocation (un ange frappe, comme 1)
 spells={}
-spells[2]=tbl("flammeche,1,12,3|bouclier,2,3,3|eclair,1,22,5|rempart,2,6,5|evasion,3,0,4|brasier,1,36,8|forteresse,2,10,8|retour,4,0,6|tonnerre,1,55,12|egide,2,15,12|repousse,5,150,6")
+spells[2]=tbl("flammeche,1,18,3|bouclier,2,3,3|eclair,1,33,5|rempart,2,6,5|evasion,3,0,4|brasier,1,54,8|forteresse,2,10,8|retour,4,0,6|tonnerre,1,80,12|egide,2,15,12|repousse,5,150,6")
 -- clerc : soins et boucliers, sorts speciaux plus tot, l'ange au niv 11
-spells[3]=tbl("soin,6,15,3|bouclier,2,3,3|evasion,3,0,4|grand soin,6,35,5|rempart,2,6,5|retour,4,0,5|repousse,5,150,5|guerison,6,80,9|forteresse,2,10,8|egide,2,15,11|invocation,7,120,18")
+spells[3]=tbl("soin,6,15,3|bouclier,2,3,3|evasion,3,0,4|grand soin,6,35,5|rempart,2,6,5|retour,4,0,5|repousse,5,150,5|guerison,6,80,9|forteresse,2,10,8|egide,2,15,11|invocation,7,180,18")
 sdesc=split("degats magiques,protege des coups,sortir d'un donjon,retour a l'auberge,eloigne les monstres,rend des pv,un ange frappe fort")
 
 -- tresors laches par les monstres, a revendre au marchand d'objets
@@ -56,7 +56,7 @@ ending=split("grumdor est vaincu !|vous trouvez la princesse\nelwyne... sans ses
 hatk=split("coup d'epee,coup de baton,coup de masse,coup de dague")
 
 -- attaques normales des monstres indexees par numero de sprite
-matk={[64]="vous donne un coup de bec",[66]="vous donne un coup de corne",[68]="vous charge violemment",[70]="porte un coup de lance",[72]="vous griffe sauvagement",[74]="frappe de sa massue",[76]="vous mord ferocement",[78]="griffe dans l'ombre",[98]="pique de sa fourche",[128]="plonge serres en avant",[132]="mord a pleine gueule",[136]="crache des flammes",[140]="assene un coup de hache",[192]="lance un eclair sournois"}
+matk={[64]="vous donne un coup de bec",[66]="vous donne un coup de corne",[68]="vous charge violemment",[70]="porte un coup de lance",[72]="vous griffe sauvagement",[74]="frappe de sa massue",[76]="vous mord ferocement",[78]="griffe dans l'ombre",[98]="pique de sa fourche",[100]="vous mord et siffle",[128]="plonge serres en avant",[132]="mord a pleine gueule",[136]="crache des flammes",[140]="assene un coup de hache",[192]="lance un eclair sournois"}
 
 -- equipement : armures (5 pieces) et armes, par paliers
 -- palier 1 tissu, 2 cuir, 3 fer, 4 acier ; chaque ville vend un palier
@@ -89,7 +89,7 @@ wep_att=split("3,6,10,15")
 -- 10 ville,11 donjon,12 chateau ; 16 mur,17 sol,18 sortie,19 boss,
 -- 20 table,21 lit,22 coffre,23 etagere (mobilier des donjons)
 need=split("16,2,0,0,4,16,1,8,0,0,0,0,16,16,16,16,0,0,0,16,16,16,16")
-rate=split("0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,10,0,0,0,0,0,0")
+rate=split("0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,7,0,0,0,0,0,0")
 zone=split("0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
 
 -- rumeurs par ville (# separe les villes, | les rumeurs)

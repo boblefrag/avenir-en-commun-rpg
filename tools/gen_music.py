@@ -190,7 +190,7 @@ TRACKS.append(dict(name="jingle niveau", speed=6, jingle=True, sfx={
     "h": voice("c3*4 e3*4 g3*4 c4*4 c4*16", "pulse", 3, tr=12),
 }, patterns=[["m", "h"]]))
 
-# 44. Alerte PV faibles : bip court et aigu x2 (~0,4 s)
+# 53. Alerte PV faibles : bip court et aigu x2 (~0,4 s)
 TRACKS.append(dict(name="jingle danger", speed=4, jingle=True, sfx={
     "m": voice("a5*2 .*2 a5*2 .*26", "sqr", 6, tr=0),
 }, patterns=[["m"]]))
@@ -226,9 +226,13 @@ def build():
                 flags = (1 if j == 0 else 0) | (2 if j == n - 1 else 0)
             ch = [f"{ids[c]:02x}" for c in chans] + [f"{0x41 + k:02x}" for k in range(len(chans), 4)]
             music_lines[start + j] = f"{flags:02x} " + "".join(ch)
-    # sfx 53 : petit bruit de texte defilant (typewriter blip)
+    # sfx 54 : petit bruit de texte defilant (typewriter blip)
     text_sfx = "01020000" + "2a023" + "00000" * 31
     sfx_lines.append(text_sfx)
+    # sfx 55 : impact quand un monstre frappe (bruit qui chute, ~0,1 s)
+    hit = [(24, 6, 7, 0), (16, 6, 6, 3), (10, 0, 5, 3), (6, 0, 3, 5)]
+    sfx_lines.append("01030000" + "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in hit)
+                     + "00000" * (32 - len(hit)))
     assert len(sfx_lines) <= 64, f"{len(sfx_lines)} sfx, max 64"
     used = len(sfx_lines)
     sfx_lines += ["01100000" + "0" * 160] * (64 - used)

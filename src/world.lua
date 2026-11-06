@@ -168,9 +168,11 @@ function world.update()
  end
 end
 
--- nuit : de 0 (noir d'encre) a 4 gemmes (plein jour)
+-- nuit : de 0 gemme (nuit de lune, lisible) a 4 gemmes (plein jour)
 -- chaque chaine : couleur de remplacement pour les couleurs 0 a 15
-nights=split("0001001500110101,0001105511211112,0111215d22431524,012345d68493dd89,0123456789abcdef",",",false)
+-- 0 : eau sans reflets, sable lavande, montagnes violettes
+-- 1 : reflets de l'eau, 2 : sable, 3 : montagnes brunes, 4 : tout
+nights=split("012321d6849bdded,012321d7849bcded,012321d789abcdef,012341d789abcdef,0123456789abcdef",",",false)
 
 function world.draw()
  cls()

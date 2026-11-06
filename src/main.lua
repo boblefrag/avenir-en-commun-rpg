@@ -5,6 +5,7 @@
 -- musiques (patterns de depart, voir tools/gen_music.py)
 -- 0 exterieur, 8 ville, 16 donjon, 24 combat, 32 boss
 -- jingles : 40 debut de combat, 41 victoire, 42 defaite, 43 niveau
+-- sfx : 53 alerte pv, 54 texte de l'intro, 55 impact
 mus_cur=-1
 function play(n)
  -- pendant un jingle, la musique attend qu'il finisse
@@ -94,7 +95,7 @@ function intro.update()
  if #wins>0 then return end
  local spd=btn(4) and 2 or 0.4
  sy-=spd
- if (flr(sy)%6==0) sfx(53,3)
+ if (flr(sy)%6==0) sfx(54,3)
  if btnp(5) or sy<-#intro_lines*8-10 then
   choose_class()
  end

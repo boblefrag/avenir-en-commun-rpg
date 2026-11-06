@@ -5,7 +5,11 @@ battle={}
 
 function battle.init(m)
  -- shd : bouclier actif, hid : voleur cache (prochain coup x3)
- mo,mhp,bt,shd,hid=m,m[2],0,0,false
+ -- combats de 3-4 tours : pv des monstres x2 et leurs degats x0.55
+ -- (boss : pv x1.3, degats x0.75) ; mmax = pv max du monstre
+ local b=m[8]\10==1
+ mmax,mdk=flr(m[2]*(b and 1.3 or 2)),b and .75 or .55
+ mo,mhp,bt,shd,hid,hit,blk=m,mmax,0,0,false,0,0
  jingle(40,m[8]==15 and 32 or 24)
  msg(m[1].." surgit !",bmenu)
 end
@@ -82,6 +86,7 @@ function bmagic()
    if e==1 or e==7 then
     local n=s[3]+flr(rnd(s[3]/4))
     mhp-=n
+    blk=10
     if (e==7) t..="un ange descend du ciel,\nfrappe, et s'en va.\n"
     t..=mo[1].." perd "..n.." pv"
    elseif e==6 then
@@ -106,6 +111,7 @@ end
 function hero_turn(k)
  local n=dmg(h.att,mo[4])*(hid and 3 or 1)
  mhp-=n
+ blk=10
  local s=hid and "attaque sournoise !" or "vous donnez un "..(hatk[h.cl] or "coup d'epee").." !"
  hid=false
  s..="\n"..mo[1]..(#mo[1]>14 and "\nperd " or " perd ")..n.." pv"
@@ -117,7 +123,7 @@ end
 -- x : multiplicateur des degats (2 si le voleur rate sa cachette)
 function monster_turn(k,x)
  bt+=1
- local sp,n,s,c=mo[12],dmg(mo[3],h.def,4)*(x or 1),"",bt%3==0
+ local sp,n,s,c=mo[12],max(1,flr(dmg(mo[3],h.def,4)*mdk))*(x or 1),"",bt%3==0
  if sp==4 and bt%3==2 then
   n,s=0,"le minotaure gratte le sol..."
  elseif sp==5 then
@@ -126,7 +132,7 @@ function monster_turn(k,x)
    n,s=0,spn[5]..mo[1].." perd "..n.." pv"
   end
  elseif sp==2 and c then
-  mhp=min(mhp+25,mo[2])
+  mhp=min(mhp+25,mmax)
   n,s=0,spn[2]
  elseif sp>0 and c then
   n*=sp==1 and 2 or 3
@@ -134,6 +140,11 @@ function monster_turn(k,x)
  end
  if (n>0) n=max(1,n-shd)
  h.hp=max(0,h.hp-n)
+ -- animation et son d'impact (voir battle.draw)
+ if n>0 then
+  hit=12
+  sfx(55,3)
+ end
  if s=="" then
   s=mo[1].."\n"..(matk[mo[9]] or "vous attaque").." !\n"
  end
@@ -221,8 +232,14 @@ end
 
 function battle.update() end
 
+-- impact : quand le monstre frappe, il glisse vers la droite et
+-- revient (12 frames) et le fond vire au rouge 3 frames au pic.
+-- touche par le heros, le monstre clignote (blk, 10 frames).
+-- compte dans draw : update ne tourne pas tant qu'un message est ouvert
 function battle.draw()
- cls(1)
+ if (hit>0) hit-=1
+ if (blk>0) blk-=1
+ cls(hit>5 and hit<9 and 8 or 1)
  rectfill(0,64,127,127,3)
  pal(11,mo[10])
  pal(3,mo[11])
@@ -230,7 +247,7 @@ function battle.draw()
  local n=mo[9]
  local s,w=16,48
  if (n>127) s,w=32,64
- sspr(n%16*8,n\16*8,s,s,64-w/2,44-w/2,w,w)
+ if (blk%4<2) sspr(n%16*8,n\16*8,s,s,64-w/2-sin(hit/24)*10,44-w/2,w,w)
  pal()
  hud()
 end
