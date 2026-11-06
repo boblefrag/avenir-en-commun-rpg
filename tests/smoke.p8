@@ -10,6 +10,7 @@ __lua__
 #include ../src/battle.lua
 #include ../src/town.lua
 #include ../src/dungeon.lua
+#include ../src/decor.lua
 #include smoke.lua
 __map__
 1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1e411e1f1f1f00401d1f124306461f1a1f114702481f191f1148004d02451f0c1f105f421f0b1d4008a20050614260511f0a1b440343a155664c1f0a1a605f46664b1f09196343604e6240604b664d1f07186541634b
