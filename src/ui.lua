@@ -87,7 +87,21 @@ function ui_draw()
 end
 
 -- bandeau d'etat en haut de l'ecran
+-- couleur pv : vert si >50%, jaune si 25..50%, rouge si <25%
+-- bip d'alerte si pv<25% (toutes les 90 frames env.)
+bip_cd=0
 function hud()
  rectfill(0,0,127,7,0)
- print("pv "..h.hp.."/"..h.pv.." pm "..h.mp.."/"..h.pm.." or "..h.gold,2,1,7)
+ local pct=h.hp/h.pv
+ local hcol=11
+ if pct<0.5 then hcol=10 end
+ if pct<0.25 then
+  hcol=8
+  bip_cd-=1
+  if bip_cd<=0 then sfx(44) bip_cd=90 end
+ else
+  bip_cd=0
+ end
+ print("pv "..h.hp.."/"..h.pv,2,1,hcol)
+ print("pm "..h.mp.."/"..h.pm.." or "..h.gold,52,1,7)
 end

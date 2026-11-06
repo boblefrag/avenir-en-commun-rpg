@@ -190,6 +190,11 @@ TRACKS.append(dict(name="jingle niveau", speed=6, jingle=True, sfx={
     "h": voice("c3*4 e3*4 g3*4 c4*4 c4*16", "pulse", 3, tr=12),
 }, patterns=[["m", "h"]]))
 
+# 44. Alerte PV faibles : bip court et aigu x2 (~0,4 s)
+TRACKS.append(dict(name="jingle danger", speed=4, jingle=True, sfx={
+    "m": voice("a5*2 .*2 a5*2 .*26", "sqr", 6, tr=0),
+}, patterns=[["m"]]))
+
 # ---------------------------------------------------------------- export
 
 PATTERN_STRIDE = 8  # piste i commence au pattern 8*i (marge pour allonger)
