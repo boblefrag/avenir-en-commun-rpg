@@ -12,12 +12,12 @@ On remplace donc ce lanceur par `trimui/Emus/PICO8/launch.sh` (dans ce dépôt) 
 
 ## 1. Préparer les fichiers (sur l'ordinateur)
 
-**a. Exporter le jeu en un seul fichier.** `main.p8` dépend des fichiers `src/*.lua` ; la console a besoin d'un cart autonome :
+**a. Exporter le jeu en un seul fichier.** `main.p8` dépend des fichiers `src/*.lua` ; la console a besoin d'un cart autonome. `tools/build.py` écrit `legend_of_the_gems.p8` : le code y est recopié **sans commentaires ni indentation**, sinon PICO-8 refuse l'export (« could not compress code » : le code compressé d'un `.p8.png` est limité à 15 616 octets). On exporte **ce fichier-là**, pas `main.p8` :
 
 ```sh
 python3 tools/build.py
-./pico-8/PICO-8.app/Contents/MacOS/pico8 main.p8 -export legend_of_the_gems.p8.png   # Mac
-pico8 main.p8 -export legend_of_the_gems.p8.png                                        # Debian (version Linux)
+./pico-8/PICO-8.app/Contents/MacOS/pico8 legend_of_the_gems.p8 -export legend_of_the_gems.p8.png   # Mac
+pico8 legend_of_the_gems.p8 -export legend_of_the_gems.p8.png                                        # Debian (version Linux)
 ```
 
 **b. Récupérer les binaires Raspberry Pi de PICO-8.** Sur ton compte [lexaloffle.com](https://www.lexaloffle.com), télécharge la version **Raspberry Pi** (`pico-8_0.2.7_raspi.zip`). La version Mac ou Windows ne tourne pas sur la console. Dans le zip, garde :

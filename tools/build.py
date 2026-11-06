@@ -3,6 +3,11 @@
 
 Usage : python3 tools/build.py [--reset-gfx | --sprite N[,M...]]
 
+Ecrit aussi legend_of_the_gems.p8 : cart autonome pour l'export en
+.p8.png, code inline SANS commentaires ni indentation. PICO-8 refuse
+d'exporter un .p8.png si le code compresse depasse 15616 octets
+("could not compress code"), et nos commentaires font ~1/3 du code.
+
 Ce que le script ecrit dans main.p8 :
 - __lua__   : les #include de src/ (le code reste dans les .lua)
 - __map__   : la carte monde + les 5 donjons en RLE (depuis assets/*.png)
@@ -24,9 +29,39 @@ from tokens import count_tokens  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CART = ROOT / "main.p8"
+EXPORT = ROOT / "legend_of_the_gems.p8"
 SRC = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon", "decor"]
 KEEP = ["__gfx__", "__gff__", "__label__"]
 ORDER = ["__lua__", "__gfx__", "__label__", "__gff__", "__map__", "__sfx__", "__music__"]
+
+def strip_code(code):
+    """Retire commentaires (--, hors chaines), indentation et lignes vides.
+    Garde les retours a la ligne : les if (c) stmt de PICO-8 en dependent."""
+    out = []
+    for line in code.split("\n"):
+        res, q, i = "", None, 0
+        while i < len(line):
+            c = line[i]
+            if q:
+                res += c
+                if c == "\\":
+                    res += line[i + 1:i + 2]
+                    i += 1
+                elif c == q:
+                    q = None
+            elif c in "\"'":
+                q = c
+                res += c
+            elif line[i:i + 2] == "--":
+                break
+            else:
+                res += c
+            i += 1
+        res = res.strip()
+        if res:
+            out.append(res)
+    return "\n".join(out)
+
 
 def read_sections(path):
     sections, cur = {}, None
@@ -80,12 +115,21 @@ def main():
         if k in sec:
             out += [k] + sec[k]
     CART.write_text("\n".join(out) + "\n")
+    # cart d'export : meme contenu, code inline et nettoye
+    code = "\n".join((ROOT / f"src/{f}.lua").read_text() for f in SRC)
+    small = strip_code(code)
+    check_syntax(small, EXPORT.name)
+    exp = ["pico-8 cartridge // http://www.pico-8.com", "version 42", "__lua__"] + small.split("\n")
+    for k in ORDER[1:]:
+        if k in sec:
+            exp += [k] + sec[k]
+    EXPORT.write_text("\n".join(exp) + "\n")
     # cart de test : memes donnees, code + tests/smoke.lua
     test = ["pico-8 cartridge // http://www.pico-8.com", "version 42", "__lua__"]
     test += [f"#include ../src/{f}.lua" for f in SRC] + ["#include smoke.lua", "__map__"]
     test += sec["__map__"]
     (ROOT / "tests/smoke.p8").write_text("\n".join(test) + "\n")
-    code = "\n".join((ROOT / f"src/{f}.lua").read_text() for f in SRC)
+    print(f"{EXPORT.name} : code nettoye {len(code)} -> {len(small)} caracteres")
     print(f"{CART.name} : carte {world} o + donjons {total - world} o = {total}/4096, "
           f"sfx {used}/64, tokens ~{count_tokens(code)}/8192")
 

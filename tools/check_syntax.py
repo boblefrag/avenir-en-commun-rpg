@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRCS = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon"]
+SRCS = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon", "decor"]
 
 MOCKS = """
 local function peek(a) return 0 end
@@ -60,6 +60,9 @@ def pico8_to_standard_lua(code: str) -> str:
     code = re.sub(r"\\=", "//=", code)
     code = re.sub(r"\\", "//", code)
 
+    # 2b. Nombres binaires de PICO-8 (0b1010...) -> decimal
+    code = re.sub(r"\b0b([01]+)\b", lambda m: str(int(m.group(1), 2)), code)
+
     # 3. Remplacement de @addr par peek(addr)
     code = re.sub(r"@\(([^)]+)\)", r"peek(\1)", code)
     code = re.sub(r"@(0x[0-9a-fA-F]+|[a-zA-Z_][a-zA-Z0-9_.]*)", r"peek(\1)", code)
@@ -101,24 +104,27 @@ def pico8_to_standard_lua(code: str) -> str:
     return "\n".join(lines)
 
 
-def main():
+def main(code=None, label="src/*.lua"):
+    """Verifie code (par defaut : la concatenation de src/*.lua)."""
     has_error = False
-    full_code = []
-    for s in SRCS:
-        path = ROOT / f"src/{s}.lua"
-        if not path.exists():
-            print(f"Fichier manquant : {path}")
-            sys.exit(1)
-        full_code.append(f"-- FILE: {s}.lua\n" + path.read_text())
+    if code is None:
+        full_code = []
+        for s in SRCS:
+            path = ROOT / f"src/{s}.lua"
+            if not path.exists():
+                print(f"Fichier manquant : {path}")
+                sys.exit(1)
+            full_code.append(f"-- FILE: {s}.lua\n" + path.read_text())
+        code = "\n".join(full_code)
 
-    translated = pico8_to_standard_lua("\n".join(full_code))
+    translated = pico8_to_standard_lua(code)
     tmp = ROOT / ".temp_syntax_check.lua"
     tmp.write_text(MOCKS + "\n" + translated)
 
     try:
         res = subprocess.run(["luac", "-p", str(tmp)], capture_output=True, text=True)
         if res.returncode == 0:
-            print("Syntaxe Lua valide sur l'ensemble de src/*.lua !")
+            print(f"Syntaxe Lua valide sur {label} !")
         else:
             has_error = True
             print("Erreur de syntaxe detectee par luac :")
