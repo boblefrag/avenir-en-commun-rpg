@@ -57,8 +57,11 @@ function ui_update()
   if btnp(4) then
    w.cb(w.sel)
   elseif btnp(5) then
-   if (w.onx) w.cb(w.onx)
-   elseif (not w.nox) close()
+   if w.onx then
+    w.cb(w.onx)
+   elseif not w.nox then
+    close()
+   end
   end
  end
  return true
