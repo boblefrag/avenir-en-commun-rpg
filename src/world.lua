@@ -39,6 +39,8 @@ end
 
 -- deplacement case par case, partage par le monde et les donjons
 dx,dy,mv=split("-1,1,0,0"),split("0,0,-1,1"),0
+walk_f=0   -- frame marche : 0 ou 1 (alterne a chaque pas)
+safe=0     -- pas restants sans rencontre apres un combat
 
 function pass(s)
  local n=need[s]
@@ -55,6 +57,7 @@ function walk()
    local x,y=px+dx[b+1],py+dy[b+1]
    if pass(mget(x,y)) then
     px,py,mv=x,y,4
+    walk_f=1-walk_f
     return true
    end
   end
@@ -125,7 +128,11 @@ function world.update()
   end
   local s=mget(px,py)
   -- au nord de la grande chaine (y<27) : zones 3 et 4, plus fortes
-  if (rnd(100)<rate[s]) fight(zone[s]+(py<27 and zone[s]<3 and 2 or 0))
+  if safe>0 then
+   safe-=1
+  elseif rnd(100)<rate[s] then
+   fight(zone[s]+(py<27 and zone[s]<3 and 2 or 0))
+  end
  end
 end
 

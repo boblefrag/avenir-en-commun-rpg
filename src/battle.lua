@@ -103,6 +103,7 @@ end
 
 function win()
  jingle(41,-1)
+ safe=5  -- 5 pas sans rencontre apres le combat
  if mo[8]==15 then
   msg("grumdor est vaincu !\nla princesse elwyne\nest libre. fin !",function() go(title) end)
   return

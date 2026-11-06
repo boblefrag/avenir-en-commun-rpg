@@ -59,6 +59,11 @@ end
 
 function hero_spr()
  pal(8,classes[h.cl][2])
- spr(32,px*8,py*8)
+ local s,flip=32,false
+ if mv and mv>0 then
+  s=33
+  flip=((walk_f or 0)==1)
+ end
+ spr(s,px*8,py*8,1,1,flip)
  pal()
 end
