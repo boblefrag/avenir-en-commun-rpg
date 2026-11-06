@@ -20,7 +20,7 @@ function wep_name(t)
 end
 
 function new_hero(cl)
- h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,eth=0,wep=0,arm={0,0,0,0,0}}
+ h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,eth=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0}}
  stats()
  h.hp,h.mp=h.pv,h.pm
 end
@@ -46,7 +46,7 @@ function ngems()
 -- sauvegarde (0x5e00, voir decisions.md)
 -- 0 marqueur, 1 classe, 2 niveau, 3 gemmes, 4 ville, 5 pot, 6 wep
 -- 7..11 arm (5 pieces), 12 potions de magie
--- 16.. xp, or, pv, pm (2 octets chacun)
+-- 16.. xp, or, pv, pm (2 octets chacun), 24..29 tresors (6 types)
 sv=split("cl,lv,gems,town,pot,wep")
 
 function save()
@@ -55,10 +55,12 @@ function save()
  for i=1,5 do poke(0x5e06+i,h.arm and h.arm[i] or 0) end
  poke(0x5e0c,h.eth or 0)
  poke2(0x5e10,h.xp,h.gold,h.hp,h.mp)
+ for i=1,6 do poke(0x5e17+i,h.tr[i]) end
 end
 
 function load_game()
- h={arm={}}
+ h={arm={},tr={}}
+ for i=1,6 do h.tr[i]=@(0x5e17+i) end
  for i,k in ipairs(sv) do h[k]=@(0x5e00+i) end
  for i=1,5 do h.arm[i]=@(0x5e06+i) end
  h.eth=@0x5e0c

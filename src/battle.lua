@@ -194,7 +194,24 @@ function win()
    msg("vous obtenez la gemme\n"..g[1].." !\n"..g[2],fin)
   end
  end
- msg("victoire !\n+"..mo[6].." xp  +"..mo[7].." or",k)
+ msg("victoire !\n+"..mo[6].." xp  +"..mo[7].." or"..loot(),k)
+end
+
+-- butin : 25% des combats (40% pour le voleur, toujours sur un boss)
+-- 40% potion (ou potion de magie si on a des pm), sinon un tresor
+-- d'autant plus precieux que le monstre donne de l'or
+function loot()
+ if (rnd(100)>=(mo[8]\10==1 and 100 or h.cl==4 and 40 or 25)) return ""
+ if rnd()<.4 then
+  local k=h.pm>0 and rnd()<.5 and "eth" or "pot"
+  if h[k]<9 then
+   h[k]+=1
+   return "\nobjet : "..(k=="pot" and "potion" or "potion de magie").." !"
+  end
+ end
+ local i=flr(rnd(min(6,1+mo[7]\12)))+1
+ h.tr[i]=min(99,h.tr[i]+1)
+ return "\nobjet : "..tres[i][1].." !"
 end
 
 -- mort : rechargement de la derniere sauvegarde

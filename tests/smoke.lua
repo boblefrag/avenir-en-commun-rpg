@@ -135,6 +135,19 @@ hero_turn()
 ok(not hid and mhp<1000,"attaque sournoise : "..(1000-mhp).." degats")
 wins={}
 
+-- butin et vente
+new_hero(4)
+for m in all(mons) do if (m[8]==11) mo=m end
+local l=loot()
+ok(#l>0,"boss : butin garanti"..l)
+h.tr={0,0,2,0,0,0}
+h.town=1
+save()
+h=nil
+load_game()
+ok(h.tr[3]==2,"tresors sauvegardes")
+ok(#tres==6,"table des tresors")
+
 -- donjons : sortie et boss presents
 px,py=0,0
 for d=1,5 do

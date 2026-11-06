@@ -42,6 +42,10 @@ spells[2]=tbl("flammeche,1,12,3|bouclier,2,3,3|eclair,1,22,5|rempart,2,6,5|evasi
 spells[3]=tbl("soin,6,15,3|bouclier,2,3,3|evasion,3,0,4|grand soin,6,35,5|rempart,2,6,5|retour,4,0,5|repousse,5,150,5|guerison,6,80,9|forteresse,2,10,8|egide,2,15,11|invocation,7,120,18")
 sdesc=split("degats magiques,protege des coups,sortir d'un donjon,retour a l'auberge,eloigne les monstres,rend des pv,un ange frappe fort")
 
+-- tresors laches par les monstres, a revendre au marchand d'objets
+-- nom,prix de vente ; du moins au plus precieux
+tres=tbl("bague,15|bijou,30|emeraude,60|rubis,100|coffret,180|couronne,350")
+
 -- attaques de base du heros selon sa classe
 hatk=split("coup d'epee,coup de baton,coup de masse,coup de dague")
 

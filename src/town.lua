@@ -35,9 +35,12 @@ end
 
 -- objets : potion (10 or) et potion de magie (25 or), 9 max chacune
 function item_shop()
- menu({"potion - 10 or ("..h.pot.."/9)","p. magie - 25 or ("..h.eth.."/9)","retour"},4,44,function(o)
+ menu({"potion - 10 or ("..h.pot.."/9)","p. magie - 25 or ("..h.eth.."/9)","vendre","retour"},4,44,function(o)
   close()
-  if o>2 then
+  if o==3 then
+   sell_shop()
+   return
+  elseif o>3 then
    tmenu()
    return
   end
@@ -50,6 +53,35 @@ function item_shop()
     h[k]+=1
     msg(n.." achetee !\nvous en avez "..h[k].."/9.",item_shop)
    end,item_shop)
+  end
+ end,true)
+end
+
+-- vente des tresors : un a la fois, ou toutes les babioles d'un coup
+function sell_shop()
+ local it={}
+ for i=1,6 do add(it,tres[i][1].." x"..h.tr[i].." - "..tres[i][2].." or") end
+ add(it,"vendre toutes les babioles")
+ add(it,"retour")
+ menu(it,4,24,function(o)
+  close()
+  if o>7 then
+   item_shop()
+   return
+  end
+  local g=0
+  for i=1,6 do
+   if o==i or o==7 then
+    g+=h.tr[i]*tres[i][2]
+    if (o==7) h.tr[i]=0
+   end
+  end
+  if g==0 then
+   msg("rien a vendre !",sell_shop)
+  else
+   if (o<7) g=tres[o][2] h.tr[o]-=1
+   h.gold=min(9999,h.gold+g)
+   msg("vendu ! +"..g.." or",sell_shop)
   end
  end,true)
 end
