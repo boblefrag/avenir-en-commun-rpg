@@ -82,6 +82,10 @@ Dans le menu de la console : **PICO-8 → legend_of_the_gems**.
 
 ## Si le jeu ne se lance pas
 
+**Vérifier d'abord le nom du fichier :** il doit finir par `.p8.png` (`legend_of_the_gems.p8.png`), pas seulement `.png`. Sinon PICO-8 ne le reconnaît pas comme une cartouche : le journal montre `loading ...legend_of_the_gems.png` puis `splore_init`, sans lancer le jeu.
+
+**Si le journal (ou le terminal) affiche `Killed` :** le système a tué PICO-8, très probablement par manque de mémoire. Le projet [pico8-trimui-brick](https://github.com/Ninoh-FOX/pico8-trimui-brick), qui fait tourner `pico8_64` sur la Brick, active le swap pour PICO-8 : dans `Emus/PICO8/config.json` sur la carte, mets `"useswap":1` (ajoute la ligne si elle n'y est pas). Pour confirmer la cause, `dmesg | tail -30` juste après le plantage (en SSH) doit montrer `Out of memory: Killed process ... (pico8_64)`.
+
 L'écran revient au menu, ou reste noir :
 1. Ouvre `Emus/PICO8/pico8/log.txt` sur l'ordinateur et envoie son contenu : il dit pourquoi PICO-8 s'est arrêté.
 2. Vérifie que `pico8_64` et `pico8.dat` sont bien dans `Emus/PICO8/pico8/` (pas dans un sous-dossier issu du zip).

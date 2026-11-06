@@ -13,6 +13,10 @@ $EMU_DIR/cpufreq.sh
 $EMU_DIR/cpuswitch.sh
 
 if [ -f "$P8_DIR/pico8_64" ] && [ -f "$P8_DIR/pico8.dat" ]; then
+	# cpuswitch.sh (fait pour retro8) eteint 2 coeurs sur 4 : on les
+	# rallume, comme le projet pico8-trimui-brick qui fait tourner
+	# pico8_64 sur la Brick
+	for c in 0 1 2 3; do echo 1 > /sys/devices/system/cpu/cpu$c/online; done
 	cd "$P8_DIR"
 	chmod +x pico8_64 2>/dev/null
 	# correspondance des boutons : on reprend celle du systeme si elle existe
