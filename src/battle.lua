@@ -4,7 +4,7 @@
 battle={}
 
 function battle.init(m)
- mo,mhp=m,m[2]
+ mo,mhp,bt=m,m[2],0
  play(m[8]==15 and 32 or 24)
  msg(m[1].." surgit !",bmenu)
 end
@@ -43,11 +43,30 @@ function turn(atk)
    if mhp<=0 then win() else k() end
   end)
  end
+ -- le monstre agit (attaque speciale des boss : voir spn)
  local function it(k)
-  local n=dmg(mo[3],h.def)
+  bt+=1
+  local sp,n,s,c=mo[12],dmg(mo[3],h.def),"",bt%3==0
+  if sp==4 and bt%3==2 then
+   n,s=0,"le minotaure gratte le sol..."
+  elseif sp==5 then
+   if rnd()<.25 then
+    mhp-=n
+    n,s=0,spn[5]..mo[1].." perd "..n.." pv"
+   end
+  elseif sp==2 and c then
+   mhp=min(mhp+25,mo[2])
+   n,s=0,spn[2]
+  elseif sp>0 and c then
+   n*=sp==1 and 2 or 3
+   s=spn[sp]
+  end
   h.hp=max(0,h.hp-n)
-  msg("vous perdez "..n.." pv",function()
-   if h.hp<=0 then lose() else k() end
+  if (n>0) s..="vous perdez "..n.." pv"
+  msg(s,function()
+   if mhp<=0 then win()
+   elseif h.hp<=0 then lose()
+   else k() end
   end)
  end
  if h.agi+rnd(4)>=mo[5]+rnd(4) then
@@ -92,8 +111,11 @@ function battle.draw()
  rectfill(0,64,127,127,3)
  pal(11,mo[10])
  pal(3,mo[11])
+ -- 16x16 agrandi x3, boss 32x32 agrandi x2
  local n=mo[9]
- sspr(n%16*8,n\16*8,16,16,40,20,48,48)
+ local s,w=16,48
+ if (n>127) s,w=32,64
+ sspr(n%16*8,n\16*8,s,s,64-w/2,44-w/2,w,w)
  pal()
  hud()
 end

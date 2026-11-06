@@ -67,6 +67,7 @@ function fight(z)
  for m in all(mons) do
   if (m[8]==z) add(l,m)
  end
+ if (#l==0) return
  prev=st
  go(battle,rnd(l))
 end
@@ -99,7 +100,8 @@ function world.update()
    end
   end
   local s=mget(px,py)
-  if (rnd(100)<rate[s]) fight(zone[s])
+  -- au nord de la grande chaine (y<27) : zones 3 et 4, plus fortes
+  if (rnd(100)<rate[s]) fight(zone[s]+(py<27 and zone[s]<3 and 2 or 0))
  end
 end
 

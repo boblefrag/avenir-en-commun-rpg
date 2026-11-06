@@ -37,7 +37,7 @@ function town.update() end
 function town.draw()
  cls(1)
  rectfill(0,64,127,127,4)
- sspr(16,32,16,16,56,20,48,48)
+ sspr(0,48,16,16,40,20,48,48)
  print(tw.n,64-#tw.n*2,12,10)
  hud()
 end

@@ -34,7 +34,7 @@ function dungeon.update()
     if (m[8]==10+dp.d) go(battle,m)
    end
   elseif rnd(100)<rate[s] then
-   fight(zone[s])
+   fight(20+dp.d)
   end
  end
 end

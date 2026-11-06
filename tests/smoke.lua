@@ -50,7 +50,13 @@ for d=1,5 do
 end
 
 -- contenu
-ok(#classes==4 and #mons==10 and #rumors==5,"tables de contenu")
-for m in all(mons) do ok(#m==11,"monstre "..m[1]) end
+ok(#classes==4 and #rumors==5,"tables de contenu")
+for m in all(mons) do ok(#m==12,"monstre "..m[1]) end
+for z in all(split("1,2,3,4,5,21,22,23,24,25,11,12,13,14,15")) do
+ local n=0
+ for m in all(mons) do if (m[8]==z) n+=1 end
+ ok(n>0,"zone "..z.." : "..n.." monstre(s)")
+end
+ok(#spn==5,"attaques speciales des boss")
 
 printh(nok==0 and "tout est ok" or nok.." echec(s)")

@@ -221,6 +221,42 @@ def gen_dungeon(seed):
     return g
 
 
+def gen_maze(seed):
+    """Labyrinthe parfait (temple du Minotaure) : 15x15 cellules sur 31x31 cases.
+    Sortie dans un coin, boss sur la cellule la plus eloignee."""
+    rng = random.Random(seed)
+    g = [[0] * 32 for _ in range(32)]
+    n = 15
+    seen = {(0, 0)}
+    stack = [(0, 0)]
+    g[1][1] = 1
+    while stack:
+        cx, cy = stack[-1]
+        nxt = [(cx + dx, cy + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+               if 0 <= cx + dx < n and 0 <= cy + dy < n and (cx + dx, cy + dy) not in seen]
+        if not nxt:
+            stack.pop()
+            continue
+        nx, ny = rng.choice(nxt)
+        g[cy * 2 + 1 + (ny - cy)][cx * 2 + 1 + (nx - cx)] = 1
+        g[ny * 2 + 1][nx * 2 + 1] = 1
+        seen.add((nx, ny))
+        stack.append((nx, ny))
+    # case la plus loin de l'entree
+    dist = {(1, 1): 0}
+    todo = deque([(1, 1)])
+    while todo:
+        x, y = todo.popleft()
+        for a, b in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if g[b][a] and (a, b) not in dist:
+                dist[(a, b)] = dist[(x, y)] + 1
+                todo.append((a, b))
+    bx, by = max(dist, key=dist.get)
+    g[1][1] = 2
+    g[by][bx] = 3
+    return g
+
+
 def places_lua():
     rows = "|".join(",".join(str(v) for v in (n, t, x, y, SPRITE[t], d, gem, c, r))
                     for n, t, x, y, d, gem, c, r in PLACES)
@@ -235,7 +271,8 @@ def places_lua():
 
 def main():
     seed = int(sys.argv[1]) if len(sys.argv) > 1 else 1
-    dungeons = [gen_dungeon(100 + i) for i in range(5)]
+    # donjon 4 = temple du Minotaure : un labyrinthe
+    dungeons = [gen_maze(103) if i == 3 else gen_dungeon(100 + i) for i in range(5)]
     dsize = sum(len(rle(d)) for d in dungeons)
     for s in range(seed, seed + 200):
         g = generate(s)

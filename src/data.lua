@@ -11,19 +11,31 @@ end
 -- pv,pm,att,def,agi de depart, puis gain par niveau
 classes=tbl("guerrier,8,30,0,8,6,4,6,0,3,2,1|mage,12,18,12,3,3,5,3,4,1,1,1|clerc,7,24,8,5,6,4,4,3,2,2,1|voleur,11,22,0,6,4,9,4,0,2,1,3")
 
--- monstres : nom,pv,att,def,agi,xp,or,zone,sprite,couleur1,couleur2
--- zone 1 plaine, 2 foret, 3 donjon, 11..15 boss du donjon 1..5
+-- monstres : nom,pv,att,def,agi,xp,or,zone,sprite,couleur1,couleur2,special
+-- zones : 1 plaine, 2 foret, 3 plaine du nord, 4 foret du nord, 5 cote,
+-- 21..25 donjon 1..5, 11..15 boss du donjon 1..5
+-- sprites : 64 harpie, 66 satyre, 68 sanglier, 70 spartoi, 72 sirene,
+-- 74 cyclope, 76 chien, 78 ombre, 98 diablotin ; 128+ boss en 32x32
 -- couleurs : remplacent le 11 et le 3 du sprite (pal)
-mons=tbl("slime vert,8,4,1,3,3,2,1,64,11,3|slime bleu,12,5,2,4,5,4,1,64,12,1|slime rouge,20,9,4,5,10,8,2,64,8,2|slime roi,35,12,6,4,20,15,2,64,10,9|spectre,28,11,5,8,16,12,3,64,6,5|gardien des brumes,60,12,6,6,60,50,11,64,7,6|hydre,70,14,7,5,70,60,12,64,12,1|salamandre,90,18,8,7,90,80,13,64,9,8|golem,120,20,12,3,120,100,14,64,4,5|grumdor,250,25,12,10,0,0,15,68,14,2")
+-- special (boss) : voir spn plus bas
+mons=tbl("harpie,10,4,1,6,4,3,1,64,4,2,0|sanglier,14,5,2,3,5,4,1,68,4,2,0|satyre,18,7,3,6,8,6,2,66,4,2,0|satyre ivre,22,9,3,2,10,9,2,66,14,2,0|chien d'orthros,24,9,4,7,12,8,2,76,5,1,0|sanglier d'erymanthe,40,13,6,5,25,15,3,68,6,5,0|cyclope,55,16,6,3,32,20,3,74,15,4,0|cyclope,55,16,6,3,32,20,4,74,15,4,0|harpie des tempetes,38,14,5,10,28,18,4,64,12,1,0|sirene,20,8,3,6,10,8,5,72,12,1,0|harpie,10,4,1,6,4,3,5,64,4,2,0|harpie des tempetes,38,14,5,10,28,18,21,64,12,1,0|spartoi,30,11,7,4,18,12,21,70,9,4,0|hoplite noye,34,12,8,4,22,14,22,70,3,1,0|nereide,30,12,5,8,22,16,22,72,14,2,0|sirene,20,8,3,6,10,8,22,72,12,1,0|cyclope forgeron,70,20,9,4,45,30,23,74,9,4,0|molosse de braise,50,18,7,9,40,25,23,76,8,2,0|spartoi,30,11,7,4,18,12,23,70,9,4,0|ombre,45,17,8,10,40,25,24,78,13,1,0|empuse,60,20,9,8,50,35,24,78,8,2,0|spartoi,30,11,7,4,18,12,24,70,9,4,0|diablotin,60,22,10,9,55,40,25,98,8,2,0|grand diablotin,90,26,12,7,70,55,25,98,2,1,0|empuse,60,20,9,8,50,35,25,78,8,2,0|celeno,90,14,6,12,80,60,11,128,11,3,1|l'hydre,120,15,8,5,100,80,12,132,11,3,2|la chimere,150,18,9,8,130,100,13,136,11,3,3|le minotaure,200,22,12,6,160,120,14,140,11,3,4|grumdor,300,26,14,10,0,0,15,192,11,3,5")
+
+-- attaques speciales des boss, au 3e tour puis tous les 3 tours :
+-- 1 frappe double, 2 se soigne, 3 frappe triple,
+-- 4 prend son elan (tour d'avant) puis frappe triple,
+-- 5 grumdor : 1 fois sur 4, sa foudre lui revient dessus
+spn=split("bourrasque !\n,les tetes repoussent !\n,souffle de feu !\n,le minotaure charge !\n,la foudre de grumdor\nlui revient dessus !\n")
 
 -- tuiles, indexees par numero de sprite :
 -- need : 0 libre, 16 jamais, sinon gemme requise (1 vent,2 eau,4 feu,8 terre)
 -- rate : % de rencontre par pas ; zone : zone des monstres
+-- (au nord de la grande chaine, plaine et foret passent en zones 3 et 4 ;
+-- en donjon, la zone est 20 + numero du donjon)
 -- 1 eau,2 gue,3 plaine,4 foret,5 ronces,6 montagne,7 col,8 chaine,9 sable
 -- 10 ville,11 donjon,12 chateau ; 16 mur,17 sol,18 sortie,19 boss
 need=split("16,2,0,0,4,16,1,8,0,0,0,0,16,16,16,16,0,0,0")
 rate=split("0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,10,0,0")
-zone=split("0,1,1,2,2,0,2,2,1,0,0,0,0,0,0,0,3,0,0")
+zone=split("0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0")
 
 -- rumeurs par ville (# separe les villes, | les rumeurs)
 -- grumdor ecrit mal, c'est voulu
