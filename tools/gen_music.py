@@ -196,7 +196,7 @@ TRACKS.append(dict(name="jingle danger", speed=4, jingle=True, sfx={
 }, patterns=[["m"]]))
 
 # ---------------------------------------------------------------- fin
-# 48. Fin : reprise triomphale en do majeur. C G / Am F / C G / F G C
+# 48. Generique de fin : reprise triomphale en do majeur. C G / Am F / C G / F G C
 # Pattern 48 (start), et ses sfx viennent APRES les sfx 53-55
 # (late=True) pour ne pas decaler les numeros deja utilises dans le code.
 lead = dict(wave="pulse", vol=5, tr=12)
