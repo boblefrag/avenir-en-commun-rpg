@@ -114,13 +114,16 @@ new_hero(1)
 ok(nspells()==0,"guerrier : aucun sort")
 new_hero(2)
 h.eth,h.mp=1,0
-local t,u=use_item(2)
+local t,u=use_item(3)
 ok(u and h.eth==0 and h.mp==min(15,h.pm),"potion de magie : pm rendus")
 h.eth=3
 save()
 h=nil
 load_game()
 ok(h.eth==3,"potions de magie sauvegardees")
+h.spo,h.hp=1,1
+use_item(2)
+ok(h.spo==0 and h.hp==min(81,h.pv),"super potion : +80 pv")
 rep=10
 ok(enc(17)!=nil and rep==9,"repousse : compteur de pas")
 rep=0
@@ -149,8 +152,8 @@ ok(h.tr[3]==2,"tresors sauvegardes")
 ok(#tres==6,"table des tresors")
 
 -- serviette : toujours la, un message, rien de consomme
-local t,u=use_item(3)
-ok(t and not u and #items()==4,"serviette : "..(t or "?"))
+local t,u=use_item(4)
+ok(t and not u and #items()==5,"serviette : "..(t or "?"))
 
 -- fin : la princesse et la serviette
 wins={}

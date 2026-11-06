@@ -20,7 +20,7 @@ function wep_name(t)
 end
 
 function new_hero(cl)
- h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,eth=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0}}
+ h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,spo=0,eth=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0}}
  stats()
  h.hp,h.mp=h.pv,h.pm
 end
@@ -45,7 +45,7 @@ function ngems()
 
 -- sauvegarde (0x5e00, voir decisions.md)
 -- 0 marqueur, 1 classe, 2 niveau, 3 gemmes, 4 ville, 5 pot, 6 wep
--- 7..11 arm (5 pieces), 12 potions de magie
+-- 7..11 arm (5 pieces), 12 potions de magie, 13 super potions
 -- 16.. xp, or, pv, pm (2 octets chacun), 24..29 tresors (6 types)
 sv=split("cl,lv,gems,town,pot,wep")
 
@@ -54,6 +54,7 @@ function save()
  for i,k in ipairs(sv) do poke(0x5e00+i,h[k] or 0) end
  for i=1,5 do poke(0x5e06+i,h.arm and h.arm[i] or 0) end
  poke(0x5e0c,h.eth or 0)
+ poke(0x5e0d,h.spo or 0)
  poke2(0x5e10,h.xp,h.gold,h.hp,h.mp)
  for i=1,6 do poke(0x5e17+i,h.tr[i]) end
 end
@@ -64,6 +65,7 @@ function load_game()
  for i,k in ipairs(sv) do h[k]=@(0x5e00+i) end
  for i=1,5 do h.arm[i]=@(0x5e06+i) end
  h.eth=@0x5e0c
+ h.spo=@0x5e0d
  h.xp,h.gold,h.hp,h.mp=peek2(0x5e10,4)
  stats()
 end
@@ -99,23 +101,25 @@ function spell_list(f)
  return it,ids
 end
 
--- objets : 1 potion (+20 pv), 2 potion de magie (+15 pm),
--- 3 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
+-- objets : 1 potion (+20 pv), 2 super potion (+80 pv),
+-- 3 potion de magie (+15 pm),
+-- 4 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
 function items()
- return {"potion (x"..h.pot..")","p. magie (x"..h.eth..")","serviette","retour"}
+ return {"potion (x"..h.pot..")","super potion (x"..h.spo..")","p. magie (x"..h.eth..")","serviette","retour"}
 end
 
 -- utilise l'objet o : renvoie le message (nil si retour)
 -- et true si l'objet a ete bu
 function use_item(o)
- if o==1 then
-  if (h.pot<1) return "plus de potion !"
+ if o<3 then
+  local k=o==1 and "pot" or "spo"
+  if (h[k]<1) return "plus de "..(o==1 and "potion" or "super potion").." !"
   if (h.hp>=h.pv) return "pv deja au maximum !"
-  h.pot-=1
-  return "vous buvez une potion !\n"..heal(20),true
- elseif o==3 then
+  h[k]-=1
+  return "vous buvez une "..(o==1 and "" or "super ").."potion !\n"..heal(o==1 and 20 or 80),true
+ elseif o==4 then
   return rnd(towel)
- elseif o==2 then
+ elseif o==3 then
   if (h.eth<1) return "plus de potion de magie !"
   if (h.mp>=h.pm) return "pm deja au maximum !"
   local g=min(15,h.pm-h.mp)

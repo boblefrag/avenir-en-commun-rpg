@@ -24,7 +24,7 @@ from tokens import count_tokens  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CART = ROOT / "main.p8"
-SRC = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon"]
+SRC = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon", "decor"]
 KEEP = ["__gfx__", "__gff__", "__label__"]
 ORDER = ["__lua__", "__gfx__", "__label__", "__gff__", "__map__", "__sfx__", "__music__"]
 

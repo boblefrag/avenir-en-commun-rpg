@@ -33,19 +33,21 @@ function tact(i)
  end
 end
 
--- objets : potion (10 or) et potion de magie (25 or), 9 max chacune
+-- objets : potion (10 or), super potion (60 or), potion de magie
+-- (25 or), 9 max chacune
 function item_shop()
- menu({"potion - 10 or ("..h.pot.."/9)","p. magie - 25 or ("..h.eth.."/9)","vendre","retour"},4,44,function(o)
+ menu({"potion - 10 or ("..h.pot.."/9)","super potion - 60 or ("..h.spo.."/9)","p. magie - 25 or ("..h.eth.."/9)","vendre","retour"},4,40,function(o)
   close()
-  if o==3 then
+  if o==4 then
    sell_shop()
    return
-  elseif o>3 then
+  elseif o>4 then
    tmenu()
    return
   end
   local k,pr,n="pot",10,"potion"
-  if (o==2) k,pr,n="eth",25,"potion de magie"
+  if (o==2) k,pr,n="spo",60,"super potion"
+  if (o==3) k,pr,n="eth",25,"potion de magie"
   if h[k]>=9 then
    msg("sacoche pleine !",item_shop)
   else
@@ -137,9 +139,11 @@ end
 function town.update() end
 
 function town.draw()
- cls(1)
- rectfill(0,64,127,127,4)
- sspr(0,48,16,16,40,20,48,48)
- print(tw.n,64-#tw.n*2,12,10)
+ shop()
+ -- enseigne au nom de la ville
+ local w=#tw.n*2
+ rectfill(60-w,8,67+w,18,4)
+ rect(60-w,8,67+w,18,9)
+ print(tw.n,64-w,11,10)
  hud()
 end
