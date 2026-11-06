@@ -172,7 +172,7 @@ function win()
  jingle(41,-1)
  safe=5  -- 5 pas sans rencontre apres le combat
  if mo[8]==15 then
-  chain(ending,function() go(title) end)
+  go(epilog)
   return
  end
  local olv=h.lv

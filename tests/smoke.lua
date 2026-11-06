@@ -162,6 +162,11 @@ local fini=false
 chain(ending,function() fini=true end)
 for i=1,#ending do wins[#wins].cb() end
 ok(fini and #ending==7,"fin : "..#ending.." messages enchaines")
+-- cinematique : 7 scenes puis retour au titre
+h.cl=1
+go(epilog)
+for i=1,#ending do epilog.draw() wins[#wins].cb() end
+ok(st==title,"cinematique de fin : retour au titre")
 wins={}
 
 -- donjons : sortie et boss presents
