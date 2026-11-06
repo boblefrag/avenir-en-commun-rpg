@@ -4,12 +4,23 @@
 
 -- musiques (patterns de depart, voir tools/gen_music.py)
 -- 0 exterieur, 8 ville, 16 donjon, 24 combat, 32 boss
+-- jingles : 40 debut de combat, 41 victoire, 42 defaite, 43 niveau
 mus_cur=-1
 function play(n)
- if n!=mus_cur then
+ -- pendant un jingle, la musique attend qu'il finisse
+ if jt then
+  mnext=n
+ elseif n!=mus_cur then
   music(n,300,7) -- canaux 0-2, le 3 reste aux bruitages
   mus_cur=n
  end
+end
+
+-- joue le jingle j une fois, puis la musique n
+-- (-1 : silence ; sans n : la musique d'avant)
+function jingle(j,n)
+ music(j,0,7)
+ jt,mnext,mus_cur=5,n or mus_cur,-1
 end
 
 function go(s,...)
@@ -31,6 +42,13 @@ function _init()
 end
 
 function _update()
+ if jt then
+  jt-=1
+  if jt<0 and not stat(57) then
+   jt=nil
+   play(mnext)
+  end
+ end
  if (not ui_update()) st.update()
 end
 
@@ -54,6 +72,7 @@ function title.init()
    for c in all(classes) do add(cl,c[1]) end
    menu(cl,40,60,function(c)
     new_hero(c)
+    save() -- le depart compte comme une nuit a l'auberge
     start()
    end)
   end

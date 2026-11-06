@@ -21,6 +21,28 @@ ok((cnt[7] or 0)>0 and (cnt[2] or 0)>0 and (cnt[5] or 0)>0 and (cnt[8] or 0)>0,"
 
 -- heros
 new_hero(1)
+
+-- depuis kalden, sans gemme : ce qu'on atteint vraiment en jeu (pass())
+function reach_from(x0,y0)
+ local seen,q={},{{x0,y0}}
+ seen[y0*128+x0]=true
+ while #q>0 do
+  local c=deli(q,1)
+  for d=1,4 do
+   local x,y=c[1]+dx[d],c[2]+dy[d]
+   if x>=0 and y>=0 and x<128 and y<128 and not seen[y*128+x] and pass(mget(x,y)) then
+    seen[y*128+x]=true
+    add(q,{x,y})
+   end
+  end
+ end
+ return seen
+end
+local r=reach_from(k.x,k.y)
+for i,want in pairs({[2]=true,[3]=false,[4]=false,[5]=false,[6]=true,[7]=true,[8]=false,[9]=false,[10]=false}) do
+ local p=places[i]
+ ok((r[p.y*128+p.x] or false)==want,"sans gemme, "..p.n..(want and " accessible" or " inaccessible"))
+end
 ok(h.pv==30 and h.att==8,"guerrier niv 1 : pv "..h.pv.." att "..h.att)
 ok(pass(3) and not pass(1) and not pass(7) and not pass(6),"passages sans gemme")
 h.gems=1
@@ -39,6 +61,18 @@ local lv=h.lv
 h=nil
 load_game()
 ok(h.lv==lv and h.town==3 and h.hp==17 and h.xp==9999,"sauvegarde rechargee")
+
+-- mort : reveil a la derniere auberge, moitie de l'or, niveau garde
+new_hero(2)
+gain(200,0)
+h.gold,h.town,h.hp=101,2,0
+lv=h.lv
+mo=mons[1]
+lose()
+wins[#wins].cb()
+ok(h.gold==50 and h.lv==lv and h.hp==h.pv,"mort : or "..h.gold..", niveau "..h.lv..", pv pleins")
+ok(px==places[2].x and py==places[2].y and st==world,"mort : reveil a port-sel")
+ok(@0x5e00==1 and @0x5e04==2,"mort : partie sauvegardee")
 
 -- donjons : sortie et boss presents
 px,py=0,0

@@ -5,7 +5,7 @@ battle={}
 
 function battle.init(m)
  mo,mhp,bt=m,m[2],0
- play(m[8]==15 and 32 or 24)
+ jingle(40,m[8]==15 and 32 or 24)
  msg(m[1].." surgit !",bmenu)
 end
 
@@ -77,30 +77,38 @@ function turn(atk)
 end
 
 function win()
+ jingle(41,-1)
  if mo[8]==15 then
   msg("grumdor est vaincu !\nla princesse elwyne\nest libre. fin !",function() go(title) end)
   return
  end
  local up=gain(mo[6],mo[7])
- local s="victoire ! +"..mo[6].." xp +"..mo[7].." or"
- if (up) s..="\nniveau "..h.lv.." !"
+ local s="victoire !\n+"..mo[6].." xp  +"..mo[7].." or"
  if mo[8]>10 then
   -- boss d'un donjon : la gemme
   h.gems|=dp.g
   mset(px,py,17)
   s..="\nvous obtenez une gemme !"
  end
- msg(s,back)
+ msg(s,function()
+  if up then
+   jingle(43,-1)
+   msg("niveau "..h.lv.." !\npv "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,back)
+  else
+   back()
+  end
+ end)
 end
 
+-- mort : on se reveille a la derniere auberge (kalden au depart)
+-- avec la moitie de l'or ; niveaux, xp, gemmes et equipement restent
 function lose()
- msg("vous etes mort...",function()
-  if @0x5e00==1 then
-   load_game()
-   start()
-  else
-   go(title)
-  end
+ jingle(42,-1)
+ msg("vous etes mort...\nvous vous reveillez a\nl'auberge. la moitie de\nvotre or a disparu.",function()
+  h.gold\=2
+  h.hp,h.mp=h.pv,h.pm
+  save()
+  start()
  end)
 end
 

@@ -105,7 +105,7 @@ def main():
     random.seed(1)
     for i, t in enumerate(TRACKS, 1):
         path = out_dir / f"{i}_{t['name'].replace(' ', '_')}.wav"
-        samples = render_track(t, loops)
+        samples = render_track(t, 1 if t.get("jingle") else loops)
         write_wav(path, samples)
         print(f"{path}  ({len(samples) / RATE:.0f} s)")
 

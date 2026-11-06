@@ -160,14 +160,46 @@ TRACKS.append(dict(name="boss final", speed=10, sfx={
     ["m3", "b_g", "dr"],
 ]))
 
+# ---------------------------------------------------------------- jingles
+# Joues une fois (pas de boucle), a partir du pattern 40 :
+# 40 debut de combat, 41 victoire, 42 defaite, 43 niveau gagne.
+
+# 40. Debut de combat : montee tendue puis coup sec (~1,3 s)
+TRACKS.append(dict(name="jingle combat", speed=5, jingle=True, sfx={
+    "m": voice("e3*2 g3*2 b3*2 d#4*2 e4*12 .*12", "sqr", 5, tr=12),
+    "b": voice("e2*2 .*2 e2*2 .*2 e2*16 .*8", "saw", 5),
+    "d": drums("k . . . k . . . s s s s k . . . . . . . . . . . . . . . . . . ."),
+}, patterns=[["m", "b", "d"]]))
+
+# 41. Victoire : fanfare majeure qui monte (~2,4 s)
+TRACKS.append(dict(name="jingle victoire", speed=9, jingle=True, sfx={
+    "m": voice("g3*2 c4*2 e4*2 g4*6 e4*2 g4*2 c5*16", "pulse", 5, tr=12),
+    "h": voice("e3*2 g3*2 c4*2 e4*6 c4*2 e4*2 e4*16", "tri", 3, tr=12),
+    "b": voice("c3*8 g2*8 c3*16", "tri", 5),
+}, patterns=[["m", "h", "b"]]))
+
+# 42. Defaite : descente lente en mineur (~3,7 s)
+TRACKS.append(dict(name="jingle defaite", speed=14, jingle=True, sfx={
+    "m": voice("a3*6 g3*2 f3*6 e3*2 d3*8 c#3*8", "organ", 4, fx="vib", tr=12),
+    "b": voice("d3*16 a2*8 d2*8", "phaser", 4),
+}, patterns=[["m", "b"]]))
+
+# 43. Niveau gagne : arpege qui scintille (~1,6 s)
+TRACKS.append(dict(name="jingle niveau", speed=6, jingle=True, sfx={
+    "m": voice("c4 e4 g4 c5 e4 g4 c5 e5 g4 c5 e5 g5 c5*4 g5*16", "tri", 5, tr=12),
+    "h": voice("c3*4 e3*4 g3*4 c4*4 c4*16", "pulse", 3, tr=12),
+}, patterns=[["m", "h"]]))
+
 # ---------------------------------------------------------------- export
 
 PATTERN_STRIDE = 8  # piste i commence au pattern 8*i (marge pour allonger)
+JINGLE_START = 40   # les jingles se suivent a partir de ce pattern
 
 
 def build():
     sfx_lines, music_lines = [], [None] * 64
     lua_tracks = []
+    nj = 0
     for i, t in enumerate(TRACKS):
         ids = {}
         for name, notes in t["sfx"].items():
@@ -175,11 +207,18 @@ def build():
             head = f"01{t['speed']:02x}0000"
             body = "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in notes)
             sfx_lines.append(head + body)
-        start = i * PATTERN_STRIDE
         n = len(t["patterns"])
-        assert n <= PATTERN_STRIDE
+        if t.get("jingle"):
+            start = JINGLE_START + nj
+            nj += n
+        else:
+            start = i * PATTERN_STRIDE
+            assert n <= PATTERN_STRIDE
         for j, chans in enumerate(t["patterns"]):
-            flags = (1 if j == 0 else 0) | (2 if j == n - 1 else 0)
+            if t.get("jingle"):
+                flags = 4 if j == n - 1 else 0  # 4 = s'arrete apres ce pattern
+            else:
+                flags = (1 if j == 0 else 0) | (2 if j == n - 1 else 0)
             ch = [f"{ids[c]:02x}" for c in chans] + [f"{0x41 + k:02x}" for k in range(len(chans), 4)]
             music_lines[start + j] = f"{flags:02x} " + "".join(ch)
         lua_tracks.append(f'{{"{t["name"]}",{start}}}')
