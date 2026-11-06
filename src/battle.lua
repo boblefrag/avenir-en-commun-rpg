@@ -109,21 +109,26 @@ function win()
   return
  end
  local up=gain(mo[6],mo[7])
- local s="victoire !\n+"..mo[6].." xp  +"..mo[7].." or"
- if mo[8]>10 then
-  -- boss d'un donjon : la gemme
-  h.gems|=dp.g
-  mset(px,py,17)
-  s..="\nvous obtenez une gemme !"
- end
- msg(s,function()
+ local function fin()
   if up then
    jingle(43,-1)
    msg("niveau "..h.lv.." !\npv "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,back)
   else
    back()
   end
- end)
+ end
+ local k=fin
+ -- seuls les boss des donjons 1..4 (zones 11..14) donnent une gemme ;
+ -- les monstres de donjon (zones 21..25) n'en donnent pas
+ if mo[8]>10 and mo[8]<15 then
+  h.gems|=dp.g
+  mset(px,py,17)
+  local g=gems[dp.d]
+  k=function()
+   msg("vous obtenez la gemme\n"..g[1].." !\n"..g[2],fin)
+  end
+ end
+ msg("victoire !\n+"..mo[6].." xp  +"..mo[7].." or",k)
 end
 
 -- mort : rechargement de la derniere sauvegarde

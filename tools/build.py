@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Assemble main.p8 a partir des sources.
 
-Usage : python3 tools/build.py [--reset-gfx]
+Usage : python3 tools/build.py [--reset-gfx | --sprite N[,M...]]
 
 Ce que le script ecrit dans main.p8 :
 - __lua__   : les #include de src/ (le code reste dans les .lua)
@@ -59,6 +59,18 @@ def main():
     if "__gfx__" not in sec or "--reset-gfx" in sys.argv:
         sec["__gfx__"] = sheet()
         print("sprites ecrits depuis tools/sprites.py")
+    elif "--sprite" in sys.argv:
+        # copie seulement les sprites 8x8 listes (ex. --sprite 33,34)
+        # depuis tools/sprites.py, sans toucher au reste de la planche
+        new = sheet()
+        gfx = [r.ljust(128, "0") for r in sec["__gfx__"]]
+        gfx += ["0" * 128] * (128 - len(gfx))
+        for n in map(int, sys.argv[sys.argv.index("--sprite") + 1].split(",")):
+            sx, sy = n % 16 * 8, n // 16 * 8
+            for j in range(sy, sy + 8):
+                gfx[j] = gfx[j][:sx] + new[j][sx:sx + 8] + gfx[j][sx + 8:]
+            print(f"sprite {n} copie depuis tools/sprites.py")
+        sec["__gfx__"] = gfx
     sec["__lua__"] = [f"#include src/{f}.lua" for f in SRC]
     sec["__map__"], world, total = map_section()
     sfx, music, _, used = build_music()

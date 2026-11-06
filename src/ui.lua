@@ -89,6 +89,8 @@ end
 -- bandeau d'etat en haut de l'ecran
 -- couleur pv : vert si >50%, jaune si 25..50%, rouge si <25%
 -- bip d'alerte si pv<25% (toutes les 90 frames env.)
+-- gemmes : vent(gris clair), eau(bleu clair), feu(rouge), terre(marron)
+gem_col=split("6,12,8,4")
 bip_cd=0
 function hud()
  rectfill(0,0,127,7,0)
@@ -103,5 +105,18 @@ function hud()
   bip_cd=0
  end
  print("pv "..h.hp.."/"..h.pv,2,1,hcol)
- print("pm "..h.mp.."/"..h.pm.." or "..h.gold,52,1,7)
+ print("pm "..h.mp.."/"..h.pm.." or "..h.gold,46,1,7)
+ -- 4 gemmes a droite (x 111..125) : losange colore si possedee,
+ -- simple point gris sinon
+ for i=0,3 do
+  local x=111+i*4
+  if h.gems&1<<i>0 then
+   local c=gem_col[i+1]
+   rectfill(x,2,x+2,4,c)
+   pset(x+1,1,c)
+   pset(x+1,5,c)
+  else
+   pset(x+1,3,5)
+  end
+ end
 end

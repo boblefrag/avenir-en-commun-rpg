@@ -26,6 +26,10 @@ mons=tbl("harpie,14,5,1,6,5,3,1,64,4,2,0|loup,16,7,2,5,6,4,1,76,3,6,0|sanglier,2
 -- 5 grumdor : 1 fois sur 4, sa foudre lui revient dessus
 spn=split("bourrasque !\n,les tetes repoussent !\n,souffle de feu !\n,le minotaure charge !\n,la foudre de grumdor\nlui revient dessus !\n")
 
+-- gemmes, dans l'ordre des donjons 1..4 (bits 1,2,4,8) :
+-- nom affiche, pouvoir (2 lignes de 29 car. max)
+gems=tbl("du vent#les cols du nord s'ouvrent\ndesormais devant vous.|de l'eau#vous pouvez traverser\nles gues a pied.|du feu#elle brule les ronces\nqui barrent la route.|de la terre#la grande chaine s'ouvre\ndevant vous.","|","#")
+
 -- attaques de base du heros selon sa classe
 hatk=split("coup d'epee,coup de baton,coup de masse,coup de dague")
 
