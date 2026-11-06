@@ -20,7 +20,7 @@ function wep_name(t)
 end
 
 function new_hero(cl)
- h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,spo=0,eth=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0}}
+ h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,spo=0,eth=0,spe=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0}}
  stats()
  h.hp,h.mp=h.pv,h.pm
 end
@@ -55,6 +55,7 @@ function save()
  for i=1,5 do poke(0x5e06+i,h.arm and h.arm[i] or 0) end
  poke(0x5e0c,h.eth or 0)
  poke(0x5e0d,h.spo or 0)
+ poke(0x5e0e,h.spe or 0)
  poke2(0x5e10,h.xp,h.gold,h.hp,h.mp)
  for i=1,6 do poke(0x5e17+i,h.tr[i]) end
 end
@@ -66,6 +67,7 @@ function load_game()
  for i=1,5 do h.arm[i]=@(0x5e06+i) end
  h.eth=@0x5e0c
  h.spo=@0x5e0d
+ h.spe=@0x5e0e
  h.xp,h.gold,h.hp,h.mp=peek2(0x5e10,4)
  stats()
 end
@@ -105,7 +107,17 @@ end
 -- 3 potion de magie (+15 pm),
 -- 4 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
 function items()
- return {"potion (x"..h.pot..")","super potion (x"..h.spo..")","p. magie (x"..h.eth..")","serviette","retour"}
+ -- iid[i] : numero d'objet (pour use_item) de la ligne i du menu ;
+ -- guerrier et voleur (0 pm) ne voient pas les potions de magie
+ local t,l,c={},split("potion,super potion,p. magie,super p. magie,serviette,retour"),{h.pot,h.spo,h.eth,h.spe}
+ iid={}
+ for i=1,6 do
+  if h.pm>0 or i<3 or i>4 then
+   add(iid,i)
+   add(t,l[i]..(c[i] and " (x"..c[i]..")" or ""))
+  end
+ end
+ return t
 end
 
 -- utilise l'objet o : renvoie le message (nil si retour)
@@ -117,15 +129,17 @@ function use_item(o)
   if (h.hp>=h.pv) return "pv deja au maximum !"
   h[k]-=1
   return "vous buvez une "..(o==1 and "" or "super ").."potion !\n"..heal(o==1 and 20 or 80),true
- elseif o==4 then
+ elseif o==5 then
   return rnd(towel)
- elseif o==3 then
-  if (h.eth<1) return "plus de potion de magie !"
+ elseif o<5 then
+  -- potion de magie (+15 pm) ou super potion de magie (+50 pm)
+  local k,n=o==3 and "eth" or "spe",(o==3 and "" or "super ").."potion de magie"
+  if (h[k]<1) return "plus de\n"..n.." !"
   if (h.mp>=h.pm) return "pm deja au maximum !"
-  local g=min(15,h.pm-h.mp)
-  h.eth-=1
+  local g=min(o==3 and 15 or 50,h.pm-h.mp)
+  h[k]-=1
   h.mp+=g
-  return "vous buvez une potion de\nmagie ! +"..g.." pm (pm "..h.mp.."/"..h.pm..")",true
+  return "vous buvez une\n"..n.." !\n+"..g.." pm (pm "..h.mp.."/"..h.pm..")",true
  end
 end
 

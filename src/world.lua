@@ -91,7 +91,7 @@ function field_menu()
    -- jamais vide : il reste toujours la serviette
    menu(items(),4,12,function(o)
     close()
-    local t=use_item(o)
+    local t=use_item(iid[o])
     if (t) msg(t)
    end)
   else

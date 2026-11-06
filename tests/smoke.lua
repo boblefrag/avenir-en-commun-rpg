@@ -124,6 +124,21 @@ ok(h.eth==3,"potions de magie sauvegardees")
 h.spo,h.hp=1,1
 use_item(2)
 ok(h.spo==0 and h.hp==min(81,h.pv),"super potion : +80 pv")
+new_hero(2)
+h.lv=23
+stats()
+h.spe,h.mp=2,0
+local t,u=use_item(4)
+ok(u and h.spe==1 and h.mp==50,"super potion de magie : +50 pm")
+save()
+h=nil
+load_game()
+ok(h.spe==1,"super potions de magie sauvegardees")
+new_hero(1)
+local l=items()
+ok(#l==4 and iid[3]==5,"guerrier : pas de potion de magie dans le menu")
+new_hero(2)
+ok(#items()==6 and iid[4]==4,"mage : potions de magie dans le menu")
 rep=10
 ok(enc(17)!=nil and rep==9,"repousse : compteur de pas")
 rep=0
@@ -153,8 +168,8 @@ ok(#tres==6,"table des tresors")
 ok(#dtxt==5,"messages d'entree des donjons")
 
 -- serviette : toujours la, un message, rien de consomme
-local t,u=use_item(4)
-ok(t and not u and #items()==5,"serviette : "..(t or "?"))
+local t,u=use_item(5)
+ok(t and not u and #items()==(h.pm>0 and 6 or 4),"serviette : "..(t or "?"))
 
 -- fin : la princesse et la serviette
 wins={}

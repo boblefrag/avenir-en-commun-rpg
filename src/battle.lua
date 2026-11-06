@@ -32,7 +32,7 @@ function bact(i)
   hid=false
   menu(items(),4,56,function(o)
    close()
-   local t,u=use_item(o)
+   local t,u=use_item(iid[o])
    if not t then
     bmenu()
    else
@@ -208,16 +208,17 @@ function win()
 end
 
 -- butin : 25% des combats (40% pour le voleur, toujours sur un boss)
--- 40% potion (super potion sur les monstres qui donnent 25 or et
--- plus, ou potion de magie si on a des pm), sinon un tresor
+-- 40% potion (ou potion de magie si on a des pm ; version super
+-- sur les monstres qui donnent 25 or et plus), sinon un tresor
 -- d'autant plus precieux que le monstre donne de l'or
 function loot()
  if (rnd(100)>=(mo[8]\10==1 and 100 or h.cl==4 and 40 or 25)) return ""
  if rnd()<.4 then
-  local k=h.pm>0 and rnd()<.5 and "eth" or mo[7]>=25 and "spo" or "pot"
+  local big=mo[7]>=25
+  local k=h.pm>0 and rnd()<.5 and (big and "spe" or "eth") or big and "spo" or "pot"
   if h[k]<9 then
    h[k]+=1
-   return "\nobjet : "..(k=="pot" and "potion" or k=="spo" and "super potion" or "potion de magie").." !"
+   return "\nobjet : "..({pot="potion",spo="super potion",eth="potion de magie",spe="super p. magie"})[k].." !"
   end
  end
  local i=flr(rnd(min(6,1+mo[7]\12)))+1

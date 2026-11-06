@@ -35,23 +35,30 @@ end
 
 -- objets : potion (10 or), super potion (60 or), potion de magie
 -- (25 or), 9 max chacune
+-- guerrier et voleur (0 pm) : pas de potions de magie en rayon
 function item_shop()
- menu({"potion - 10 or ("..h.pot.."/9)","super potion - 60 or ("..h.spo.."/9)","p. magie - 25 or ("..h.eth.."/9)","vendre","retour"},4,40,function(o)
+ local ks,pr,nm=split("pot,spo,eth,spe"),split("10,60,25,100"),split("potion,super potion,p. magie,super p. magie")
+ local it,ids={},{}
+ for i=1,4 do
+  if h.pm>0 or i<3 then
+   add(it,(i==4 and "super p.magie" or nm[i]).." - "..pr[i].." or ("..h[ks[i]].."/9)")
+   add(ids,i)
+  end
+ end
+ add(it,"vendre")
+ add(it,"retour")
+ menu(it,4,40,function(o)
   close()
-  if o==4 then
-   sell_shop()
-   return
-  elseif o>4 then
-   tmenu()
+  local i=ids[o]
+  if not i then
+   if o==#it then tmenu() else sell_shop() end
    return
   end
-  local k,pr,n="pot",10,"potion"
-  if (o==2) k,pr,n="spo",60,"super potion"
-  if (o==3) k,pr,n="eth",25,"potion de magie"
+  local k,p,n=ks[i],pr[i],nm[i]
   if h[k]>=9 then
    msg("sacoche pleine !",item_shop)
   else
-   confirm("acheter "..n.."\n("..pr.." or) ?",pr,function()
+   confirm("acheter "..n.."\n("..p.." or) ?",p,function()
     h[k]+=1
     msg(n.." achetee !\nvous en avez "..h[k].."/9.",item_shop)
    end,item_shop)
