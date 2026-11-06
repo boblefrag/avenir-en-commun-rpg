@@ -23,7 +23,7 @@ function gain(xp,g)
  h.xp=min(h.xp+xp,9999)
  h.gold=min(h.gold+g,9999)
  local lv=h.lv
- while h.xp>=h.lv*h.lv*12 do h.lv+=1 end
+ while h.xp>=h.lv*h.lv*18 do h.lv+=1 end
  stats()
  return h.lv>lv
 end
