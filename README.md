@@ -27,5 +27,5 @@ Jouer sur la console : [docs/trimui.md](docs/trimui.md).
 
 ## Couleurs des PNG
 Monde : eau `#1d2b53`, gué `#29adff`, plaine `#00e436`, forêt `#008751`, ronces `#7e2553`, montagne `#ab5236`, col `#ffccaa`, grande chaîne `#5f574f`.
-Donjons : mur `#5f574f`, sol `#c2c3c7`, sortie `#ffec27`, boss `#ff004d`.
+Donjons : mur `#5f574f`, sol `#c2c3c7`, sortie `#ffec27`, boss `#ff004d`, table `#ab5236`, lit `#ff77a8`, coffre `#29adff`, étagère `#7e2553`.
 Les lieux (villes, donjons) sont dans `src/places.lua`, pas dans le PNG.

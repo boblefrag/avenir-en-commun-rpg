@@ -32,10 +32,11 @@ spn=split("bourrasque !\n,les tetes repoussent !\n,souffle de feu !\n,le minotau
 -- (au nord de la grande chaine, plaine et foret passent en zones 3 et 4 ;
 -- en donjon, la zone est 20 + numero du donjon)
 -- 1 eau,2 gue,3 plaine,4 foret,5 ronces,6 montagne,7 col,8 chaine,9 sable
--- 10 ville,11 donjon,12 chateau ; 16 mur,17 sol,18 sortie,19 boss
-need=split("16,2,0,0,4,16,1,8,0,0,0,0,16,16,16,16,0,0,0")
-rate=split("0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,10,0,0")
-zone=split("0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0")
+-- 10 ville,11 donjon,12 chateau ; 16 mur,17 sol,18 sortie,19 boss,
+-- 20 table,21 lit,22 coffre,23 etagere (mobilier des donjons)
+need=split("16,2,0,0,4,16,1,8,0,0,0,0,16,16,16,16,0,0,0,16,16,16,16")
+rate=split("0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,10,0,0,0,0,0,0")
+zone=split("0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
 
 -- rumeurs par ville (# separe les villes, | les rumeurs)
 -- grumdor ecrit mal, c'est voulu

@@ -1,14 +1,17 @@
 -- donjon : vue du dessus, meme moteur que la carte monde
--- decode dans les lignes 128-159 ; fog of war de 2 cases
+-- decode dans les lignes 128+ ; fog of war de 2 cases
 -- seen = cases parcourues (perdues en quittant le donjon)
 
 dungeon={mus=16}
 
 function dungeon.init(p)
  dp,wx,wy,seen=p,px,py,{}
- rle(dun[p.d],32,32,128,16)
- for y=128,159 do
-  for x=0,31 do
+ local n=dsz[p.d]
+ -- efface le donjon precedent (48 lignes max) puis decode
+ memset(0xc000,0,6144)
+ rle(dun[p.d],n,n,128,16)
+ for y=128,127+n do
+  for x=0,n-1 do
    local s=mget(x,y)
    if (s==18) px,py=x,y
    -- boss deja battu : la gemme est deja la

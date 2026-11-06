@@ -1,6 +1,6 @@
 -- carte monde : decodage, deplacement, rencontres, nuit
 -- la carte vit en memoire haute (0x8000, 128 de large) :
--- lignes 0-127 monde, lignes 128-159 donjon en cours
+-- lignes 0-127 monde, lignes 128+ donjon en cours (cote dsz[d])
 
 -- decode un plan rle depuis a vers les lignes y0..
 -- 1 octet = type*32 + longueur-1 ; sprite = base+type
@@ -32,7 +32,7 @@ function map_init()
  dun={}
  for i=1,5 do
   dun[i]=a
-  a=rle(a,32,32,128,16)
+  a=rle(a,dsz[i],dsz[i],128,16)
  end
  for p in all(places) do mset(p.x,p.y,p.s) end
 end

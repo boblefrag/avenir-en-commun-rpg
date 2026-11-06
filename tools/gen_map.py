@@ -24,6 +24,10 @@ N = 128
 EAU, GUE, PLAINE, FORET, RONCES, MONTAGNE, COL, CHAINE = range(8)
 VENT, EAU_G, FEU, TERRE = 1, 2, 4, 8
 MAP_BUDGET = 4096
+# relief : plus SEA_LEVEL ou FALLOFF sont hauts, plus il y a de mer
+SEA_LEVEL, FALLOFF, FALLOFF_POW = 0.14, 0.7, 3
+INNER_SEA = 0.58  # plus bas = plus de mers interieures
+DSIZES = []  # cote de chaque donjon, rempli par main()
 
 # nom, type (v ville, d donjon, c chateau), x, y, donjon, gemme, prix auberge, rumeurs
 PLACES = [
@@ -83,8 +87,33 @@ def disc(g, cx, cy, r, t, only=None):
                     g[y][x] = t
 
 
+# Isthmes garantis entre les lieux (x, y) : la terre ferme les relie toujours,
+# meme avec beaucoup de mer. Les anneaux et la chaine sont poses par-dessus.
+ROADS = [
+    [(24, 98), (30, 80), (26, 54), (14, 64)],           # kalden - port-sel - grotte
+    [(26, 54), (40, 40), (70, 40), (106, 42)],          # port-sel - tour des brumes
+    [(24, 98), (50, 92), (75, 100), (86, 100)],         # kalden - gue du volcan
+    [(106, 42), (112, 60), (110, 78), (100, 86)],       # tour - col du volcan
+    [(24, 98), (40, 100), (56, 104)],                   # kalden - chaussee de l'ile
+    [(34, 22), (50, 16), (64, 16), (78, 16), (86, 22)], # nord : col ouest - nordheim - col est
+    [(34, 31), (40, 40)], [(86, 31), (86, 40)],          # pieds sud des deux cols
+]
+
+
+def road(g, pts, f):
+    for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+        steps = max(abs(bx - ax), abs(by - ay))
+        for i in range(steps + 1):
+            t = i / steps
+            # petite ondulation pour que ca ne fasse pas des lignes droites
+            w = (vnoise(f, (ax + bx) / 7 + t * 4, (ay + by) / 7) - 0.5) * 6
+            x = round(ax + (bx - ax) * t + (w if abs(by - ay) > abs(bx - ax) else 0))
+            y = round(ay + (by - ay) * t + (w if abs(bx - ax) >= abs(by - ay) else 0))
+            disc(g, x, y, 2, PLAINE, (EAU, MONTAGNE))
+
+
 def generate(seed):
-    hn, rn, fn = lattice(seed), lattice(seed + 1), lattice(seed + 2)
+    hn, rn, fn, sn = lattice(seed), lattice(seed + 1), lattice(seed + 2), lattice(seed + 4)
     g = [[EAU] * N for _ in range(N)]
     for y in range(N):
         for x in range(N):
@@ -92,7 +121,10 @@ def generate(seed):
                 continue
             dx, dy = (x - 64) / 62, (y - 64) / 62
             d = max(abs(dx), abs(dy)) * 0.6 + math.hypot(dx, dy) * 0.4
-            if fbm(hn, x / 22, y / 22) - 0.6 * d ** 3 < 0.12:
+            if fbm(hn, x / 22, y / 22) - FALLOFF * d ** FALLOFF_POW < SEA_LEVEL:
+                continue
+            # mers interieures et golfes
+            if fbm(sn, x / 26, y / 26, 2) > INNER_SEA:
                 continue
             ridge = 1 - abs(2 * fbm(rn, x / 18, y / 18) - 1)
             if ridge > 0.9:
@@ -101,6 +133,9 @@ def generate(seed):
                 g[y][x] = FORET
             else:
                 g[y][x] = PLAINE
+
+    for pts in ROADS:
+        road(g, pts, lattice(seed + 3))
 
     # Grande chaine au nord, franchissable seulement par deux cols (gemme du Vent)
     for x in range(N):
@@ -195,66 +230,166 @@ def check(g):
     return None
 
 
-def gen_dungeon(seed):
-    """Salles reliees par des couloirs ; sortie dans la 1re salle, boss dans la derniere."""
-    rng = random.Random(seed)
-    g = [[0] * 32 for _ in range(32)]
-    rooms = []
-    while len(rooms) < 7:
-        w, h = rng.randint(4, 8), rng.randint(4, 7)
-        x, y = rng.randint(1, 30 - w), rng.randint(1, 30 - h)
-        if all(x + w + 1 < rx or rx + rw + 1 < x or y + h + 1 < ry or ry + rh + 1 < y
-               for rx, ry, rw, rh in rooms):
-            rooms.append((x, y, w, h))
-    for x, y, w, h in rooms:
-        for j in range(y, y + h):
-            for i in range(x, x + w):
-                g[j][i] = 1
-    centers = [(x + w // 2, y + h // 2) for x, y, w, h in rooms]
-    for (ax, ay), (bx, by) in zip(centers, centers[1:]):
-        for i in range(min(ax, bx), max(ax, bx) + 1):
-            g[ay][i] = 1
-        for j in range(min(ay, by), max(ay, by) + 1):
-            g[j][bx] = 1
-    g[centers[0][1]][centers[0][0]] = 2
-    g[centers[-1][1]][centers[-1][0]] = 3
-    return g
+# ---------------------------------------------------------------- donjons
+# Grille de 4x4 cellules de 12 cases (48x48). Une colonne vertebrale de salles
+# monte de l'entree (en bas) au boss (en haut), des impasses partent sur les cotes.
+# Chaque salle a un role, qui decide de son mobilier.
+GRID, CELL = 4, 12
+MUR, SOL, SORTIE, BOSS, TABLE, LIT, COFFRE, ETAGERE = range(8)
+
+# roles possibles par donjon (hors entree, boss et salle des coffres)
+THEMES = [
+    # 1 tour des Brumes : ancienne tour de guet
+    ["caserne", "refectoire", "armurerie", "bibliotheque", "caserne", "cuisine", "vide"],
+    # 2 grotte engloutie : repaire de contrebandiers
+    ["entrepot", "dortoir", "salle de partage", "entrepot", "cuisine", "vide", "vide"],
+    # 3 volcan : forge des cyclopes
+    ["forge", "dortoir", "entrepot", "forge", "refectoire", "vide", "vide"],
+    # 4 temple sous la foret : moines disparus
+    ["chapelle", "bibliotheque", "cellules", "refectoire", "chapelle", "vide", "vide"],
+    # 5 chateau de Grumdor
+    ["cuisine", "caserne", "bibliotheque", "salle des miroirs", "refectoire", "caserne", "vide"],
+]
+
+# role -> motif de mobilier (voir furnish)
+FURNITURE = {
+    "caserne": "lits", "dortoir": "lits", "cellules": "lits",
+    "refectoire": "tables", "salle de partage": "tables", "chapelle": "tables",
+    "cuisine": "cuisine", "forge": "cuisine",
+    "bibliotheque": "etageres", "armurerie": "etageres", "entrepot": "etageres",
+    "salle des miroirs": "etageres", "tresor": "coffres",
+}
 
 
-def gen_maze(seed):
-    """Labyrinthe parfait (temple du Minotaure) : 15x15 cellules sur 31x31 cases.
-    Sortie dans un coin, boss sur la cellule la plus eloignee."""
-    rng = random.Random(seed)
-    g = [[0] * 32 for _ in range(32)]
-    n = 15
-    seen = {(0, 0)}
-    stack = [(0, 0)]
-    g[1][1] = 1
-    while stack:
-        cx, cy = stack[-1]
-        nxt = [(cx + dx, cy + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
-               if 0 <= cx + dx < n and 0 <= cy + dy < n and (cx + dx, cy + dy) not in seen]
-        if not nxt:
-            stack.pop()
+def furnish(g, room, kind, keep):
+    """Pose le mobilier d'une salle sans toucher les cases a garder libres."""
+    x0, y0, w, h = room
+    spots = []
+    if kind == "lits":       # lits contre les murs haut et bas, un sur deux
+        spots = [(x, y) for x in range(x0 + 1, x0 + w - 1, 2) for y in (y0, y0 + h - 1)]
+    elif kind == "tables":   # rangees de tables au milieu
+        spots = [(x, y) for y in range(y0 + 2, y0 + h - 2, 2) for x in range(x0 + 2, x0 + w - 2)]
+    elif kind == "cuisine":  # etageres au mur du haut, une grande table au centre
+        cy = y0 + h // 2
+        spots = [(x, y0) for x in range(x0 + 1, x0 + w - 1)] + \
+                [(x, cy) for x in range(x0 + 2, x0 + w - 2)]
+    elif kind == "etageres":  # rayonnages, une rangee sur deux
+        spots = [(x, y) for y in range(y0 + 1, y0 + h - 1, 2) for x in range(x0 + 1, x0 + w - 2)]
+    elif kind == "coffres":  # coffres contre les murs
+        spots = [(x, y) for x in range(x0 + 1, x0 + w - 1, 2) for y in (y0, y0 + h - 1)] + \
+                [(x, y) for y in range(y0 + 1, y0 + h - 1, 2) for x in (x0, x0 + w - 1)]
+    tile = {"lits": LIT, "tables": TABLE, "etageres": ETAGERE, "coffres": COFFRE}
+    for i, (x, y) in enumerate(spots):
+        if (x, y) in keep:
             continue
-        nx, ny = rng.choice(nxt)
-        g[cy * 2 + 1 + (ny - cy)][cx * 2 + 1 + (nx - cx)] = 1
-        g[ny * 2 + 1][nx * 2 + 1] = 1
-        seen.add((nx, ny))
-        stack.append((nx, ny))
-    # case la plus loin de l'entree
-    dist = {(1, 1): 0}
-    todo = deque([(1, 1)])
+        if kind == "cuisine":
+            g[y][x] = ETAGERE if y == y0 else TABLE
+        else:
+            g[y][x] = tile[kind]
+
+
+def reachable(g, start):
+    seen = {start}
+    todo = deque([start])
     while todo:
         x, y = todo.popleft()
         for a, b in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
-            if g[b][a] and (a, b) not in dist:
-                dist[(a, b)] = dist[(x, y)] + 1
+            if (a, b) not in seen and g[b][a] in (SOL, SORTIE, BOSS):
+                seen.add((a, b))
                 todo.append((a, b))
-    bx, by = max(dist, key=dist.get)
-    g[1][1] = 2
-    g[by][bx] = 3
-    return g
+    return seen
+
+
+def gen_dungeon(seed, theme):
+    rng = random.Random(seed)
+    n = GRID * CELL
+    g = [[MUR] * n for _ in range(n)]
+
+    # 1. colonne vertebrale : de l'entree (rangee du bas) au boss (rangee du haut)
+    x, y = rng.randrange(GRID), GRID - 1
+    spine = [(x, y)]
+    while y > 0:
+        opts = [(x, y - 1)] * 2
+        opts += [(nx, y) for nx in (x - 1, x + 1) if 0 <= nx < GRID and (nx, y) not in spine]
+        x, y = rng.choice(opts)
+        spine.append((x, y))
+    links = list(zip(spine, spine[1:]))
+    used = set(spine)
+
+    # 2. impasses : 3 a 5 salles accrochees au chemin (jamais a la salle du boss)
+    branches = []
+    for _ in range(rng.randint(3, 5)):
+        cands = [(c, (c[0] + dx, c[1] + dy)) for c in spine[:-1] + branches
+                 for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                 if 0 <= c[0] + dx < GRID and 0 <= c[1] + dy < GRID and (c[0] + dx, c[1] + dy) not in used]
+        if not cands:
+            break
+        c, nb = rng.choice(cands)
+        used.add(nb)
+        links.append((c, nb))
+        branches.append(nb)
+
+    # 3. salles : chacune couvre le centre de sa cellule (+-1), d'ou des couloirs courts
+    rooms = {}
+    for cx, cy in used:
+        big = (cx, cy) == spine[-1]
+        w = 10 if big else rng.randint(6, 10)
+        h = 10 if big else rng.randint(6, 9)
+        bx, by = cx * CELL, cy * CELL
+        x0 = rng.randint(max(bx + 1, bx + 8 - w), min(bx + 5, bx + 11 - w))
+        y0 = rng.randint(max(by + 1, by + 8 - h), min(by + 5, by + 11 - h))
+        rooms[(cx, cy)] = (x0, y0, w, h)
+        for j in range(y0, y0 + h):
+            for i in range(x0, x0 + w):
+                g[j][i] = SOL
+
+    # 4. couloirs droits entre salles voisines
+    keep = set()
+    for a, b in links:
+        (ax, ay, aw, ah), (bx_, by_, bw, bh) = rooms[a], rooms[b]
+        if a[1] == b[1]:  # voisines a gauche / a droite
+            lo, hi = max(ay, by_), min(ay + ah, by_ + bh) - 1
+            yy = rng.randint(lo + 1, hi - 1) if hi - lo > 2 else lo
+            l, r = (rooms[a], rooms[b]) if a[0] < b[0] else (rooms[b], rooms[a])
+            for xx in range(l[0] + l[2] - 1, r[0] + 1):
+                g[yy][xx] = SOL
+                keep |= {(xx + dx, yy + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+        else:  # voisines en haut / en bas
+            lo, hi = max(ax, bx_), min(ax + aw, bx_ + bw) - 1
+            xx = rng.randint(lo + 1, hi - 1) if hi - lo > 2 else lo
+            t, d = (rooms[a], rooms[b]) if a[1] < b[1] else (rooms[b], rooms[a])
+            for yy in range(t[1] + t[3] - 1, d[1] + 1):
+                g[yy][xx] = SOL
+                keep |= {(xx + dx, yy + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+
+    # 5. roles : entree, boss, une salle des coffres au bout d'une impasse
+    roles = {spine[0]: "entree", spine[-1]: "boss"}
+    ends = [b for b in branches if sum(1 for l in links if b in l) == 1]
+    if ends:
+        roles[rng.choice(ends)] = "tresor"
+    pool = theme[:]
+    rng.shuffle(pool)
+    for c in sorted(used):
+        if c not in roles:
+            roles[c] = pool.pop() if pool else "vide"
+
+    ex, ey, ew, eh = rooms[spine[0]]
+    entry = (ex + ew // 2, ey + eh - 1)
+    kx, ky, kw, kh = rooms[spine[-1]]
+    boss = (kx + kw // 2, ky + 1)
+    keep |= {entry, boss}
+    for c, role in roles.items():
+        if role in FURNITURE:
+            before = [row[:] for row in g]
+            furnish(g, rooms[c], FURNITURE[role], keep)
+            # le mobilier ne doit jamais couper le chemin : sinon on le retire
+            r = reachable(g, entry)
+            if not all(any((i, j) in r for i in range(x0, x0 + w) for j in range(y0, y0 + h))
+                       for x0, y0, w, h in rooms.values()) or boss not in r:
+                g[:] = before
+    g[entry[1]][entry[0]] = SORTIE
+    g[boss[1]][boss[0]] = BOSS
+    return g, roles
 
 
 def places_lua():
@@ -266,13 +401,18 @@ def places_lua():
             f'for r in all(split("{rows}","|")) do\n'
             " local p=split(r)\n"
             " add(places,{n=p[1],t=p[2],x=p[3],y=p[4],s=p[5],d=p[6],g=p[7],c=p[8],r=p[9],i=#places+1})\n"
-            "end\n")
+            "end\n"
+            f'dsz=split("{",".join(str(s) for s in DSIZES)}")  -- cote de chaque donjon\n')
 
 
 def main():
-    seed = int(sys.argv[1]) if len(sys.argv) > 1 else 1
-    # donjon 4 = temple du Minotaure : un labyrinthe
-    dungeons = [gen_maze(103) if i == 3 else gen_dungeon(100 + i) for i in range(5)]
+    seed = int(sys.argv[1]) if len(sys.argv) > 1 else 3
+    dungeons = []
+    for i, theme in enumerate(THEMES):
+        d, roles = gen_dungeon(100 + i, theme)
+        dungeons.append(d)
+        print(f"donjon {i + 1} : " + ", ".join(sorted(roles.values())))
+    DSIZES[:] = [len(d) for d in dungeons]
     dsize = sum(len(rle(d)) for d in dungeons)
     for s in range(seed, seed + 200):
         g = generate(s)

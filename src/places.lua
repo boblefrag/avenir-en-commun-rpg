@@ -5,3 +5,4 @@ for r in all(split("kalden,v,24,98,10,0,0,5,1|port-sel,v,26,54,10,0,0,6,2|nordhe
  local p=split(r)
  add(places,{n=p[1],t=p[2],x=p[3],y=p[4],s=p[5],d=p[6],g=p[7],c=p[8],r=p[9],i=#places+1})
 end
+dsz=split("48,48,48,48,48")  -- cote de chaque donjon

@@ -45,7 +45,7 @@ px,py=0,0
 for d=1,5 do
  dungeon.init(places[5+d])
  local b=0
- for y=128,159 do for x=0,31 do if (mget(x,y)==19) b+=1 end end
+ for y=128,127+dsz[d] do for x=0,dsz[d]-1 do if (mget(x,y)==19) b+=1 end end
  ok(mget(px,py)==18 and b==1,"donjon "..d.." : sortie et boss")
 end
 
