@@ -46,6 +46,12 @@ sdesc=split("degats magiques,protege des coups,sortir d'un donjon,retour a l'aub
 -- nom,prix de vente ; du moins au plus precieux
 tres=tbl("bague,15|bijou,30|emeraude,60|rubis,100|coffret,180|couronne,350")
 
+-- la serviette du sage (voir l'intro) : inutile, toujours la
+towel=split("c'est une serviette.|vous etes bien essuye.|vous vous epongez le front.\nca va mieux.|un aventurier sait toujours\nou est sa serviette.|vous agitez la serviette.\nrien ne se passe.|pas de panique !\nvous avez votre serviette.|vous pliez la serviette.\nelle est tres bien pliee.","|")
+
+-- fin du jeu, une boite de message par element
+ending=split("grumdor est vaincu !|vous trouvez la princesse\nelwyne... sans ses habits.\ngrumdor les a changes en\ncrapauds. ils coassent.|'je ne sortirai pas comme\nca !' dit-elle, rouge\ncomme un rubis.|heureusement, un aventurier\nsait toujours ou est\nsa serviette.|elle s'enroule dedans,\ndigne comme une reine.\n'bon. on y va ?'|le jour se leve sur ostrel.|le heros a la serviette\nentre dans la legende.\nfin !","|")
+
 -- attaques de base du heros selon sa classe
 hatk=split("coup d'epee,coup de baton,coup de masse,coup de dague")
 

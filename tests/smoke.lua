@@ -148,6 +148,18 @@ load_game()
 ok(h.tr[3]==2,"tresors sauvegardes")
 ok(#tres==6,"table des tresors")
 
+-- serviette : toujours la, un message, rien de consomme
+local t,u=use_item(3)
+ok(t and not u and #items()==4,"serviette : "..(t or "?"))
+
+-- fin : la princesse et la serviette
+wins={}
+local fini=false
+chain(ending,function() fini=true end)
+for i=1,#ending do wins[#wins].cb() end
+ok(fini and #ending==7,"fin : "..#ending.." messages enchaines")
+wins={}
+
 -- donjons : sortie et boss presents
 px,py=0,0
 for d=1,5 do

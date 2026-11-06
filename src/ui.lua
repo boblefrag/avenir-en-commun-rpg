@@ -18,6 +18,16 @@ function msg(s,f)
  add(wins,{x=2,y=96,w=124,h=30,txt=s,cb=f})
 end
 
+-- enchaine les messages de la table t, puis appelle k
+function chain(t,k,i)
+ i=i or 1
+ if t[i] then
+  msg(t[i],function() chain(t,k,i+1) end)
+ else
+  k()
+ end
+end
+
 function close()
  deli(wins)
 end

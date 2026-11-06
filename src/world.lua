@@ -88,15 +88,12 @@ function field_menu()
    end
    msg(classes[h.cl][1].." niv "..h.lv.."  xp "..h.xp.."\npv "..h.hp.."/"..h.pv.." pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | arm "..arm_cnt.."/5")
   elseif i==2 then
-   if h.pot+h.eth<1 then
-    msg("aucun objet !")
-   else
-    menu(items(),4,12,function(o)
-     close()
-     local t=use_item(o)
-     if (t) msg(t)
-    end)
-   end
+   -- jamais vide : il reste toujours la serviette
+   menu(items(),4,12,function(o)
+    close()
+    local t=use_item(o)
+    if (t) msg(t)
+   end)
   else
    field_magic()
   end

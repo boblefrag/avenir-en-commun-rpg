@@ -99,9 +99,10 @@ function spell_list(f)
  return it,ids
 end
 
--- objets : 1 potion (+20 pv), 2 potion de magie (+15 pm)
+-- objets : 1 potion (+20 pv), 2 potion de magie (+15 pm),
+-- 3 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
 function items()
- return {"potion (x"..h.pot..")","p. magie (x"..h.eth..")","retour"}
+ return {"potion (x"..h.pot..")","p. magie (x"..h.eth..")","serviette","retour"}
 end
 
 -- utilise l'objet o : renvoie le message (nil si retour)
@@ -112,6 +113,8 @@ function use_item(o)
   if (h.hp>=h.pv) return "pv deja au maximum !"
   h.pot-=1
   return "vous buvez une potion !\n"..heal(20),true
+ elseif o==3 then
+  return rnd(towel)
  elseif o==2 then
   if (h.eth<1) return "plus de potion de magie !"
   if (h.mp>=h.pm) return "pm deja au maximum !"

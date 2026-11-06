@@ -23,19 +23,15 @@ function bact(i)
   if h.cl==4 then hide() else bmagic() end
  elseif i==3 then
   hid=false
-  if h.pot+h.eth<1 then
-   msg("aucun objet !",bmenu)
-  else
-   menu(items(),4,60,function(o)
-    close()
-    local t,u=use_item(o)
-    if not t then
-     bmenu()
-    else
-     msg(t,u and function() monster_turn(bmenu) end or bmenu)
-    end
-   end,true)
-  end
+  menu(items(),4,60,function(o)
+   close()
+   local t,u=use_item(o)
+   if not t then
+    bmenu()
+   else
+    msg(t,u and function() monster_turn(bmenu) end or bmenu)
+   end
+  end,true)
  elseif i==4 then
   -- cache, le voleur fuit bien plus facilement (agi x6)
   local a=h.agi*(hid and 6 or 1)
@@ -162,7 +158,7 @@ function win()
  jingle(41,-1)
  safe=5  -- 5 pas sans rencontre apres le combat
  if mo[8]==15 then
-  msg("grumdor est vaincu !\nla princesse elwyne\nest libre. fin !",function() go(title) end)
+  chain(ending,function() go(title) end)
   return
  end
  local olv=h.lv
