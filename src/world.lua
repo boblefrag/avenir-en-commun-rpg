@@ -79,7 +79,9 @@ function field_menu()
   if i==1 then
    local wep=h.wep>0 and wep1[h.cl] or wep0[h.cl]
    local arm_cnt=0
-   for p=1,5 do if ((h.arm[p] or 0)>0) arm_cnt+=1 end
+   for p=1,5 do
+    if (h.arm[p] or 0)>0 then arm_cnt+=1 end
+   end
    msg(classes[h.cl][1].." niv "..h.lv.."  xp "..h.xp.."\npv "..h.hp.."/"..h.pv.." pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | arm "..arm_cnt.."/5")
   elseif i==2 then
    if (h.pot or 0)<=0 then

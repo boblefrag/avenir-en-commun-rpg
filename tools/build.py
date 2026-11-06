@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from check_syntax import main as check_syntax  # noqa: E402
 from gen_music import build as build_music  # noqa: E402
 from mapdata import DUNGEON, WORLD, read_png, rle  # noqa: E402
 from sprites import sheet  # noqa: E402
@@ -52,6 +53,7 @@ def map_section():
 
 
 def main():
+    check_syntax()
     old = read_sections(CART)
     sec = {k: old[k] for k in KEEP if k in old}
     if "__gfx__" not in sec or "--reset-gfx" in sys.argv:
