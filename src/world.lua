@@ -75,8 +75,30 @@ end
 -- menu hors combat (x)
 function field_menu()
  menu(split("statut,objets,magie"),4,12,function(i)
+  close()
   if i==1 then
-   msg(classes[h.cl][1].." niv "..h.lv.."  xp "..h.xp.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\ngemmes "..ngems().."/4")
+   local wep=h.wep>0 and wep1[h.cl] or wep0[h.cl]
+   local arm_cnt=0
+   for p=1,5 do if ((h.arm[p] or 0)>0) arm_cnt+=1 end
+   msg(classes[h.cl][1].." niv "..h.lv.."  xp "..h.xp.."\npv "..h.hp.."/"..h.pv.." pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | arm "..arm_cnt.."/5")
+  elseif i==2 then
+   if (h.pot or 0)<=0 then
+    msg("aucun objet !")
+   else
+    menu(split("potion (x"..h.pot.."),retour"),4,12,function(o)
+     close()
+     if o==1 then
+      if h.hp>=h.pv then
+       msg("pv deja au maximum !")
+      else
+       h.pot-=1
+       local g=min(20,h.pv-h.hp)
+       h.hp+=g
+       msg("vous buvez une potion.\n+"..g.." pv (pv "..h.hp.."/"..h.pv..")")
+      end
+     end
+    end)
+   end
   else
    msg("bientot !")
   end

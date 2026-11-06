@@ -54,25 +54,40 @@ ok(h.lv==3 and h.xp==100,"niveau "..h.lv)
 gain(20000,20000)
 ok(h.xp==9999 and h.gold==9999,"plafond 9999")
 
--- sauvegarde aller-retour
-h.town,h.hp=3,17
+-- sauvegarde aller-retour avec equipement et potions
+h.town,h.hp,h.pot,h.wep=3,17,2,1
+h.arm[2]=1
 save()
 local lv=h.lv
 h=nil
 load_game()
-ok(h.lv==lv and h.town==3 and h.hp==17 and h.xp==9999,"sauvegarde rechargee")
+ok(h.lv==lv and h.town==3 and h.hp==17 and h.pot==2 and h.wep==1 and h.arm[2]==1,"sauvegarde rechargee avec equipement")
 
--- mort : reveil a la derniere auberge, moitie de l'or, niveau garde
+-- mort : rechargement de la derniere sauvegarde (auberge de port-sel)
 new_hero(2)
-gain(200,0)
-h.gold,h.town,h.hp=101,2,0
-lv=h.lv
+h.gold,h.town,h.hp=70,2,20
+save()
+h.gold,h.hp=250,0 -- progression non sauvegardee
 mo=mons[1]
 lose()
 wins[#wins].cb()
-ok(h.gold==50 and h.lv==lv and h.hp==h.pv,"mort : or "..h.gold..", niveau "..h.lv..", pv pleins")
+ok(h.gold==70 and h.town==2 and h.hp==20,"mort : derniere sauvegarde restauree (70 or)")
 ok(px==places[2].x and py==places[2].y and st==world,"mort : reveil a port-sel")
-ok(@0x5e00==1 and @0x5e04==2,"mort : partie sauvegardee")
+
+-- equipement et stats
+new_hero(1)
+local base_att,base_def=h.att,h.def
+h.wep=1
+stats()
+ok(h.att==base_att+3,"guerrier avec epee courte : att +"..wep_att[1])
+h.arm[2]=1
+stats()
+ok(h.def==base_def+3,"cuirasse tissu : def +3")
+h.pot=1
+h.hp=10
+h.pot-=1
+h.hp=min(h.pv,h.hp+20)
+ok(h.hp==30 and h.pot==0,"potion : pv rendus")
 
 -- donjons : sortie et boss presents
 px,py=0,0
@@ -92,5 +107,10 @@ for z in all(split("1,2,3,4,5,21,22,23,24,25,11,12,13,14,15")) do
  ok(n>0,"zone "..z.." : "..n.." monstre(s)")
 end
 ok(#spn==5,"attaques speciales des boss")
+ok(#hatk==4,"attaques du heros")
+local all_matk=true
+for m in all(mons) do if (not matk[m[9]]) all_matk=false end
+ok(all_matk,"chaque sprite de monstre a son attaque")
+ok(#intro_lines>30,"texte d'intro present ("..#intro_lines.." lignes)")
 
 printh(nok==0 and "tout est ok" or nok.." echec(s)")

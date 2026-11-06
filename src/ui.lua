@@ -22,6 +22,26 @@ function close()
  deli(wins)
 end
 
+-- confirmation oui/non avec message et verification de prix
+function confirm(txt,price,yes,no)
+ msg(txt)
+ local m={x=94,y=74,w=24,h=19,it=split("oui,non"),sel=1,onx=2,nox=true,cb=function(i)
+  close()
+  close()
+  if i==1 then
+   if h.gold<price then
+    msg("or insuffisant !",no)
+   else
+    h.gold-=price
+    yes()
+   end
+  else
+   if (no) no()
+  end
+ end}
+ add(wins,m)
+end
+
 function ui_update()
  local w=wins[#wins]
  if (not w) return false
@@ -36,8 +56,9 @@ function ui_update()
   if (btnp(3)) w.sel=w.sel%n+1
   if btnp(4) then
    w.cb(w.sel)
-  elseif btnp(5) and not w.nox then
-   close()
+  elseif btnp(5) then
+   if (w.onx) w.cb(w.onx)
+   elseif (not w.nox) close()
   end
  end
  return true

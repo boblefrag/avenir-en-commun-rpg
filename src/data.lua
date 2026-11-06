@@ -26,6 +26,23 @@ mons=tbl("harpie,10,4,1,6,4,3,1,64,4,2,0|sanglier,14,5,2,3,5,4,1,68,4,2,0|satyre
 -- 5 grumdor : 1 fois sur 4, sa foudre lui revient dessus
 spn=split("bourrasque !\n,les tetes repoussent !\n,souffle de feu !\n,le minotaure charge !\n,la foudre de grumdor\nlui revient dessus !\n")
 
+-- attaques de base du heros selon sa classe
+hatk=split("coup d'epee,coup de baton,coup de masse,coup de dague")
+
+-- attaques normales des monstres indexees par numero de sprite
+matk={[64]="vous donne un coup de bec",[66]="vous donne un coup de corne",[68]="vous charge violemment",[70]="porte un coup de lance",[72]="vous griffe sauvagement",[74]="frappe de sa massue",[76]="vous mord ferocement",[78]="griffe dans l'ombre",[98]="pique de sa fourche",[128]="plonge serres en avant",[132]="mord a pleine gueule",[136]="crache des flammes",[140]="assene un coup de hache",[192]="lance un eclair sournois"}
+
+-- equipement : armures (5 pieces) et armes (paliers)
+arm_names=split("casque,cuirasse,gant,pantalon,botte")
+arm_prices=split("8,15,6,10,8")
+arm_base=split("1,3,1,1,1")
+
+wep0=split("epee de bois,baton use,masse de bois,dague usee")
+wep1=split("epee courte,baton de chene,masse ferree,dague effilee")
+wep1_prices=split("25,20,25,25")
+wep_att=split("3,6,10,15,22")
+
+
 -- tuiles, indexees par numero de sprite :
 -- need : 0 libre, 16 jamais, sinon gemme requise (1 vent,2 eau,4 feu,8 terre)
 -- rate : % de rencontre par pas ; zone : zone des monstres
@@ -41,3 +58,7 @@ zone=split("0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
 -- rumeurs par ville (# separe les villes, | les rumeurs)
 -- grumdor ecrit mal, c'est voulu
 rumors=tbl("le sage dit que la tour\ndes brumes est au nord-est.|une grotte engloutie se\ncache sur la cote ouest.|grumdor a ecrit au roi :\n'je sui le plu bo mage\ndu monde.'#avec la gemme de l'eau,\non traverse les gues.|on dit qu'une ile au sud\nabrite un port.|les cols du nord ne\ns'ouvrent qu'au vent.#le volcan du sud-est garde\nla gemme du feu.|au nord, rien que de la\nneige et des loups.|grumdor a oublie\nson anniversaire. encore.#le feu brule les ronces de\nla foret maudite.|un temple dort sous\nla foret maudite.|ici on peche la nuit.\nde toute facon il fait nuit.#grumdor craint la lumiere.\nil l'ecrit 'lumiaire'.|la grande chaine s'ouvre\navec la gemme de terre.|l'acier se vend ici,\nmais tres cher.","#","|")
+
+-- texte d'introduction (defilement style annees 80)
+intro_lines=split("il y a bien longtemps...|dans une contree|lointaine, tres lointaine...||le paisible royaume d'ostrel|vivait dans la lumiere.|les oiseaux chantaient,|et les heros mangeaient|des champignons magiques.||tout bascula le soir du bal.|furieux de n'avoir pas ete|invite, le mage grumdor|decida de se venger.||il ecrivit au roi :|'je sui le plu bo mage|du monde et vou ale voir !'||d'un eclair sournois, il|plongea ostrel dans la nuit,|lanca des hordes de monstres|et kidnappa la princesse|elwyne dans son chateau.||les gardes accoururent...|mais un message les stoppa :|'desole, votre princesse est|dans un autre chateau !'||qui allez-vous appeler ?|les chasseurs de fantomes ?|une chasseuse de primes en|armure roulee en boule ?|une delorean a 88 miles/h ?||personne ne repondit.||l'unique espoir repose sur|la legende des 4 gemmes.|le vieux sage trouva l'elu|grace a sa marque au bras.||'c'est dangereux de partir|seul, prends ceci !' dit-il|en tendant... une serviette.|'un aventurier ne panique|jamais, et sait toujours|ou est sa serviette.'||votre quete commence.|que la force soit avec vous.","|")
+

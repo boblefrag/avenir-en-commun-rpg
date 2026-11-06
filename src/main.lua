@@ -68,13 +68,7 @@ function title.init()
    load_game()
    start()
   else
-   local cl={}
-   for c in all(classes) do add(cl,c[1]) end
-   menu(cl,40,60,function(c)
-    new_hero(c)
-    save() -- le depart compte comme une nuit a l'auberge
-    start()
-   end)
+   go(intro)
   end
  end,true)
 end
@@ -85,6 +79,52 @@ function title.draw()
  cls()
  print("legend of the gems",28,30,10)
  print("la nuit de grumdor",28,40,13)
+end
+
+-- ecran d'intro defilant (crawl spatial annees 80)
+intro={mus=0}
+
+function intro.init()
+ sy=128
+ stars={}
+ for i=1,30 do add(stars,{x=rnd(128),y=rnd(128),c=rnd({5,6,7})}) end
+end
+
+function intro.update()
+ if #wins>0 then return end
+ local spd=btn(4) and 2 or 0.4
+ sy-=spd
+ if (flr(sy)%6==0) sfx(53,3)
+ if btnp(5) or sy<-#intro_lines*8-10 then
+  choose_class()
+ end
+end
+
+function intro.draw()
+ cls(0)
+ for s in all(stars) do pset(s.x,s.y,s.c) end
+ if #wins>0 then
+  print("choisis ta classe :",30,48,10)
+  return
+ end
+ for i,l in ipairs(intro_lines) do
+  local y=flr(sy)+(i-1)*8
+  if y>=-8 and y<=128 then
+   local c=y<16 and 5 or (y<28 and 6 or 7)
+   if (l!="") print(l,64-#l*2,y,c)
+  end
+ end
+ print("o: accelerer  x: passer",16,122,5)
+end
+
+function choose_class()
+ local cl={}
+ for c in all(classes) do add(cl,c[1]) end
+ menu(cl,40,60,function(c)
+  new_hero(c)
+  save()
+  start()
+ end,true)
 end
 
 -- place le heros a la ville de depart (ou de sauvegarde)

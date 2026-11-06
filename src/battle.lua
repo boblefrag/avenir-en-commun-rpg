@@ -16,12 +16,34 @@ end
 function bact(i)
  close()
  if i==1 then
-  turn(true)
+  turn()
+ elseif i==3 then
+  if (h.pot or 0)<=0 then
+   msg("aucun objet !",bmenu)
+  else
+   menu(split("potion (x"..h.pot.."),retour"),4,74,function(o)
+    close()
+    if o==1 then
+     if h.hp>=h.pv then
+      msg("pv deja au maximum !",bmenu)
+     else
+      h.pot-=1
+      local g=min(20,h.pv-h.hp)
+      h.hp+=g
+      msg("vous buvez une potion !\n+"..g.." pv (pv "..h.hp.."/"..h.pv..")",function()
+       monster_turn(bmenu)
+      end)
+     end
+    else
+     bmenu()
+    end
+   end,true)
+  end
  elseif i==4 then
   if rnd(h.agi+mo[5])<h.agi then
    msg("vous prenez la fuite !",back)
   else
-   msg("impossible de fuir !",function() turn() end)
+   msg("impossible de fuir !",function() monster_turn(bmenu) end)
   end
  else
   msg("bientot !",bmenu)
@@ -32,47 +54,50 @@ function dmg(a,d)
  return max(1,flr(a-d/2+rnd(a/4)))
 end
 
--- un tour : l'agilite decide qui frappe en premier
--- atk : le heros attaque (sinon il a rate sa fuite)
-function turn(atk)
- local function me(k)
-  if not atk then return k() end
-  local n=dmg(h.att,mo[4])
-  mhp-=n
-  msg(mo[1].." perd "..n.." pv",function()
-   if mhp<=0 then win() else k() end
-  end)
- end
- -- le monstre agit (attaque speciale des boss : voir spn)
- local function it(k)
-  bt+=1
-  local sp,n,s,c=mo[12],dmg(mo[3],h.def),"",bt%3==0
-  if sp==4 and bt%3==2 then
-   n,s=0,"le minotaure gratte le sol..."
-  elseif sp==5 then
-   if rnd()<.25 then
-    mhp-=n
-    n,s=0,spn[5]..mo[1].." perd "..n.." pv"
-   end
-  elseif sp==2 and c then
-   mhp=min(mhp+25,mo[2])
-   n,s=0,spn[2]
-  elseif sp>0 and c then
-   n*=sp==1 and 2 or 3
-   s=spn[sp]
+function hero_turn(k)
+ local n=dmg(h.att,mo[4])
+ mhp-=n
+ local a=hatk[h.cl] or "coup d'epee"
+ local s="vous donnez un "..a.." !\n"..mo[1]..(#mo[1]>14 and "\nperd " or " perd ")..n.." pv"
+ msg(s,function()
+  if mhp<=0 then win() else (k or bmenu)() end
+ end)
+end
+
+function monster_turn(k)
+ bt+=1
+ local sp,n,s,c=mo[12],dmg(mo[3],h.def),"",bt%3==0
+ if sp==4 and bt%3==2 then
+  n,s=0,"le minotaure gratte le sol..."
+ elseif sp==5 then
+  if rnd()<.25 then
+   mhp-=n
+   n,s=0,spn[5]..mo[1].." perd "..n.." pv"
   end
-  h.hp=max(0,h.hp-n)
-  if (n>0) s..="vous perdez "..n.." pv"
-  msg(s,function()
-   if mhp<=0 then win()
-   elseif h.hp<=0 then lose()
-   else k() end
-  end)
+ elseif sp==2 and c then
+  mhp=min(mhp+25,mo[2])
+  n,s=0,spn[2]
+ elseif sp>0 and c then
+  n*=sp==1 and 2 or 3
+  s=spn[sp]
  end
+ h.hp=max(0,h.hp-n)
+ if s=="" then
+  s=mo[1].."\n"..(matk[mo[9]] or "vous attaque").." !\n"
+ end
+ if (n>0) s..="vous perdez "..n.." pv"
+ msg(s,function()
+  if mhp<=0 then win()
+  elseif h.hp<=0 then lose()
+  else (k or bmenu)() end
+ end)
+end
+
+function turn()
  if h.agi+rnd(4)>=mo[5]+rnd(4) then
-  me(function() it(bmenu) end)
+  hero_turn(function() monster_turn(bmenu) end)
  else
-  it(function() me(bmenu) end)
+  monster_turn(function() hero_turn(bmenu) end)
  end
 end
 
@@ -100,14 +125,11 @@ function win()
  end)
 end
 
--- mort : on se reveille a la derniere auberge (kalden au depart)
--- avec la moitie de l'or ; niveaux, xp, gemmes et equipement restent
+-- mort : rechargement de la derniere sauvegarde
 function lose()
  jingle(42,-1)
- msg("vous etes mort...\nvous vous reveillez a\nl'auberge. la moitie de\nvotre or a disparu.",function()
-  h.gold\=2
-  h.hp,h.mp=h.pv,h.pm
-  save()
+ msg("vous etes mort...\nretour a la derniere\nsauvegarde.",function()
+  load_game()
   start()
  end)
 end

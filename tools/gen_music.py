@@ -221,7 +221,9 @@ def build():
                 flags = (1 if j == 0 else 0) | (2 if j == n - 1 else 0)
             ch = [f"{ids[c]:02x}" for c in chans] + [f"{0x41 + k:02x}" for k in range(len(chans), 4)]
             music_lines[start + j] = f"{flags:02x} " + "".join(ch)
-        lua_tracks.append(f'{{"{t["name"]}",{start}}}')
+    # sfx 53 : petit bruit de texte defilant (typewriter blip)
+    text_sfx = "01020000" + "2a023" + "00000" * 31
+    sfx_lines.append(text_sfx)
     assert len(sfx_lines) <= 64, f"{len(sfx_lines)} sfx, max 64"
     used = len(sfx_lines)
     sfx_lines += ["01100000" + "0" * 160] * (64 - used)
