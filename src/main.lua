@@ -57,6 +57,7 @@ function _update()
    play(mnext)
   end
  end
+ tick()
  if (not ui_update()) st.update()
 end
 
@@ -66,7 +67,7 @@ function _draw()
 end
 
 -- ecran titre
-title={mus=8}
+title={mus=8,notime=true}
 
 function title.init()
  local it={"nouvelle partie"}
@@ -90,7 +91,7 @@ function title.draw()
 end
 
 -- ecran d'intro defilant (crawl spatial annees 80)
-intro={mus=0}
+intro={mus=0,notime=true}
 
 function intro.init()
  sy=128
@@ -138,7 +139,7 @@ function crawl(t)
 end
 
 -- generique de fin, apres la cinematique
-credits={mus=48}
+credits={mus=48,notime=true}
 credits.init=intro.init
 
 function credits.update()

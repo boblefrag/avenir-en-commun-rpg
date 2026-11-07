@@ -23,6 +23,64 @@ function new_hero(cl)
  h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,spo=0,eth=0,spe=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0}}
  stats()
  h.hp,h.mp=h.pv,h.pm
+ h.dth,h.mn,h.sc=0,0,0
+ clock()
+end
+
+-- temps de jeu et morts : ecrits a part (0x5e1e morts, 0x5e20 minutes,
+-- 0x5e22 secondes), en continu et hors de save(), pour qu'une mort
+-- (qui recharge la sauvegarde) ou une console eteinte ne les efface pas
+function clock()
+ poke(0x5e1e,min(h.dth,255))
+ poke2(0x5e20,h.mn)
+ poke(0x5e22,h.sc)
+end
+
+-- appele a chaque frame ; pas de chrono sur le titre, l'intro et la fin
+function tick()
+ if (not h or st.notime) return
+ fc=(fc or 0)+1
+ if fc>=30 then
+  fc=0
+  h.sc+=1
+  if (h.sc>=60) h.sc=0 h.mn=min(h.mn+1,32767)
+  clock()
+ end
+end
+
+-- score : plus c'est rapide, a petit niveau et sans mourir, mieux c'est
+-- temps : 3000 - 10/minute (0 au-dela de 5 h) ; niveau : 100 par niveau
+-- sous 24 ; morts : 1000 - 200 par mort
+function score()
+ local s=max(0,3000-min(h.mn,300)*10)+(24-h.lv)*100+max(0,1000-h.dth*200)
+ return s,rank(s)
+end
+
+function rank(s)
+ return s>=3500 and "s" or s>=2500 and "a" or s>=1500 and "b" or s>=800 and "c" or "d"
+end
+
+-- meilleurs scores : 5 entrees de 5 octets a partir de 0x5e30
+-- (3 lettres 1..26, puis le score en poke2) ; lettre 0 = case vide
+abc="abcdefghijklmnopqrstuvwxyz"
+function hof_add(e)
+ local t={}
+ for k=0,4 do
+  local a=0x5e30+k*5
+  if (@a>0) add(t,{@a,@(a+1),@(a+2),peek2(a+3)})
+ end
+ add(t,e)
+ -- seule la nouvelle entree (a la fin) n'est pas a sa place
+ for i=#t,2,-1 do
+  if (t[i][4]>t[i-1][4]) t[i],t[i-1]=t[i-1],t[i]
+ end
+ hof={}
+ for k=1,min(5,#t) do
+  local a,e=0x5e30+(k-1)*5,t[k]
+  poke(a,e[1],e[2],e[3])
+  poke2(a+3,e[4])
+  add(hof,e)
+ end
 end
 
 -- xp et or plafonnes a 9999 ; renvoie true si niveau gagne
@@ -68,6 +126,7 @@ function load_game()
  h.eth=@0x5e0c
  h.spo=@0x5e0d
  h.spe=@0x5e0e
+ h.dth,h.mn,h.sc=@0x5e1e,peek2(0x5e20),@0x5e22
  h.xp,h.gold,h.hp,h.mp=peek2(0x5e10,4)
  stats()
 end

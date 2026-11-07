@@ -30,6 +30,7 @@ from tokens import count_tokens  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 CART = ROOT / "main.p8"
 EXPORT = ROOT / "legend_of_the_gems.p8"
+HEADER = "-- legend of the gems\n-- by yohann gabory\n"
 SRC = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon", "decor"]
 KEEP = ["__gfx__", "__gff__", "__label__"]
 ORDER = ["__lua__", "__gfx__", "__label__", "__gff__", "__map__", "__sfx__", "__music__"]
@@ -117,7 +118,9 @@ def main():
     CART.write_text("\n".join(out) + "\n")
     # cart d'export : meme contenu, code inline et nettoye
     code = "\n".join((ROOT / f"src/{f}.lua").read_text() for f in SRC)
-    small = strip_code(code)
+    # les 2 premieres lignes de commentaire = titre et auteur de la
+    # cartouche (affiches par splore et sur le .p8.png) : on les remet
+    small = HEADER + strip_code(code)
     check_syntax(small, EXPORT.name)
     exp = ["pico-8 cartridge // http://www.pico-8.com", "version 42", "__lua__"] + small.split("\n")
     for k in ORDER[1:]:

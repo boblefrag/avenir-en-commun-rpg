@@ -109,8 +109,9 @@ end
 -- cinematique de fin : une scene par message de ending
 -- 1 trone vide, 2 la princesse en ombre chinoise derriere un paravent
 -- (ses habits changes en crapauds), 3 cachee derriere le trone, 4 la serviette brandie, 5 princesse en serviette,
--- 6-7 lever du soleil sur ostrel ; puis le generique (credits)
-epilog={mus=8}
+-- 6-7 lever du soleil sur ostrel ; puis le bilan (results) et le
+-- generique (credits)
+epilog={mus=8,notime=true}
 
 function epilog.init()
  fi=0
@@ -120,7 +121,7 @@ end
 function epi_next()
  fi+=1
  ft=0
- if ending[fi] then msg(ending[fi],epi_next) else go(credits) end
+ if ending[fi] then msg(ending[fi],epi_next) else go(results) end
 end
 
 function epilog.update() end
@@ -194,4 +195,68 @@ function epilog.draw()
   sspr(16,16,16,16,66,66,16,16)
   if (fi==7) print("legend of the gems",28,12,7)
  end
+end
+
+-- bilan de la partie, entre la cinematique et le generique :
+-- stats, score et rang, puis initiales a l'ancienne (haut/bas : lettre,
+-- o : lettre suivante) et tableau des 5 meilleurs scores
+results={mus=8,notime=true}
+
+function results.init()
+ rs,rr=score()
+ ft,ic,ini,hof=0,1,{1,1,1}
+end
+
+function results.update()
+ if hof then
+  if (btnp(4)) go(credits)
+  return
+ end
+ if (btnp(2)) ini[ic]=ini[ic]%26+1
+ if (btnp(3)) ini[ic]=(ini[ic]-2)%26+1
+ if (btnp(5) and ic>1) ic-=1
+ if btnp(4) then
+  if ic<3 then
+   ic+=1
+  else
+   me={ini[1],ini[2],ini[3],rs}
+   hof_add(me)
+  end
+ end
+end
+
+function initials(e)
+ local s=""
+ for i=1,3 do s..=sub(abc,e[i],e[i]) end
+ return s
+end
+
+function results.draw()
+ cls(1)
+ rect(8,8,119,119,10)
+ ft+=1
+ local rc={s=10,a=11,b=12,c=9,d=8}
+ if hof then
+  print("- meilleurs scores -",24,18,10)
+  for k,e in ipairs(hof) do
+   local r=rank(e[4])
+   print(k..". "..initials(e).."  "..e[4],30,26+k*10,e==me and ft%30<20 and 10 or 7)
+   print(r,92,26+k*10,rc[r])
+  end
+  print("o : continuer",38,108,5)
+  return
+ end
+ print("- ta partie -",38,16,10)
+ local m=h.mn%60
+ local t={"classe : "..classes[h.cl][1],"temps  : "..(h.mn\60).."h"..(m<10 and "0" or "")..m,"niveau : "..h.lv,"morts  : "..h.dth,"score  : "..rs}
+ for i,l in ipairs(t) do print(l,28,18+i*8,7) end
+ print("rang : "..rr,46,70,ft%30<20 and rc[rr] or 7)
+ -- initiales : la lettre en cours clignote, soulignee
+ print("initiales :",22,86,6)
+ for i=1,3 do
+  local x=70+i*8
+  if (i!=ic or ft%16<10) print(sub(abc,ini[i],ini[i]),x,86,i==ic and 10 or 7)
+  if (i==ic) line(x,92,x+2,92,10)
+ end
+ print("haut/bas : lettre  o : ok",14,106,5)
 end

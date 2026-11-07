@@ -230,6 +230,9 @@ end
 function lose()
  jingle(42,-1)
  msg("vous etes mort...\nretour a la derniere\nsauvegarde.",function()
+  -- la mort est comptee avant de recharger (load_game la relit)
+  h.dth+=1
+  clock()
   load_game()
   start()
  end)
