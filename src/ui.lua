@@ -40,7 +40,7 @@ function confirm(txt,price,yes,no)
   close()
   if i==1 then
    if h.gold<price then
-    msg("or insuffisant !",no)
+    msg("fonds insuffisants !",no)
    else
     h.gold-=price
     yes()
@@ -115,7 +115,8 @@ function hud()
   bip_cd=0
  end
  print("pv "..h.hp.."/"..h.pv,2,1,hcol)
- print("pm "..h.mp.."/"..h.pm.." or "..h.gold,46,1,7)
+ print("pm "..h.mp.."/"..h.pm,44,1,7)
+ print(h.gold.."e",80,1,10)
  -- 4 gemmes a droite (x 111..125) : losange colore si possedee,
  -- simple point gris sinon
  for i=0,3 do

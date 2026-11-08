@@ -14,7 +14,7 @@ function battle.init(m)
  local t=mget(px,py)
  bk=prev==dungeon and 4 or (t==4 or t==5) and 2 or (t==2 or t==9) and 3 or 1
  jingle(40,m[8]==15 and 32 or 24)
- msg(m[1].." surgit !",bmenu)
+ msg("debat contre :\n"..m[1].." !",bmenu)
 end
 
 function bmenu()
@@ -90,13 +90,13 @@ function bmagic()
     local n=s[3]+flr(rnd(s[3]/4))
     mhp-=n
     blk=10
-    if (e==7) t..="le peuple en marche convoque\nl'assemblee constituante !\n"
-    t..=mo[1].." perd "..n.." conviction"
+    if (e==7) t..="appel a la 6e !\n"
+    t..=mo[1].."\nperd "..n.." conviction"
    elseif e==6 then
     t..=heal(s[3])
    else
     shd=max(shd,s[3])
-    t..="les coups sont reduits de "..shd
+    t..="degats reduits de "..shd
    end
    msg(t,function()
     if mhp<=0 then win() else monster_turn(bmenu) end
@@ -115,9 +115,9 @@ function hero_turn(k)
  local n=dmg(h.att,mo[4])*(hid and 3 or 1)
  mhp-=n
  blk=10
- local s=hid and "fact-checking imparable !" or "vous lancez un "..(hatk[h.cl] or "argument").." !"
+ local s=hid and "fact-checking imparable !" or hatk[h.cl].." !"
  hid=false
- s..="\n"..mo[1]..(#mo[1]>14 and "\nperd " or " perd ")..n.." conviction"
+ s..="\n"..mo[1].."\nperd "..n.." conviction"
  msg(s,function()
   if mhp<=0 then win() else (k or bmenu)() end
  end)
@@ -128,15 +128,15 @@ function monster_turn(k,x)
  bt+=1
  local sp,n,s,c=mo[12],max(1,flr(dmg(mo[3],h.def,4)*mdk))*(x or 1),"",bt%3==0
  if sp==4 and bt%3==2 then
-  n,s=0,"l'oligarque prepare son assaut..."
+  n,s=0,"l'oligarque prepare\nson offensive..."
  elseif sp==5 then
   if rnd()<.25 then
    mhp-=n
-   n,s=0,spn[5]..mo[1].." perd "..n.." conviction"
+   n,s=0,spn[5]..mo[1].."\nperd "..n.." conv."
   end
  elseif sp==2 and c then
   mhp=min(mhp+25,mmax)
-  n,s=0,spn[2]
+  n,s=0,spn[2]..mo[1].." reprend\nde la conviction"
  elseif sp>0 and c then
   n*=sp==1 and 2 or 3
   s=spn[sp]
@@ -149,9 +149,9 @@ function monster_turn(k,x)
   sfx(55,3)
  end
  if s=="" then
-  s=mo[1].."\n"..(matk[mo[9]] or "vous assaille").." !\n"
+  s=mo[1].."\n"..(matk[mo[9]] or "attaque").." !\n"
  end
- if (n>0) s..="vous perdez "..n.." conviction"
+ if (n>0) s..="vous perdez "..n.." conv."
  msg(s,function()
   if mhp<=0 then win()
   elseif h.hp<=0 then lose()
@@ -184,10 +184,10 @@ function win()
    local t=""
    for i=olv+1,nspells() do
     local s=sp(i)
-    t..="nouveau sort : "..s[1].."\n"..sdesc[s[2]]..", "..s[4].." pm\n"
+    t..=s[1].." ("..s[4].." pm)\n"..sdesc[s[2]].."\n"
    end
    msg("niveau "..h.lv.." !\npv "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,function()
-    if t>"" then msg(t,back) else back() end
+    if t>"" then msg("nouveau :\n"..t,back) else back() end
    end)
   else
    back()
@@ -204,7 +204,7 @@ function win()
    msg("vous obtenez le levier\n"..g[1].." !\n"..g[2],fin)
   end
  end
- msg("ralliement !\n"..mo[1].."\nrejoint l'union populaire !\n+"..mo[6].." xp  +"..mo[7].." or"..loot(),k)
+ msg(mo[1].."\nrejoint l'union populaire !\n+"..mo[6].." xp  +"..mo[7].."e"..loot(),k)
 end
 
 -- soutien militant : 25% des debats (40% pour le fact-checker, toujours sur un boss)
@@ -215,12 +215,12 @@ function loot()
   local k=h.pm>0 and rnd()<.5 and (big and "spe" or "eth") or big and "spo" or "pot"
   if h[k]<9 then
    h[k]+=1
-   return "\nobjet : "..({pot="cafe militant",spo="repas solidaire",eth="fiche argument",spe="revue ideologique"})[k].." !"
+   return "\ndon : "..({pot="cafe militant",spo="repas solidaire",eth="fiche argument",spe="revue ideol."})[k]
   end
  end
  local i=flr(rnd(min(6,1+mo[7]\12)))+1
  h.tr[i]=min(99,h.tr[i]+1)
- return "\nobjet : "..tres[i][1].." !"
+ return "\ndon : "..tres[i][1]
 end
 
 -- repli militant en cas de perte de conviction : rechargement du dernier QG

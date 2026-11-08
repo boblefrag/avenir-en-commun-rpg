@@ -57,8 +57,8 @@ dtxt=split("les projecteurs eblouissent.\nles micros sont ouverts.|l'or coule a 
 -- attaques de base du heros selon sa classe
 hatk=split("harangue au mega,argument massue,appel solidaire,fact-check eclair")
 
--- attaques des opposants selon le numero de sprite
-matk={[64]="brandit une fausse citation",[66]="propose un cadeau fiscal",[68]="menace d'une crise financiere",[70]="invoque la dette publique",[72]="lance un spin mediatique",[74]="agite le chantage a l'emploi",[76]="aboie sur le plateau",[78]="inonde le reseau de fakes",[98]="exige des gages d'austerite",[100]="menace d'exil fiscal",[128]="lance une tirade calomnieuse",[132]="specule contre la republique",[136]="degaine la regle d'or",[140]="rachete les ondes du paf",[192]="sort le 49.3 autoritaire"}
+-- attaques des opposants selon le numero de sprite (courtes pour eviter les debordements)
+matk={[64]="cite une fake news",[66]="offre un cadeau fiscal",[68]="menace de crise financ.",[70]="invoque la dette pub.",[72]="lance un spin mediat.",[74]="chantage a l'emploi",[76]="aboie sur le plateau",[78]="inonde le web de fakes",[98]="exige de l'austerite",[100]="menace d'exil fiscal",[128]="tirade calomnieuse",[132]="specule contre l'etat",[136]="degaine la regle d'or",[140]="rachete les ondes",[192]="sort le 49.3 autorit."}
 
 -- equipement militant : protections (5 pieces) et materiel de conviction
 arm_names=split("badge,gilet,casquette,sacoche,baskets")

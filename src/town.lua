@@ -15,7 +15,7 @@ end
 function tact(i)
  close()
  if i==1 then
-  confirm("reposer l'equipe ("..tw.c.." or) ?",tw.c,function()
+  confirm("reposer l'equipe ("..tw.c.."e) ?",tw.c,function()
    h.hp,h.mp,h.town=h.pv,h.pm,tw.i
    save()
    msg("forces retrouvees !\nstrategie sauvegardee.",tmenu)
@@ -33,14 +33,14 @@ function tact(i)
  end
 end
 
--- materiel : cafe (10 or), repas solidaire (60 or), fiche argument (25 or), revue (100 or)
+-- materiel : cafe (10e), repas solidaire (60e), fiche argument (25e), revue (100e)
 -- syndicaliste et fact-checker (0 pm) : pas de fiches d'argument en rayon
 function item_shop()
  local ks,pr,nm=split("pot,spo,eth,spe"),split("10,60,25,100"),split("cafe militant,repas solidaire,fiche arg.,revue theorique")
  local it,ids={},{}
  for i=1,4 do
   if h.pm>0 or i<3 then
-   add(it,(i==4 and "revue theorique" or nm[i]).." - "..pr[i].." or ("..h[ks[i]].."/9)")
+   add(it,(i==4 and "revue theorique" or nm[i]).." - "..pr[i].."e ("..h[ks[i]].."/9)")
    add(ids,i)
   end
  end
@@ -57,7 +57,7 @@ function item_shop()
   if h[k]>=9 then
    msg("sacoche pleine !",item_shop)
   else
-   confirm("acheter "..n.."\n("..p.." or) ?",p,function()
+   confirm("acheter "..n.."\n("..p.."e) ?",p,function()
     h[k]+=1
     msg(n.." obtenu !\nvous en avez "..h[k].."/9.",item_shop)
    end,item_shop)
@@ -68,7 +68,7 @@ end
 -- dons et soutiens de campagne : versement un par un ou d'un coup
 function sell_shop()
  local it={}
- for i=1,6 do add(it,tres[i][1].." x"..h.tr[i].." - "..tres[i][2].." or") end
+ for i=1,6 do add(it,tres[i][1].." x"..h.tr[i].." - "..tres[i][2].."e") end
  add(it,"verser tous les dons")
  add(it,"retour")
  menu(it,4,24,function(o)
@@ -89,7 +89,7 @@ function sell_shop()
   else
    if (o<7) g=tres[o][2] h.tr[o]-=1
    h.gold=min(9999,h.gold+g)
-   msg("don verse ! +"..g.." or",sell_shop)
+   msg("don verse ! +"..g.."e",sell_shop)
   end
  end,true)
 end
@@ -99,7 +99,7 @@ function armor_shop()
  local t,it=town_tier[tw.i],{}
  for p=1,5 do
   local n=arm_names[p].." "..mat[t]
-  add(it,n.." - "..((h.arm[p] or 0)>=t and "equipe" or arm_prices[p]*tier_mult[t].." or"))
+  add(it,n.." - "..((h.arm[p] or 0)>=t and "equipe" or arm_prices[p]*tier_mult[t].."e"))
  end
  add(it,"retour")
  menu(it,4,24,function(o)
@@ -112,7 +112,7 @@ function armor_shop()
    msg("inadapte pour un\n"..classes[h.cl][1].." !",armor_shop)
   else
    local n,pr=arm_names[o].." "..mat[t],arm_prices[o]*tier_mult[t]
-   confirm("acheter "..n.."\n("..pr.." or) ?",pr,function()
+   confirm("acheter "..n.."\n("..pr.."e) ?",pr,function()
     h.arm[o]=t
     stats()
     msg(n.." equipe !\ndef "..h.def,armor_shop)
@@ -126,14 +126,14 @@ function weapon_shop()
  local t=town_tier[tw.i]
  local wn,pr=wep_name(t),wep_prices[t]
  local eq=(h.wep or 0)>=t
- menu({wn.." - "..(eq and "equipe" or pr.." or"),"retour"},4,44,function(o)
+ menu({wn.." - "..(eq and "equipe" or pr.."e"),"retour"},4,44,function(o)
   close()
   if o>1 then
    tmenu()
   elseif eq then
    msg("deja equipe !",weapon_shop)
   else
-   confirm("acheter "..wn.."\n("..pr.." or) ?",pr,function()
+   confirm("acheter "..wn.."\n("..pr.."e) ?",pr,function()
     h.wep=t
     stats()
     msg(wn.." equipee !\natt "..h.att,weapon_shop)
