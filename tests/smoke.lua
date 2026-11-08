@@ -87,31 +87,31 @@ h.arm[2]=4
 stats()
 ok(h.def==base_def+12,"cuirasse acier : def +12")
 h.arm[2]=1
-ok(wep_name(0)=="epee de bois" and wep_name(1)=="epee courte" and wep_name(4)=="epee d'acier","noms d'armes par palier")
+ok(wep_name(0)=="tract use" and wep_name(1)=="tract d'appel" and wep_name(4)=="megaphone d'urgence","noms de materiel par palier")
 ok(#town_tier==5 and #mat==4 and #wep_prices==4 and #wep_att==4,"tables de paliers")
 h.pot=1
 h.hp=10
 h.pot-=1
 h.hp=min(h.pv,h.hp+20)
-ok(h.hp==30 and h.pot==0,"potion : pv rendus")
+ok(h.hp==30 and h.pot==0,"cafe militant : conviction rendue")
 
--- sorts du mage et potion de magie
+-- sorts de l'intellectuel et revues
 new_hero(2)
-ok(nspells()==1 and sp(1)[1]=="flammeche","mage niv 1 : flammeche")
+ok(nspells()==1 and sp(1)[1]=="debat ouvert","intellectuel niv 1 : debat ouvert")
 h.lv=5
 local it,ids=spell_list(function(e) return e>2 end)
-ok(#it==1 and sp(ids[1])[2]==3,"mage niv 5 : evasion utilisable hors combat")
+ok(#it==1 and sp(ids[1])[2]==3,"intellectuel niv 5 : debrayage utilisable hors combat")
 h.lv=23
-ok(nspells()==11 and #spells[2]==11,"mage niv max : 11 sorts")
+ok(nspells()==11 and #spells[2]==11,"intellectuel niv max : 11 sorts")
 new_hero(3)
-ok(nspells()==1 and sp(1)[2]==6,"clerc niv 1 : soin")
+ok(nspells()==1 and sp(1)[2]==6,"organisateur niv 1 : cafe solidaire")
 h.lv=23
-ok(nspells()==11 and sp(11)[2]==7,"clerc niv 11 : invocation")
+ok(nspells()==11 and sp(11)[2]==7,"organisateur niv 11 : la constituante")
 h.hp=1
 heal(15)
-ok(h.hp==16,"soin : +15 pv")
+ok(h.hp==16,"soin : +15 conviction")
 new_hero(1)
-ok(nspells()==0,"guerrier : aucun sort")
+ok(nspells()==0,"syndicaliste : aucun sort")
 new_hero(2)
 h.eth,h.mp=1,0
 local t,u=use_item(3)
@@ -136,9 +136,9 @@ load_game()
 ok(h.spe==1,"super potions de magie sauvegardees")
 new_hero(1)
 local l=items()
-ok(#l==4 and iid[3]==5,"guerrier : pas de potion de magie dans le menu")
+ok(#l==4 and iid[3]==5,"syndicaliste : pas de revue dans le menu")
 new_hero(2)
-ok(#items()==6 and iid[4]==4,"mage : potions de magie dans le menu")
+ok(#items()==6 and iid[4]==4,"intellectuel : revues dans le menu")
 rep=10
 ok(enc(17)!=nil and rep==9,"repousse : compteur de pas")
 rep=0

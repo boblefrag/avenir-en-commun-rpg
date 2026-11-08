@@ -137,53 +137,51 @@ function epilog.draw()
  ft+=1
  local t=ft/30
  if fi<6 then
-  backdrop(4)
-  if fi==2 then
-   -- paravent eclaire, la princesse en ombre chinoise
-   fillp(0b1010010110100101)
-   rectfill(86,26,122,82,0x9a)
-   fillp()
-   for x in all({86,98,110,122}) do line(x,24,x,84,4) end
-   pal(1,0)
-   sspr(104,0,16,32,96,45)
-   sspr(120,0,8,6,99,77)
-   pal()
-  end
-  -- la princesse cachee derriere le trone
-  local hid=fi==3
-  if (hid) sspr(16,16,16,8,48,28,32,16)
-  -- trone
-  rectfill(52,44,76,82,8)
-  rect(52,44,76,82,10)
-  rectfill(48,66,80,74,2)
-  rect(48,66,80,74,10)
-  -- ses mains agrippees au dossier
-  if hid then
-   rectfill(55,42,58,46,15)
-   rectfill(70,42,73,46,15)
-  end
-  if (fi==5) sspr(16,16,16,16,84,52,32,32)
-  epi_hero(10,52,4)
-  if fi==4 then
-   -- la serviette depliee, brandie, qui scintille
-   sspr(40,16,16,8,10,30+sin(t)*2,32,16)
-   for i=1,3 do pset(8+rnd(36),26+rnd(22),rnd({7,10})) end
-  end
-  -- les crapauds sautillent
-  if fi>1 then
-   for i=0,2 do
-    spr(36,86+i*13+sin(t/2+i/3)*3,84-abs(sin(t+i/3))*6)
+  cls(0)
+  if fi<=2 then
+   -- ecran tv des resultats 20:00
+   rectfill(16,14,112,78,1)
+   rect(16,14,112,78,6)
+   rectfill(20,18,108,74,0)
+   print("20:00 - estimation",28,24,10)
+   print("l'union populaire",30,36,8)
+   print("53.8 %",52,48,7)
+   print("victoire !",44,60,11)
+  elseif fi==3 then
+   -- foule place de la republique
+   rectfill(0,0,127,90,1)
+   -- monument de la republique
+   rectfill(58,20,70,70,5)
+   circfill(64,16,6,7)
+   -- drapeaux en liesse
+   for i=0,6 do
+    spr(36,6+i*18+sin(t+i)*2,50+cos(t/2+i)*3)
    end
+  elseif fi==4 then
+   -- meeting et tribune
+   rectfill(0,0,127,90,1)
+   spr(37,56,66)
+   spr(38,64,66)
+   epi_hero(58,38,3)
+   for i=0,5 do
+    spr(36,6+i*22+sin(t+i)*2,56+cos(t/2+i)*2)
+   end
+  elseif fi==5 then
+   -- decret n.1 / urne constituante
+   rectfill(0,0,127,90,1)
+   sspr(16,16,16,16,48,22,32,32)
+   print("decret n.1",44,60,10)
+   print("assemblee constituante",20,72,7)
   end
  else
-  -- aube : bandes de ciel, soleil qui monte, ostrel en ombre
+  -- aube nouvelle : bandes de ciel tricolore et lever de soleil
   cls(1)
   local c=split("2,8,9,10")
   for i=1,4 do rectfill(0,24+i*8,127,31+i*8,c[i]) end
   local y=68-min(ft+(fi-6)*90,120)/3
   circfill(64,y,12,10)
   circfill(64,y,8,7)
-  -- maisons et tours : toits en triangle
+  -- ville en ombre
   local hs=split("8,14,6,22,10,16,7,12,20,9,11")
   for i=1,11 do
    local x,y=i*12-14,64-hs[i]
@@ -192,8 +190,7 @@ function epilog.draw()
   end
   rectfill(0,64,127,127,3)
   epi_hero(48,66,2)
-  sspr(16,16,16,16,66,66,16,16)
-  if (fi==7) print("legend of the gems",28,12,7)
+  if (fi==7) print("l'union populaire",30,12,7)
  end
 end
 
@@ -248,7 +245,7 @@ function results.draw()
  end
  print("- ta partie -",38,16,10)
  local m=h.mn%60
- local t={"classe : "..classes[h.cl][1],"temps  : "..(h.mn\60).."h"..(m<10 and "0" or "")..m,"niveau : "..h.lv,"morts  : "..h.dth,"score  : "..rs}
+ local t={"militant: "..classes[h.cl][1],"temps   : "..(h.mn\60).."h"..(m<10 and "0" or "")..m,"niveau  : "..h.lv,"replis  : "..h.dth,"score   : "..rs}
  for i,l in ipairs(t) do print(l,28,18+i*8,7) end
  print("rang : "..rr,46,70,ft%30<20 and rc[rr] or 7)
  -- initiales : la lettre en cours clignote, soulignee

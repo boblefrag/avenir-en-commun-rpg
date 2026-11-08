@@ -9,16 +9,16 @@ function town.init(p)
 end
 
 function tmenu()
- menu(split("auberge,objets,armurier,armes,rumeurs,sortir"),4,44,tact,true)
+ menu(split("qg militant,materiel,protections,arguments,rumeurs,sortir"),4,44,tact,true)
 end
 
 function tact(i)
  close()
  if i==1 then
-  confirm("dormir pour "..tw.c.." or ?",tw.c,function()
+  confirm("reposer l'equipe ("..tw.c.." or) ?",tw.c,function()
    h.hp,h.mp,h.town=h.pv,h.pm,tw.i
    save()
-   msg("bonne nuit !\npartie sauvegardee.",tmenu)
+   msg("forces retrouvees !\nstrategie sauvegardee.",tmenu)
   end,tmenu)
  elseif i==2 then
   item_shop()
@@ -33,15 +33,14 @@ function tact(i)
  end
 end
 
--- objets : potion (10 or), super potion (60 or), potion de magie
--- (25 or), 9 max chacune
--- guerrier et voleur (0 pm) : pas de potions de magie en rayon
+-- materiel : cafe (10 or), repas solidaire (60 or), fiche argument (25 or), revue (100 or)
+-- syndicaliste et fact-checker (0 pm) : pas de fiches d'argument en rayon
 function item_shop()
- local ks,pr,nm=split("pot,spo,eth,spe"),split("10,60,25,100"),split("potion,super potion,p. magie,super p. magie")
+ local ks,pr,nm=split("pot,spo,eth,spe"),split("10,60,25,100"),split("cafe militant,repas solidaire,fiche arg.,revue theorique")
  local it,ids={},{}
  for i=1,4 do
   if h.pm>0 or i<3 then
-   add(it,(i==4 and "super p.magie" or nm[i]).." - "..pr[i].." or ("..h[ks[i]].."/9)")
+   add(it,(i==4 and "revue theorique" or nm[i]).." - "..pr[i].." or ("..h[ks[i]].."/9)")
    add(ids,i)
   end
  end
@@ -60,17 +59,17 @@ function item_shop()
   else
    confirm("acheter "..n.."\n("..p.." or) ?",p,function()
     h[k]+=1
-    msg(n.." achetee !\nvous en avez "..h[k].."/9.",item_shop)
+    msg(n.." obtenu !\nvous en avez "..h[k].."/9.",item_shop)
    end,item_shop)
   end
  end,true)
 end
 
--- vente des tresors : un a la fois, ou toutes les babioles d'un coup
+-- dons et soutiens de campagne : versement un par un ou d'un coup
 function sell_shop()
  local it={}
  for i=1,6 do add(it,tres[i][1].." x"..h.tr[i].." - "..tres[i][2].." or") end
- add(it,"vendre toutes les babioles")
+ add(it,"verser tous les dons")
  add(it,"retour")
  menu(it,4,24,function(o)
   close()
@@ -86,11 +85,11 @@ function sell_shop()
    end
   end
   if g==0 then
-   msg("rien a vendre !",sell_shop)
+   msg("aucun don a verser !",sell_shop)
   else
    if (o<7) g=tres[o][2] h.tr[o]-=1
    h.gold=min(9999,h.gold+g)
-   msg("vendu ! +"..g.." or",sell_shop)
+   msg("don verse ! +"..g.." or",sell_shop)
   end
  end,true)
 end
@@ -110,7 +109,7 @@ function armor_shop()
   elseif (h.arm[o] or 0)>=t then
    msg("deja equipe !",armor_shop)
   elseif t>arm_cap[h.cl] then
-   msg("trop lourd pour un\n"..classes[h.cl][1].." !",armor_shop)
+   msg("inadapte pour un\n"..classes[h.cl][1].." !",armor_shop)
   else
    local n,pr=arm_names[o].." "..mat[t],arm_prices[o]*tier_mult[t]
    confirm("acheter "..n.."\n("..pr.." or) ?",pr,function()

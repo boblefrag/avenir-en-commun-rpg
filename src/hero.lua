@@ -167,8 +167,8 @@ end
 -- 4 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
 function items()
  -- iid[i] : numero d'objet (pour use_item) de la ligne i du menu ;
- -- guerrier et voleur (0 pm) ne voient pas les potions de magie
- local t,l,c={},split("potion,super potion,p. magie,super p. magie,serviette,retour"),{h.pot,h.spo,h.eth,h.spe}
+ -- syndicaliste et fact-checker (0 pm) ne voient pas les fiches d'argument
+ local t,l,c={},split("cafe militant,repas solidaire,fiche argument,revue ideol.,programme up,retour"),{h.pot,h.spo,h.eth,h.spe}
  iid={}
  for i=1,6 do
   if h.pm>0 or i<3 or i>4 then
@@ -180,25 +180,25 @@ function items()
 end
 
 -- utilise l'objet o : renvoie le message (nil si retour)
--- et true si l'objet a ete bu
+-- et true si l'objet a ete bu ou consulte
 function use_item(o)
  if o<3 then
   local k=o==1 and "pot" or "spo"
-  if (h[k]<1) return "plus de "..(o==1 and "potion" or "super potion").." !"
-  if (h.hp>=h.pv) return "pv deja au maximum !"
+  if (h[k]<1) return "plus de "..(o==1 and "cafe militant" or "repas solidaire").." !"
+  if (h.hp>=h.pv) return "conviction deja au maximum !"
   h[k]-=1
-  return "vous buvez une "..(o==1 and "" or "super ").."potion !\n"..heal(o==1 and 20 or 80),true
+  return "vous prenez un "..(o==1 and "cafe militant" or "repas solidaire").." !\n"..heal(o==1 and 20 or 80),true
  elseif o==5 then
   return rnd(towel)
  elseif o<5 then
-  -- potion de magie (+15 pm) ou super potion de magie (+50 pm)
-  local k,n=o==3 and "eth" or "spe",(o==3 and "" or "super ").."potion de magie"
+  -- fiche argument (+15 pm) ou revue ideologique (+50 pm)
+  local k,n=o==3 and "eth" or "spe",(o==3 and "fiche argument" or "revue ideologique")
   if (h[k]<1) return "plus de\n"..n.." !"
-  if (h.mp>=h.pm) return "pm deja au maximum !"
+  if (h.mp>=h.pm) return "force arg. deja au max !"
   local g=min(o==3 and 15 or 50,h.pm-h.mp)
   h[k]-=1
   h.mp+=g
-  return "vous buvez une\n"..n.." !\n+"..g.." pm (pm "..h.mp.."/"..h.pm..")",true
+  return "vous etudiez une\n"..n.." !\n+"..g.." pm (pm "..h.mp.."/"..h.pm..")",true
  end
 end
 

@@ -86,8 +86,8 @@ function title.update() end
 
 function title.draw()
  cls()
- print("legend of the gems",28,30,10)
- print("la nuit de grumdor",28,40,13)
+ print("l'union populaire rpg",22,30,10)
+ print("campagne presidentielle",18,40,13)
 end
 
 -- ecran d'intro defilant (crawl spatial annees 80)
@@ -113,7 +113,7 @@ function intro.draw()
  if #wins>0 then
   cls(0)
   stars_draw()
-  print("choisis ta classe :",30,48,10)
+  print("choisis ton militant :",26,48,10)
   return
  end
  crawl(intro_lines)

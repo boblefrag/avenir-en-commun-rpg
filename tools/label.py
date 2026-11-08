@@ -23,14 +23,17 @@ PAL = [(0, 0, 0), (29, 43, 83), (126, 37, 83), (0, 135, 81), (171, 82, 54), (95,
 
 # petite police 3x5 (lettres utilisees seulement ; m fait 5 de large)
 FONT = {
-    "a": ["111", "101", "111", "101", "101"], "d": ["110", "101", "101", "101", "110"],
+    "a": ["111", "101", "111", "101", "101"], "b": ["110", "101", "110", "101", "110"],
+    "c": ["111", "100", "100", "100", "111"], "d": ["110", "101", "101", "101", "110"],
     "e": ["111", "100", "110", "100", "111"], "f": ["111", "100", "110", "100", "100"],
     "g": ["111", "100", "101", "101", "111"], "h": ["101", "101", "111", "101", "101"],
     "i": ["111", "010", "010", "010", "111"], "l": ["100", "100", "100", "100", "111"],
     "m": ["10001", "11011", "10101", "10001", "10001"], "n": ["110", "101", "101", "101", "101"],
-    "o": ["111", "101", "101", "101", "111"], "r": ["110", "101", "110", "101", "101"],
-    "s": ["111", "100", "111", "001", "111"], "t": ["111", "010", "010", "010", "010"],
-    "u": ["101", "101", "101", "101", "111"], " ": ["000"] * 5,
+    "o": ["111", "101", "101", "101", "111"], "p": ["111", "101", "111", "100", "100"],
+    "r": ["110", "101", "110", "101", "101"], "s": ["111", "100", "111", "001", "111"],
+    "t": ["111", "010", "010", "010", "010"], "u": ["101", "101", "101", "101", "111"],
+    "y": ["101", "101", "111", "010", "010"], "'": ["010", "010", "000", "000", "000"],
+    " ": ["000"] * 5,
 }
 
 
@@ -56,6 +59,11 @@ class Img:
             for x in range(-r, r + 1):
                 if x * x + y * y <= r * r + r * .8:
                     self.pset(cx + x, cy + y, c)
+
+    def circ(self, cx, cy, r, c):
+        for deg in range(360):
+            rad = math.radians(deg)
+            self.pset(cx + round(r * math.cos(rad)), cy + round(r * math.sin(rad)), c)
 
     def sspr(self, sx, sy, w, h, dx, dy, k=1, pal=None, flip=False):
         for j in range(h * k):
@@ -89,45 +97,42 @@ def text_w(s, k):
 def draw():
     im = Img()
     random.seed(3)
-    # ciel de nuit en bandes, etoiles
+    # ciel nocturne et aube populaire
     for y in range(128):
-        im.rectfill(0, y, 127, y, 0 if y < 40 else 1)
-    for y in range(40, 46, 2):
+        im.rectfill(0, y, 127, y, 0 if y < 35 else (1 if y < 70 else 2))
+    for y in range(35, 42, 2):
         for x in range(y % 4, 128, 4):
             im.pset(x, y, 0)
-    for _ in range(45):
-        im.pset(random.randrange(128), random.randrange(80), random.choice([5, 6, 7, 13]))
-    # lune
-    im.circfill(100, 56, 13, 6)
-    im.circfill(100, 56, 11, 7)
-    im.circfill(96, 52, 2, 6)
-    im.circfill(104, 60, 3, 6)
-    # grumdor fantome dans le ciel (sombre, yeux rouges)
-    dark = {c: 2 for c in range(1, 16)}
-    dark.update({8: 8, 2: 1, 1: 1, 5: 1})
-    im.sspr(0, 96, 32, 32, 20, 38, 2, pal=dark)
-    # colline et chateau en ombre
+    for _ in range(40):
+        im.pset(random.randrange(128), random.randrange(60), random.choice([5, 6, 7, 10]))
+
+    # grand Phi dore rayonnant au centre
+    cx, cy = 64, 50
+    for r in range(12, 16):
+        im.circ(cx, cy, r, 2)
+    im.rectfill(cx - 1, cy - 12, cx + 1, cy + 12, 10)
+    im.circ(cx, cy, 8, 10)
+    im.circ(cx, cy, 7, 9)
+    im.pset(cx, cy - 13, 7)
+    im.pset(cx, cy + 13, 7)
+
+    # silhouette de ville / monuments et drapeaux
     for x in range(128):
-        y = int(98 - 14 * math.exp(-((x - 72) / 30) ** 2))
+        y = int(96 - 10 * math.exp(-((x - 64) / 40) ** 2))
         im.rectfill(x, y, x, 127, 0)
-    for x0, w, h in ((52, 8, 22), (62, 18, 14), (82, 8, 26), (68, 6, 24)):
-        im.rectfill(x0, 84 - h, x0 + w - 1, 90, 0)
-        for i in range(0, w, 3):
-            im.rectfill(x0 + i, 84 - h - 2, x0 + i + 1, 84 - h - 1, 0)
-    for x, y in ((55, 70), (85, 66), (70, 66), (73, 76)):
-        im.rectfill(x, y, x + 1, y + 2, 10)
-    # heros au premier plan (chevalier, x4) et la princesse
+    # drapeaux qui flottent
+    for i, fx in enumerate((20, 36, 88, 106)):
+        im.rectfill(fx, 72, fx, 96, 5)
+        im.rectfill(fx, 72, fx + 8, 78, 8 if i % 2 == 0 else 12)
+        im.pset(fx + 9, 73, 7)
+
+    # militant au premier plan (x4)
     im.sspr(0, 16, 8, 8, 8, 84, 4, pal={8: 8})
+
     # titre
-    im.text("legend of the", None, 4, 2, 7, shadow=5)
-    im.text("gems", None, 16, 5, 10, shadow=4, outline=0)
-    for i, c in enumerate((6, 12, 8, 4)):
-        x, y = 22 + i * 28, 51
-        for j in range(4):
-            im.rectfill(x - 3 + j, y - j, x + 3 - j, y - j, c)
-            im.rectfill(x - 3 + j, y + j, x + 3 - j, y + j, c)
-        im.pset(x - 1, y - 1, 7)
-    im.text("la nuit de grumdor", None, 120, 1, 13, shadow=0)
+    im.text("l'union", None, 6, 2, 7, shadow=5)
+    im.text("populaire", None, 20, 3, 10, shadow=8, outline=0)
+    im.text("campagne presidentielle", None, 120, 1, 11, shadow=0)
     return im.px
 
 

@@ -18,8 +18,8 @@ function battle.init(m)
 end
 
 function bmenu()
- -- le voleur n'a pas de magie : il se cache a la place
- menu(split("attaque,"..(h.cl==4 and "se cacher" or "magie")..",objet,fuir"),4,74,bact,true)
+ -- le fact-checker n'a pas de magie : il prend du recul mediatique a la place
+ menu(split("attaque,"..(h.cl==4 and "recul med." or "actions")..",materiel,retrait"),4,74,bact,true)
 end
 
 function bact(i)
@@ -40,36 +40,36 @@ function bact(i)
    end
   end,true)
  elseif i==4 then
-  -- cache, le voleur fuit bien plus facilement (agi x6)
+  -- cache, le fact-checker se replie bien plus facilement (agi x6)
   local a=h.agi*(hid and 6 or 1)
   hid=false
   if rnd(a+mo[5])<a then
-   msg("vous prenez la fuite !",back)
+   msg("vous vous repliez !",back)
   else
-   msg("impossible de fuir !",function() monster_turn(bmenu) end)
+   msg("retrait impossible !",function() monster_turn(bmenu) end)
   end
  end
 end
 
--- voleur : test agi contre agi du monstre, bonus x1.5 en donjon
--- (plus sombre). reussi : pas de coup ce tour, et le suivant est
--- une attaque sournoise x3 ou une fuite presque sure.
--- rate : le monstre le repere et frappe x2
+-- fact-checker : test agi contre agi de l'opposant, bonus x1.5 en donjon.
+-- reussi : pas de coup ce tour, et le suivant est
+-- un fact-checking x3 ou un retrait quasi certain.
+-- rate : l'opposant l'assaille et frappe x2
 function hide()
  local a=h.agi*(prev==dungeon and 1.5 or 1)
  if rnd(a+mo[5])<a then
   hid=true
-  msg("vous vous cachez !\n"..mo[1].."\nne vous trouve pas.",bmenu)
+  msg("recul mediatique reussi !\n"..mo[1].."\ns'epuise dans le vide.",bmenu)
  else
-  msg("pas de cachette !\n"..mo[1].."\nvous a repere !",function() monster_turn(bmenu,2) end)
+  msg("la polemique enfle !\n"..mo[1].."\nvous assaille !",function() monster_turn(bmenu,2) end)
  end
 end
 
--- magie en combat : attaque, bouclier, soin, invocation
+-- actions politiques en combat : conviction, bouclier, soutien, constituante
 function bmagic()
  local it,ids=spell_list(function(e) return e<3 or e>5 end)
  if #it==0 then
-  msg("vous ne connaissez\naucun sort !",bmenu)
+  msg("aucun argument pret !",bmenu)
   return
  end
  add(it,"retour")
@@ -80,9 +80,9 @@ function bmagic()
   if not s then
    bmenu()
   elseif h.mp<s[4] then
-   msg("pas assez de pm !",bmenu)
+   msg("force argument. epuisee !",bmenu)
   elseif e==6 and h.hp>=h.pv then
-   msg("pv deja au maximum !",bmenu)
+   msg("conviction deja au maximum !",bmenu)
   else
    h.mp-=s[4]
    local t=s[1].." !\n"
@@ -90,8 +90,8 @@ function bmagic()
     local n=s[3]+flr(rnd(s[3]/4))
     mhp-=n
     blk=10
-    if (e==7) t..="un ange descend du ciel,\nfrappe, et s'en va.\n"
-    t..=mo[1].." perd "..n.." pv"
+    if (e==7) t..="le peuple en marche convoque\nl'assemblee constituante !\n"
+    t..=mo[1].." perd "..n.." conviction"
    elseif e==6 then
     t..=heal(s[3])
    else
@@ -106,7 +106,7 @@ function bmagic()
 end
 
 -- k : diviseur de la def (2 pour le heros qui frappe, 4 pour les
--- monstres : la def du heros protege moins, les monstres font mal)
+-- opposants : la def du heros protege moins, les opposants font mal)
 function dmg(a,d,k)
  return max(1,flr(a-d/(k or 2)+rnd(a/4)))
 end
@@ -115,9 +115,9 @@ function hero_turn(k)
  local n=dmg(h.att,mo[4])*(hid and 3 or 1)
  mhp-=n
  blk=10
- local s=hid and "attaque sournoise !" or "vous donnez un "..(hatk[h.cl] or "coup d'epee").." !"
+ local s=hid and "fact-checking imparable !" or "vous lancez un "..(hatk[h.cl] or "argument").." !"
  hid=false
- s..="\n"..mo[1]..(#mo[1]>14 and "\nperd " or " perd ")..n.." pv"
+ s..="\n"..mo[1]..(#mo[1]>14 and "\nperd " or " perd ")..n.." conviction"
  msg(s,function()
   if mhp<=0 then win() else (k or bmenu)() end
  end)
@@ -128,11 +128,11 @@ function monster_turn(k,x)
  bt+=1
  local sp,n,s,c=mo[12],max(1,flr(dmg(mo[3],h.def,4)*mdk))*(x or 1),"",bt%3==0
  if sp==4 and bt%3==2 then
-  n,s=0,"le minotaure gratte le sol..."
+  n,s=0,"l'oligarque prepare son assaut..."
  elseif sp==5 then
   if rnd()<.25 then
    mhp-=n
-   n,s=0,spn[5]..mo[1].." perd "..n.." pv"
+   n,s=0,spn[5]..mo[1].." perd "..n.." conviction"
   end
  elseif sp==2 and c then
   mhp=min(mhp+25,mmax)
@@ -149,9 +149,9 @@ function monster_turn(k,x)
   sfx(55,3)
  end
  if s=="" then
-  s=mo[1].."\n"..(matk[mo[9]] or "vous attaque").." !\n"
+  s=mo[1].."\n"..(matk[mo[9]] or "vous assaille").." !\n"
  end
- if (n>0) s..="vous perdez "..n.." pv"
+ if (n>0) s..="vous perdez "..n.." conviction"
  msg(s,function()
   if mhp<=0 then win()
   elseif h.hp<=0 then lose()
@@ -160,7 +160,7 @@ function monster_turn(k,x)
 end
 
 function turn()
- -- cache, le voleur frappe toujours en premier
+ -- cache, le fact-checker contre-attaque toujours en premier
  if hid or h.agi+rnd(4)>=mo[5]+rnd(4) then
   hero_turn(function() monster_turn(bmenu) end)
  else
@@ -180,7 +180,7 @@ function win()
  local function fin()
   if up then
    jingle(43,-1)
-   -- nouveaux sorts appris avec ce(s) niveau(x)
+   -- nouvelles competences apprises avec ce(s) niveau(x)
    local t=""
    for i=olv+1,nspells() do
     local s=sp(i)
@@ -194,23 +194,20 @@ function win()
   end
  end
  local k=fin
- -- seuls les boss des donjons 1..4 (zones 11..14) donnent une gemme ;
- -- les monstres de donjon (zones 21..25) n'en donnent pas
+ -- seuls les boss des donjons 1..4 (zones 11..14) donnent un levier de rupture ;
+ -- les opposants de donjon (zones 21..25) n'en donnent pas
  if mo[8]>10 and mo[8]<15 then
   h.gems|=dp.g
   mset(px,py,17)
   local g=gems[dp.d]
   k=function()
-   msg("vous obtenez la gemme\n"..g[1].." !\n"..g[2],fin)
+   msg("vous obtenez le levier\n"..g[1].." !\n"..g[2],fin)
   end
  end
- msg("victoire !\n+"..mo[6].." xp  +"..mo[7].." or"..loot(),k)
+ msg("ralliement !\n"..mo[1].."\nrejoint l'union populaire !\n+"..mo[6].." xp  +"..mo[7].." or"..loot(),k)
 end
 
--- butin : 25% des combats (40% pour le voleur, toujours sur un boss)
--- 40% potion (ou potion de magie si on a des pm ; version super
--- sur les monstres qui donnent 25 or et plus), sinon un tresor
--- d'autant plus precieux que le monstre donne de l'or
+-- soutien militant : 25% des debats (40% pour le fact-checker, toujours sur un boss)
 function loot()
  if (rnd(100)>=(mo[8]\10==1 and 100 or h.cl==4 and 40 or 25)) return ""
  if rnd()<.4 then
@@ -218,7 +215,7 @@ function loot()
   local k=h.pm>0 and rnd()<.5 and (big and "spe" or "eth") or big and "spo" or "pot"
   if h[k]<9 then
    h[k]+=1
-   return "\nobjet : "..({pot="potion",spo="super potion",eth="potion de magie",spe="super p. magie"})[k].." !"
+   return "\nobjet : "..({pot="cafe militant",spo="repas solidaire",eth="fiche argument",spe="revue ideologique"})[k].." !"
   end
  end
  local i=flr(rnd(min(6,1+mo[7]\12)))+1
@@ -226,11 +223,11 @@ function loot()
  return "\nobjet : "..tres[i][1].." !"
 end
 
--- mort : rechargement de la derniere sauvegarde
+-- repli militant en cas de perte de conviction : rechargement du dernier QG
 function lose()
  jingle(42,-1)
- msg("vous etes mort...\nretour a la derniere\nsauvegarde.",function()
-  -- la mort est comptee avant de recharger (load_game la relit)
+ msg("conviction epuisee...\nrepli strategique vers le\ndernier qg de campagne.",function()
+  -- le repli est compte avant de recharger (load_game le relit)
   h.dth+=1
   clock()
   load_game()
