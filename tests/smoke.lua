@@ -115,12 +115,12 @@ ok(nspells()==0,"militant : aucun sort")
 new_hero(2)
 h.eth,h.mp=1,0
 local t,u=use_item(3)
-ok(u and h.eth==0 and h.mp==min(15,h.pm),"fiche argument : pm rendus")
+ok(u and h.eth==0 and h.mp==min(15,h.pm),"cahier thematique : pm rendus")
 h.eth=3
 save()
 h=nil
 load_game()
-ok(h.eth==3,"fiches argument sauvegardees")
+ok(h.eth==3,"cahiers thematiques sauvegardes")
 h.spo,h.hp=1,1
 use_item(2)
 ok(h.spo==0 and h.hp==min(81,h.pv),"repas solidaire : +80 conviction")

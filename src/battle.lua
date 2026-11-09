@@ -19,8 +19,8 @@ function battle.init(m)
 end
 
 function bmenu()
- -- le fact-checker n'a pas d'actions : il prend du recul a la place
- menu(split("convaincre,"..(h.cl==4 and "recul" or "actions")..",materiel,retrait"),4,74,bact,true)
+ -- le fact-checker n'a pas de mobilisation : il prend du recul a la place
+ menu(split("convaincre,"..(h.cl==4 and "recul" or "mobilisation")..",materiel,retrait"),4,74,bact,true)
 end
 
 function bact(i)
@@ -81,7 +81,7 @@ function bmagic()
   if not s then
    bmenu()
   elseif h.mp<s[4] then
-   msg("force argumentative\nepuisee !",bmenu)
+   msg("mobilisation\nepuisee !",bmenu)
   elseif e==6 and h.hp>=h.pv then
    msg("conviction deja au maximum !",bmenu)
   else
@@ -187,7 +187,7 @@ function win()
     local s=sp(i)
     t..=s[1].." ("..s[4].." pm)\n"..sdesc[s[2]].."\n"
    end
-   msg("niveau "..h.lv.." !\npv "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,function()
+   msg("niveau "..h.lv.." !\nconviction "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,function()
     if t>"" then msg("nouveau :\n"..t,back) else back() end
    end)
   else
@@ -216,7 +216,7 @@ function loot()
   local k=h.pm>0 and rnd()<.5 and (big and "spe" or "eth") or big and "spo" or "pot"
   if h[k]<9 then
    h[k]+=1
-   return "\ndon : "..({pot="cafe militant",spo="repas solidaire",eth="fiche argument",spe="revue politique"})[k]
+   return "\ndon : "..({pot="cafe militant",spo="repas solidaire",eth="cahier thematique",spe="revue politique"})[k]
   end
  end
  local i=flr(rnd(min(6,1+mo[7]\12)))+1
