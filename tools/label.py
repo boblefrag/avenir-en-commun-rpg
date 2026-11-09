@@ -21,19 +21,23 @@ PAL = [(0, 0, 0), (29, 43, 83), (126, 37, 83), (0, 135, 81), (171, 82, 54), (95,
        (194, 195, 199), (255, 241, 232), (255, 0, 77), (255, 163, 0), (255, 236, 39),
        (0, 228, 54), (41, 173, 255), (131, 118, 156), (255, 119, 168), (255, 204, 170)]
 
-# petite police 3x5 (lettres utilisees seulement ; m fait 5 de large)
+# petite police 3x5
 FONT = {
     "a": ["111", "101", "111", "101", "101"], "b": ["110", "101", "110", "101", "110"],
     "c": ["111", "100", "100", "100", "111"], "d": ["110", "101", "101", "101", "110"],
     "e": ["111", "100", "110", "100", "111"], "f": ["111", "100", "110", "100", "100"],
     "g": ["111", "100", "101", "101", "111"], "h": ["101", "101", "111", "101", "101"],
-    "i": ["111", "010", "010", "010", "111"], "l": ["100", "100", "100", "100", "111"],
+    "i": ["111", "010", "010", "010", "111"], "j": ["001", "001", "001", "101", "010"],
+    "l": ["100", "100", "100", "100", "111"], "k": ["101", "110", "100", "110", "101"],
     "m": ["10001", "11011", "10101", "10001", "10001"], "n": ["110", "101", "101", "101", "101"],
     "o": ["111", "101", "101", "101", "111"], "p": ["111", "101", "111", "100", "100"],
-    "r": ["110", "101", "110", "101", "101"], "s": ["111", "100", "111", "001", "111"],
-    "t": ["111", "010", "010", "010", "010"], "u": ["101", "101", "101", "101", "111"],
-    "y": ["101", "101", "111", "010", "010"], "'": ["010", "010", "000", "000", "000"],
-    " ": ["000"] * 5,
+    "q": ["111", "101", "101", "111", "001"], "r": ["110", "101", "110", "101", "101"],
+    "s": ["111", "100", "111", "001", "111"], "t": ["111", "010", "010", "010", "010"],
+    "u": ["101", "101", "101", "101", "111"], "v": ["101", "101", "101", "101", "010"],
+    "x": ["101", "101", "010", "101", "101"], "y": ["101", "101", "111", "010", "010"],
+    "6": ["111", "100", "111", "101", "111"], "'": ["010", "010", "000", "000", "000"],
+    "-": ["000", "000", "111", "000", "000"], ".": ["000", "000", "000", "000", "010"],
+    "!": ["010", "010", "010", "000", "010"], " ": ["000"] * 5,
 }
 
 
@@ -96,53 +100,77 @@ def text_w(s, k):
 
 def draw():
     im = Img()
-    random.seed(3)
-    # ciel nocturne et aube populaire
+    random.seed(42)
+    # Ciel degrade : nuit profonde -> bleu roi -> pourpre -> aube doree
     for y in range(128):
-        im.rectfill(0, y, 127, y, 0 if y < 35 else (1 if y < 70 else 2))
-    for y in range(35, 42, 2):
-        for x in range(y % 4, 128, 4):
-            im.pset(x, y, 0)
-    for _ in range(40):
-        im.pset(random.randrange(128), random.randrange(60), random.choice([5, 6, 7, 10]))
+        c = 0 if y < 28 else (1 if y < 50 else (2 if y < 72 else (9 if y < 84 else 10)))
+        im.rectfill(0, y, 127, y, c)
+    # Etoiles scintillantes
+    for _ in range(35):
+        im.pset(random.randrange(128), random.randrange(45), random.choice([7, 10, 12]))
 
-    # grand Phi officiel LFI rayonnant au centre (Bleu Cyan 12 et Blanc 7)
-    cx, cy = 64, 54
-    # aura lumineuse cyan
-    for r in range(16, 22):
+    # Rayons de lumiere emanant du Phi
+    cx, cy = 64, 46
+    for deg in range(0, 360, 18):
+        rad = math.radians(deg)
+        for dist in range(16, 42, 2):
+            rx = cx + int(dist * math.cos(rad))
+            ry = cy + int(dist * math.sin(rad))
+            if 0 <= rx < 128 and 0 <= ry < 85:
+                if dist % 4 == 0:
+                    im.pset(rx, ry, 12 if ry < 60 else 10)
+
+    # Grand Phi d'or et cyan au centre (Phi officiel)
+    for r in range(17, 23):
         im.circ(cx, cy, r, 1)
-    for r in range(13, 16):
+    for r in range(13, 17):
         im.circ(cx, cy, r, 12)
-    # anneau circulaire du Phi
-    for r in range(9, 12):
+    for r in range(9, 13):
         im.circ(cx, cy, r, 12)
     im.circ(cx, cy, 10, 7)
-    # barre verticale centrale du Phi qui traverse l'anneau
-    im.rectfill(cx - 2, cy - 18, cx + 2, cy + 18, 12)
-    im.rectfill(cx - 1, cy - 19, cx + 1, cy + 19, 7)
-    im.pset(cx, cy - 20, 7)
-    im.pset(cx, cy + 20, 7)
+    im.circ(cx, cy, 9, 10)
+    # Barre verticale du Phi
+    im.rectfill(cx - 3, cy - 20, cx + 3, cy + 20, 12)
+    im.rectfill(cx - 1, cy - 22, cx + 1, cy + 22, 7)
+    im.pset(cx, cy - 23, 10)
+    im.pset(cx, cy + 23, 10)
 
-    # silhouette de ville / monuments et drapeaux
+    # Silhouette de la tribune / estrade et foule en ombre
     for x in range(128):
-        y = int(96 - 10 * math.exp(-((x - 64) / 40) ** 2))
+        y = int(98 - 8 * math.exp(-((x - 64) / 45) ** 2))
         im.rectfill(x, y, x, 127, 0)
-    # drapeaux qui flottent (tricolores et rouges)
-    for i, fx in enumerate((18, 34, 90, 108)):
-        im.rectfill(fx, 72, fx, 96, 5)
-        # drapeau tricolore LFI (bleu cyan 12, blanc 7, rouge 8)
-        im.rectfill(fx, 72, fx + 3, 78, 12)
-        im.rectfill(fx + 3, 72, fx + 6, 78, 7)
-        im.rectfill(fx + 6, 72, fx + 9, 78, 8)
-        im.pset(fx + 10, 73, 7)
+    im.rectfill(0, 106, 127, 127, 0)
 
-    # militant au premier plan (x4) avec veste rouge et badge cyan
-    im.sspr(0, 16, 8, 8, 8, 84, 4, pal={8: 8})
+    # Drapeaux tricolores en fond (bleu cyan 12, blanc 7, rouge 8)
+    for fx, fy in ((10, 68), (30, 64), (92, 64), (112, 68)):
+        im.rectfill(fx, fy, fx, fy + 26, 5)
+        im.rectfill(fx, fy, fx + 3, fy + 7, 12)
+        im.rectfill(fx + 3, fy, fx + 6, fy + 7, 7)
+        im.rectfill(fx + 6, fy, fx + 9, fy + 7, 8)
+        im.pset(fx + 9, fy + 1, 8)
 
-    # titre
-    im.text("l'union", None, 6, 2, 7, shadow=1)
-    im.text("populaire", None, 20, 3, 12, shadow=1, outline=7)
-    im.text("campagne presidentielle", None, 120, 1, 10, shadow=0)
+    # Les 4 militants reunis au premier plan (taille x3)
+    # classes : 1 syndicaliste (8 rouge), 2 intellectuel (12 cyan),
+    # 3 organisateur (7 blanc), 4 fact-checker (11 vert)
+    coords = [
+        (16, 78, 7),   # Organisateur
+        (40, 74, 8),   # Syndicaliste (au centre gauche)
+        (64, 74, 12),  # Intellectuel (au centre droit)
+        (88, 78, 11),  # Fact-checker
+    ]
+    for mx, my, col in coords:
+        im.sspr(0, 16, 8, 8, mx, my, 3, pal={8: col})
+
+    # Titre en haut
+    im.text("l'union", None, 4, 2, 7, shadow=2)
+    im.text("populaire", None, 17, 3, 12, shadow=1, outline=7)
+    im.text("rpg", None, 34, 2, 10, shadow=0, outline=1)
+
+    # Bandeau du bas : mot d'ordre
+    im.rectfill(0, 118, 127, 127, 1)
+    im.rectfill(0, 118, 127, 118, 12)
+    im.text("pour la 6e republique", None, 121, 1, 10, shadow=0)
+
     return im.px
 
 
