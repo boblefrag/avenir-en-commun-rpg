@@ -263,10 +263,11 @@ function battle.draw()
  end
  pal(11,mo[10])
  pal(3,mo[11])
+ pal(13,0)
  -- 16x16 agrandi x3, boss 32x32 agrandi x2
  local n=mo[9]
  local s,w=16,48
- if (n>127) s,w=32,64
+ if (mo[8]\10==1) s,w=32,64
  if (blk%4<2) sspr(n%16*8,n\16*8,s,s,64-w/2-sin(hit/24)*10,44-w/2,w,w)
  pal()
  hud()

@@ -31,16 +31,16 @@ DSIZES = []  # cote de chaque donjon, rempli par main()
 
 # nom, type (v ville, d donjon, c chateau), x, y, donjon, gemme, prix auberge, rumeurs
 PLACES = [
-    ("kalden", "v", 24, 98, 0, 0, 5, 1),
-    ("port-sel", "v", 26, 54, 0, 0, 6, 2),
-    ("nordheim", "v", 64, 16, 0, 0, 10, 3),
-    ("port-ecume", "v", 56, 119, 0, 0, 10, 4),
-    ("cendre", "v", 100, 95, 0, 0, 15, 5),
-    ("tour des brumes", "d", 106, 42, 1, VENT, 0, 0),
-    ("grotte engloutie", "d", 14, 64, 2, EAU_G, 0, 0),
-    ("volcan", "d", 100, 103, 3, FEU, 0, 0),
-    ("temple", "d", 96, 62, 4, TERRE, 0, 0),
-    ("chateau de grumdor", "c", 62, 64, 5, 0, 0, 0),
+    ("saint-denis", "v", 24, 98, 0, 0, 5, 1),
+    ("marseille", "v", 26, 54, 0, 0, 6, 2),
+    ("lille", "v", 64, 16, 0, 0, 10, 3),
+    ("nantes", "v", 56, 119, 0, 0, 10, 4),
+    ("toulouse", "v", 100, 95, 0, 0, 15, 5),
+    ("tour des medias", "d", 106, 42, 1, VENT, 0, 0),
+    ("banque offshore", "d", 14, 64, 2, EAU_G, 0, 0),
+    ("tour d'austerite", "d", 100, 103, 3, FEU, 0, 0),
+    ("lobby central", "d", 96, 62, 4, TERRE, 0, 0),
+    ("palais de l'elysee", "c", 62, 64, 5, 0, 0, 0),
 ]
 SPRITE = {"v": 10, "d": 11, "c": 12}
 CHAIN_C, FOREST_C, VOLC_C = (62, 64), (96, 62), (100, 100)
