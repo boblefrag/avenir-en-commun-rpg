@@ -177,10 +177,15 @@ def render_all():
     s7.circfill(64, 36, 12, 10)
     s7.circfill(64, 36, 8, 7)
     s7.rectfill(0, 56, 127, 127, 3)
-    # les 4 militants
-    classes_col = [8, 12, 7, 11]
-    for i, col in enumerate(classes_col):
-        s7.sspr(0, 16, 8, 8, 18 + (i + 1) * 20, 44, 2, pal={8: col})
+    # les 4 militants : un blanc, un noir, un arabe, un asiatique
+    militants = [
+        (8, 15, 4),   # Blanc : rouge, peau claire 15, cheveux chatains 4
+        (12, 4, 0),   # Noir : cyan, peau foncee 4, cheveux noirs 0
+        (7, 9, 0),    # Arabe : blanc, peau mate ambree 9, cheveux noirs 0
+        (11, 15, 0),  # Asiatique : vert, peau ivoire 15, cheveux noirs 0
+    ]
+    for i, (tunic, skin, hair) in enumerate(militants):
+        s7.sspr(0, 16, 8, 8, 18 + (i + 1) * 20, 44, 2, pal={8: tunic, 15: skin, 4: hair})
     s7.circ(64, 24, 7, 12)
     for y in range(14, 35): s7.pset(64, y, 7)
     s7.print_text("place au peuple !", 30, 8, 10)

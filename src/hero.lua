@@ -205,8 +205,14 @@ function use_item(o)
  end
 end
 
+function hero_pal(cl)
+ pal(8,classes[cl][2])
+ pal(15,skins[cl])
+ pal(4,hairs[cl])
+end
+
 function hero_spr()
- pal(8,classes[h.cl][2])
+ hero_pal(h.cl)
  local s,flip=32,false
  if mv and mv>0 then
   s=33

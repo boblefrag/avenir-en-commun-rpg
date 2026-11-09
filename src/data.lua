@@ -11,6 +11,10 @@ end
 -- pv (conviction), pm (force argument), att, def, agi de depart, puis gain par niveau
 classes=tbl("militant,8,30,0,8,6,4,6,0,3,2,1|streamer,12,18,12,3,3,5,3,4,1,1,1|street medic,7,24,8,5,6,4,4,3,2,2,1|fact-checker,11,22,0,6,4,9,4,0,2,1,3")
 
+-- representation diverse des 4 militants : un blanc (15,4), un noir (4,0), un arabe (9,0), un asiatique (15,0)
+skins=split("15,4,9,15")
+hairs=split("4,0,0,0")
+
 -- opposants : nom,pv,att,def,agi,xp,or,zone,sprite,couleur1,couleur2,special
 -- zones : 1 plaine, 2 foret, 3 plaine du nord, 4 foret du nord, 5 cote,
 -- 21..25 donjon 1..5, 11..15 boss du donjon 1..5

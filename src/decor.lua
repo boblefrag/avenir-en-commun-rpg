@@ -128,7 +128,7 @@ function epilog.update() end
 
 -- sprites agrandis : heros x4 (8 -> 32), princesse x2 (16 -> 32)
 function epi_hero(x,y,k)
- pal(8,classes[h.cl][2])
+ hero_pal(h.cl)
  sspr(0,16,8,8,x,y,8*k,8*k)
  pal()
 end
@@ -201,7 +201,7 @@ function epilog.draw()
    print("L'AUBE DU PEUPLE",32,8,7)
   else
    for i=1,4 do
-    pal(8,classes[i][2])
+    hero_pal(i)
     sspr(0,16,8,8,18+i*20,44,16,16)
    end
    pal()

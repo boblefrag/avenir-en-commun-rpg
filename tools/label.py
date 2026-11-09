@@ -183,14 +183,15 @@ def draw():
             im.rectfill(fx, fy, fx + 8, fy + 7, 8)   # drapeau rouge
 
     # Les 4 militants reunis au premier plan (taille x3)
+    # Representation diverse : un blanc, un noir, un arabe, un asiatique
     coords = [
-        (16, 78, 7),   # Street Medic (7 blanc)
-        (40, 75, 8),   # Syndicaliste (8 rouge)
-        (64, 75, 12),  # Streamer / Militant (12 cyan)
-        (88, 78, 11),  # Fact-checker (11 vert)
+        (16, 78, 7, 9, 0),    # Arabe (Street Medic : tunique 7, peau 9 mate, cheveux 0 noirs)
+        (40, 75, 8, 15, 4),   # Blanc (Syndicaliste : tunique 8, peau 15 claire, cheveux 4 chatains)
+        (64, 75, 12, 4, 0),   # Noir (Streamer : tunique 12, peau 4 foncee, cheveux 0 noirs)
+        (88, 78, 11, 15, 0),  # Asiatique (Fact-checker : tunique 11, peau 15 ivoire, cheveux 0 noirs)
     ]
-    for mx, my, col in coords:
-        im.sspr(0, 16, 8, 8, mx, my, 3, pal={8: col})
+    for mx, my, col, skin, hair in coords:
+        im.sspr(0, 16, 8, 8, mx, my, 3, pal={8: col, 15: skin, 4: hair})
 
     # Titre en haut, bien au-dessus du Phi pour ne pas le masquer
     im.text("l'union", None, 5, 2, 7, shadow=1)
