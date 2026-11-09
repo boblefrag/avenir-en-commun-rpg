@@ -7,5 +7,6 @@ __pycache__/
 .DS_Store
 *.p8.png
 !legend_of_the_gems.p8.png
+!union_populaire_rpg.p8.png
 # cart d'export (code nettoye), regenere par tools/build.py
 legend_of_the_gems.p8
