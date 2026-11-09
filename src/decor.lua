@@ -138,15 +138,15 @@ function epilog.draw()
  local t=ft/30
  cls(1)
  if fi==1 then
-  box(14,12,100,72)
-  rectfill(18,16,110,80,1)
-  print(">> 20:00 - ELECTION <<",20,20,7)
-  print("VICTOIRE DE LFI !",30,34,10)
-  rectfill(24,50,78,60,12)
-  rectfill(79,50,104,60,8)
-  print("54.0 %",42,52,7)
-  print("46 %",86,52,7)
-  print("LE PEUPLE L'EMPORTE",24,68,11)
+  box(14,10,100,74)
+  rectfill(16,12,111,81,1)
+  print(">> 20:00 - ELECTION <<",20,16,7)
+  print("VICTOIRE DE LFI !",30,30,10)
+  rectfill(24,46,78,58,12)
+  rectfill(79,46,104,58,8)
+  print("54.0 %",40,49,7)
+  print("46 %",86,49,7)
+  print("LE PEUPLE L'EMPORTE",26,66,11)
  elseif fi==2 then
   rectfill(0,0,127,90,1)
   rectfill(12,24,116,74,5)
@@ -175,20 +175,20 @@ function epilog.draw()
   spr(37,56,56)
   spr(38,64,56)
   rectfill(12,66,116,78,12)
-  print("L'AVENIR EN COMMUN",26,70,7)
+  print("L'AVENIR EN COMMUN",28,70,7)
   for i=0,6 do
    spr(36,4+i*19+sin(t+i)*2,58+cos(t/2+i)*2)
   end
  elseif fi==5 then
-  rectfill(24,12,104,78,7)
-  rect(24,12,104,78,10)
-  print("REPUBLIQUE FRANCAISE",26,18,1)
-  print("DECRET N. 1",44,28,8)
-  print("ASSEMBLEE CONSTITUANTE",26,40,1)
-  print("POUR LA 6E REPUBLIQUE",27,50,12)
-  circfill(64,66,8,12)
-  circfill(64,66,5,7)
-  circfill(64,66,3,8)
+  rectfill(16,10,111,84,7)
+  rect(16,10,111,84,10)
+  print("REPUBLIQUE FRANCAISE",24,18,1)
+  print("DECRET N. 1",42,28,8)
+  print("ASSEMBLEE CONSTITUANTE",20,40,1)
+  print("POUR LA 6E REPUBLIQUE",22,50,12)
+  circfill(64,68,7,12)
+  circfill(64,68,4,7)
+  circfill(64,68,2,8)
  else
   local c=split("2,8,9,10,12")
   for i=1,5 do rectfill(0,16+i*8,127,23+i*8,c[i]) end
@@ -264,7 +264,7 @@ function results.draw()
  print("- ta partie -",38,16,10)
  local m=h.mn%60
  local t={"militant: "..classes[h.cl][1],"temps   : "..(h.mn\60).."h"..(m<10 and "0" or "")..m,"niveau  : "..h.lv,"replis  : "..h.dth,"score   : "..rs}
- for i,l in ipairs(t) do print(l,28,18+i*8,7) end
+ for i,l in ipairs(t) do print(l,24,18+i*8,7) end
  print("rang : "..rr,46,70,ft%30<20 and rc[rr] or 7)
  -- initiales : la lettre en cours clignote, soulignee
  print("initiales :",22,86,6)

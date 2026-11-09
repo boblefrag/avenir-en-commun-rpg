@@ -13,54 +13,31 @@ from label import Img, PAL
 
 ART_DIR = Path("/Users/yohann.gabory/.gemini/antigravity-cli/brain/cdd92d69-1c3e-4940-8443-91cf1de394f9")
 
-# Police PICO-8 4x6 simplifiee
-FONT_4X6 = {
-    "a": ["0110", "1001", "1111", "1001", "1001"],
-    "b": ["1110", "1001", "1110", "1001", "1110"],
-    "c": ["0111", "1000", "1000", "1000", "0111"],
-    "d": ["1110", "1001", "1001", "1001", "1110"],
-    "e": ["1111", "1000", "1110", "1000", "1111"],
-    "f": ["1111", "1000", "1110", "1000", "1000"],
-    "g": ["0111", "1000", "1011", "1001", "0111"],
-    "h": ["1001", "1001", "1111", "1001", "1001"],
-    "i": ["1110", "0100", "0100", "0100", "1110"],
-    "j": ["0011", "0001", "0001", "1001", "0110"],
-    "k": ["1001", "1010", "1100", "1010", "1001"],
-    "l": ["1000", "1000", "1000", "1000", "1111"],
-    "m": ["10001", "11011", "10101", "10001", "10001"],
-    "n": ["1001", "1101", "1011", "1001", "1001"],
-    "o": ["0110", "1001", "1001", "1001", "0110"],
-    "p": ["1110", "1001", "1110", "1000", "1000"],
-    "q": ["0110", "1001", "1001", "0110", "0001"],
-    "r": ["1110", "1001", "1110", "1010", "1001"],
-    "s": ["0111", "1000", "0110", "0001", "1110"],
-    "t": ["1111", "0100", "0100", "0100", "0100"],
-    "u": ["1001", "1001", "1001", "1001", "0110"],
-    "v": ["1001", "1001", "1001", "0110", "0100"],
-    "w": ["10001", "10001", "10101", "11011", "10001"],
-    "x": ["1001", "0110", "0000", "0110", "1001"],
-    "y": ["1001", "1001", "0110", "0010", "0100"],
-    "z": ["1111", "0010", "0100", "1000", "1111"],
-    "0": ["0110", "1011", "1101", "1001", "0110"],
-    "1": ["0100", "1100", "0100", "0100", "1110"],
-    "2": ["1110", "0001", "0110", "1000", "1111"],
-    "3": ["1110", "0001", "0110", "0001", "1110"],
-    "4": ["1001", "1001", "1111", "0001", "0001"],
-    "5": ["1111", "1000", "1110", "0001", "1110"],
-    "6": ["0111", "1000", "1110", "1001", "0110"],
-    "7": ["1111", "0001", "0010", "0100", "0100"],
-    "8": ["0110", "1001", "0110", "1001", "0110"],
-    "9": ["0110", "1001", "0111", "0001", "1110"],
-    ":": ["000", "010", "000", "010", "000"],
-    "%": ["101", "001", "010", "100", "101"],
-    "-": ["000", "000", "111", "000", "000"],
-    ".": ["000", "000", "000", "000", "010"],
-    "!": ["010", "010", "010", "000", "010"],
-    "'": ["010", "010", "000", "000", "000"],
-    ">": ["100", "010", "001", "010", "100"],
-    "<": ["001", "010", "100", "010", "001"],
-    "+": ["000", "010", "111", "010", "000"],
-    " ": ["000", "000", "000", "000", "000"],
+# Police PICO-8 3x5 exacte (pitch fixe 4 pixels par caractere)
+FONT_3X5 = {
+    "a": ["111", "101", "111", "101", "101"], "b": ["110", "101", "110", "101", "110"],
+    "c": ["111", "100", "100", "100", "111"], "d": ["110", "101", "101", "101", "110"],
+    "e": ["111", "100", "110", "100", "111"], "f": ["111", "100", "110", "100", "100"],
+    "g": ["111", "100", "101", "101", "111"], "h": ["101", "101", "111", "101", "101"],
+    "i": ["111", "010", "010", "010", "111"], "j": ["001", "001", "001", "101", "010"],
+    "k": ["101", "110", "100", "110", "101"], "l": ["100", "100", "100", "100", "111"],
+    "m": ["101", "111", "101", "101", "101"], "n": ["110", "101", "101", "101", "101"],
+    "o": ["111", "101", "101", "101", "111"], "p": ["111", "101", "111", "100", "100"],
+    "q": ["111", "101", "101", "111", "001"], "r": ["110", "101", "110", "101", "101"],
+    "s": ["111", "100", "111", "001", "111"], "t": ["111", "010", "010", "010", "010"],
+    "u": ["101", "101", "101", "101", "111"], "v": ["101", "101", "101", "101", "010"],
+    "w": ["101", "101", "101", "111", "101"], "x": ["101", "101", "010", "101", "101"],
+    "y": ["101", "101", "111", "010", "010"], "z": ["111", "001", "010", "100", "111"],
+    "0": ["111", "101", "101", "101", "111"], "1": ["010", "110", "010", "010", "111"],
+    "2": ["111", "001", "111", "100", "111"], "3": ["111", "001", "111", "001", "111"],
+    "4": ["101", "101", "111", "001", "001"], "5": ["111", "100", "111", "001", "111"],
+    "6": ["111", "100", "111", "101", "111"], "7": ["111", "001", "010", "010", "010"],
+    "8": ["111", "101", "111", "101", "111"], "9": ["111", "101", "111", "001", "111"],
+    ":": ["000", "010", "000", "010", "000"], "%": ["101", "001", "010", "100", "101"],
+    "-": ["000", "000", "111", "000", "000"], ".": ["000", "000", "000", "000", "010"],
+    "!": ["010", "010", "010", "000", "010"], "'": ["010", "010", "000", "000", "000"],
+    ">": ["100", "010", "001", "010", "100"], "<": ["001", "010", "100", "010", "001"],
+    "/": ["001", "001", "010", "100", "100"], " ": ["000", "000", "000", "000", "000"],
 }
 
 
@@ -79,26 +56,21 @@ class Screen(Img):
         for line in lines:
             cx = x
             for ch in line:
-                glyph = FONT_4X6.get(ch, FONT_4X6[" "])
+                glyph = FONT_3X5.get(ch, FONT_3X5[" "])
                 for row_idx, row in enumerate(glyph):
                     for col_idx, b in enumerate(row):
                         if b == "1":
                             self.pset(cx + col_idx, cy + row_idx, col)
-                cx += len(glyph[0]) + 1
-            cy += 6
+                cx += 4  # avancement strict PICO-8 (3px caractere + 1px espacement)
+            cy += 6      # interligne strict PICO-8 (5px hauteur + 1px interligne)
 
     def draw_box(self, x, y, w, h):
         self.rectfill(x, y, x + w - 1, y + h - 1, 0)
-        for i in range(x, x + w):
-            self.pset(i, y, 7)
-            self.pset(i, y + h - 1, 7)
-        for j in range(y, y + h):
-            self.pset(x, j, 7)
-            self.pset(x + w - 1, j, 7)
+        self.rect(x, y, x + w - 1, y + h - 1, 7)
 
     def draw_msg(self, text):
-        self.draw_box(2, 94, 124, 32)
-        self.print_text(text, 6, 97, 7)
+        self.draw_box(2, 96, 124, 30)
+        self.print_text(text, 6, 100, 7)
 
 
 def render_all():
@@ -112,34 +84,29 @@ def render_all():
     # Scene 1: 20:00 - ELECTION
     s1 = Screen()
     for y in range(128): s1.rectfill(0, y, 127, y, 1)
-    s1.draw_box(14, 10, 100, 76)
-    s1.rectfill(16, 12, 111, 83, 1)
+    s1.draw_box(14, 10, 100, 74)
+    s1.rectfill(16, 12, 111, 81, 1)
     s1.print_text(">> 20:00 - election <<", 20, 16, 7)
-    s1.print_text("victoire de lfi !", 30, 28, 10)
-    s1.rectfill(24, 42, 78, 56, 12)
-    s1.rectfill(79, 42, 104, 56, 8)
-    s1.print_text("54.0 %", 38, 46, 7)
-    s1.print_text("46 %", 84, 46, 7)
-    s1.print_text("le peuple l'emporte", 24, 66, 11)
+    s1.print_text("victoire de lfi !", 30, 30, 10)
+    s1.rectfill(24, 46, 78, 58, 12)
+    s1.rectfill(79, 46, 104, 58, 8)
+    s1.print_text("54.0 %", 40, 49, 7)
+    s1.print_text("46 %", 86, 49, 7)
+    s1.print_text("le peuple l'emporte", 26, 66, 11)
     s1.draw_msg(dialogues[0])
     scenes.append(("ending_1_election.png", s1))
 
     # Scene 2: PALAIS DESERTE
     s2 = Screen()
     for y in range(128): s2.rectfill(0, y, 127, y, 1)
-    s2.rectfill(12, 20, 116, 74, 5)
-    for x in range(12, 117):
-        s2.pset(x, 20, 0)
-        s2.pset(x, 74, 0)
-    for y in range(20, 75):
-        s2.pset(12, y, 0)
-        s2.pset(116, y, 0)
-    s2.rectfill(56, 36, 72, 54, 9)
-    s2.circfill(64, 34, 6, 10)
-    s2.rectfill(0, 74, 127, 92, 0)
+    s2.rectfill(12, 24, 116, 74, 5)
+    s2.rect(12, 24, 116, 74, 0)
+    s2.rectfill(56, 38, 72, 56, 9)
+    s2.circfill(64, 36, 6, 10)
+    s2.rectfill(0, 74, 127, 90, 0)
     s2.rectfill(68, 76, 108, 86, 0)
     s2.circfill(112, 82, 6, 10)
-    s2.print_text("palais deserte", 36, 12, 7)
+    s2.print_text("palais deserte", 36, 14, 7)
     s2.draw_msg(dialogues[1])
     scenes.append(("ending_2_palais.png", s2))
 
@@ -151,9 +118,9 @@ def render_all():
         fy = 16 + (i % 2) * 8
         s3.circ(fx, fy, 6, 8 if i % 2 == 0 else 10)
         s3.circ(fx, fy, 3, 7)
-    s3.rectfill(52, 46, 76, 78, 5)
-    s3.rectfill(60, 24, 68, 48, 6)
-    s3.circfill(64, 20, 6, 7)
+    s3.rectfill(52, 50, 76, 78, 5)
+    s3.rectfill(60, 26, 68, 50, 6)
+    s3.circfill(64, 22, 6, 7)
     # foule et drapeaux
     for i in range(7):
         dx = 6 + i * 17
@@ -161,7 +128,6 @@ def render_all():
         s3.rectfill(dx + 2, 62, dx + 4, 68, 7)
         s3.rectfill(dx + 4, 62, dx + 6, 68, 8)
         s3.circfill(dx + 2, 74, 2, 15)
-    s3.print_text("maree populaire", 32, 6, 10)
     s3.draw_msg(dialogues[2])
     scenes.append(("ending_3_republique.png", s3))
 
@@ -169,33 +135,25 @@ def render_all():
     s4 = Screen()
     for y in range(128): s4.rectfill(0, y, 127, y, 1)
     # heros avec l'avenir en commun
-    s4.sspr(0, 16, 8, 8, 52, 20, 3, pal={8: 8})
-    s4.rectfill(48, 52, 80, 64, 12)
-    s4.rect(48, 52, 80, 64, 7)
-    s4.print_text("phi", 58, 55, 7)
-    s4.rectfill(12, 70, 116, 84, 12)
-    s4.print_text("l'avenir en commun", 24, 74, 7)
+    s4.sspr(0, 16, 8, 8, 52, 24, 3, pal={8: 8})
+    s4.rectfill(12, 66, 116, 78, 12)
+    s4.print_text("l'avenir en commun", 28, 70, 7)
     s4.draw_msg(dialogues[3])
     scenes.append(("ending_4_programme.png", s4))
 
     # Scene 5: ASSEMBLEE CONSTITUANTE
     s5 = Screen()
     for y in range(128): s5.rectfill(0, y, 127, y, 1)
-    s5.rectfill(20, 8, 108, 86, 7)
-    for x in range(20, 109):
-        s5.pset(x, 8, 10)
-        s5.pset(x, 86, 10)
-    for y in range(8, 87):
-        s5.pset(20, y, 10)
-        s5.pset(108, y, 10)
-    s5.print_text("republique francaise", 22, 14, 1)
-    s5.print_text("decret n. 1", 42, 26, 8)
-    s5.print_text("assemblee constituante", 22, 38, 1)
-    s5.print_text("pour la 6e republique", 24, 50, 12)
+    s5.rectfill(16, 10, 111, 84, 7)
+    s5.rect(16, 10, 111, 84, 10)
+    s5.print_text("republique francaise", 24, 18, 1)
+    s5.print_text("decret n. 1", 42, 28, 8)
+    s5.print_text("assemblee constituante", 20, 40, 1)
+    s5.print_text("pour la 6e republique", 22, 50, 12)
     # Sceau tricolore
-    s5.circfill(64, 68, 9, 12)
-    s5.circfill(64, 68, 6, 7)
-    s5.circfill(64, 68, 3, 8)
+    s5.circfill(64, 68, 7, 12)
+    s5.circfill(64, 68, 4, 7)
+    s5.circfill(64, 68, 2, 8)
     s5.draw_msg(dialogues[4])
     scenes.append(("ending_5_constituante.png", s5))
 
@@ -206,9 +164,9 @@ def render_all():
         s6.rectfill(0, 12 + i * 8, 127, 19 + i * 8, c)
     s6.circfill(64, 38, 13, 10)
     s6.circfill(64, 38, 9, 7)
-    s6.rectfill(0, 52, 127, 92, 3)
-    s6.sspr(0, 16, 8, 8, 56, 44, 2, pal={8: 8})
-    s6.print_text("l'aube du peuple", 30, 4, 7)
+    s6.rectfill(0, 56, 127, 127, 3)
+    s6.sspr(0, 16, 8, 8, 56, 48, 2, pal={8: 8})
+    s6.print_text("l'aube du peuple", 32, 8, 7)
     s6.draw_msg(dialogues[5])
     scenes.append(("ending_6_aube.png", s6))
 
@@ -218,14 +176,14 @@ def render_all():
         s7.rectfill(0, 12 + i * 8, 127, 19 + i * 8, c)
     s7.circfill(64, 36, 12, 10)
     s7.circfill(64, 36, 8, 7)
-    s7.rectfill(0, 52, 127, 92, 3)
+    s7.rectfill(0, 56, 127, 127, 3)
     # les 4 militants
     classes_col = [8, 12, 7, 11]
     for i, col in enumerate(classes_col):
-        s7.sspr(0, 16, 8, 8, 16 + i * 26, 40, 2, pal={8: col})
-    s7.circ(64, 20, 7, 12)
-    for y in range(12, 28): s7.pset(64, y, 7)
-    s7.print_text("place au peuple !", 28, 4, 10)
+        s7.sspr(0, 16, 8, 8, 18 + (i + 1) * 20, 44, 2, pal={8: col})
+    s7.circ(64, 24, 7, 12)
+    for y in range(14, 35): s7.pset(64, y, 7)
+    s7.print_text("place au peuple !", 30, 8, 10)
     s7.draw_msg(dialogues[6])
     scenes.append(("ending_7_victoire.png", s7))
 
@@ -233,30 +191,30 @@ def render_all():
     s8 = Screen()
     for y in range(128): s8.rectfill(0, y, 127, y, 1)
     s8.draw_box(8, 8, 112, 112)
-    s8.print_text("- ta partie -", 38, 14, 10)
+    s8.print_text("- ta partie -", 38, 16, 10)
     stats = [
-        "militant: syndicaliste",
+        "militant: militant",
         "temps   : 0h42",
         "niveau  : 14",
         "replis  : 0",
         "score   : 3450",
     ]
     for i, l in enumerate(stats):
-        s8.print_text(l, 26, 26 + i * 9, 7)
-    s8.print_text("rang : a", 44, 74, 11)
-    s8.print_text("initiales :", 22, 90, 6)
-    s8.print_text("y", 76, 90, 10)
-    s8.print_text("g", 86, 90, 7)
-    s8.print_text("a", 96, 90, 7)
-    for x in range(76, 82): s8.pset(x, 96, 10)
-    s8.print_text("o : valider les initiales", 14, 106, 5)
+        s8.print_text(l, 24, 18 + (i + 1) * 8, 7)
+    s8.print_text("rang : a", 46, 70, 11)
+    s8.print_text("initiales :", 22, 86, 6)
+    s8.print_text("y", 78, 86, 10)
+    s8.print_text("g", 86, 86, 7)
+    s8.print_text("a", 94, 86, 7)
+    for x in range(78, 81): s8.pset(x, 92, 10)
+    s8.print_text("haut/bas : lettre  o : ok", 14, 106, 5)
     scenes.append(("ending_8_bilan.png", s8))
 
     # Scene 9: TABLEAU D'HONNEUR (HOF)
     s9 = Screen()
     for y in range(128): s9.rectfill(0, y, 127, y, 1)
     s9.draw_box(8, 8, 112, 112)
-    s9.print_text("- meilleurs scores -", 22, 14, 10)
+    s9.print_text("- meilleurs scores -", 24, 18, 10)
     hof_entries = [
         ("1. jlm", "3800", "s", 10),
         ("2. yga", "3450", "a", 11),
@@ -265,10 +223,9 @@ def render_all():
         ("5. bom", "2400", "b", 12),
     ]
     for i, (name, sc, rg, col) in enumerate(hof_entries):
-        s9.print_text(name, 24, 28 + i * 14, 10 if i == 1 else 7)
-        s9.print_text(sc, 66, 28 + i * 14, 7)
-        s9.print_text(rg, 96, 28 + i * 14, col)
-    s9.print_text("o : voir le generique", 20, 106, 5)
+        s9.print_text(name + "  " + sc, 30, 26 + (i + 1) * 10, 10 if i == 1 else 7)
+        s9.print_text(rg, 92, 26 + (i + 1) * 10, col)
+    s9.print_text("o : continuer", 38, 108, 5)
     scenes.append(("ending_9_hof.png", s9))
 
     # Ecriture des fichiers PNG en x3

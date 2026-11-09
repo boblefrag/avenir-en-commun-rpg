@@ -101,74 +101,105 @@ def text_w(s, k):
 def draw():
     im = Img()
     random.seed(42)
-    # Ciel degrade : nuit profonde -> bleu roi -> pourpre -> aube doree
+    # Ciel nocturne majestueux : noir -> bleu marine -> bleu nuit -> violet
     for y in range(128):
-        c = 0 if y < 28 else (1 if y < 50 else (2 if y < 72 else (9 if y < 84 else 10)))
+        c = 0 if y < 35 else (1 if y < 70 else (2 if y < 98 else 0))
         im.rectfill(0, y, 127, y, c)
-    # Etoiles scintillantes
-    for _ in range(35):
-        im.pset(random.randrange(128), random.randrange(45), random.choice([7, 10, 12]))
 
-    # Rayons de lumiere emanant du Phi
-    cx, cy = 64, 46
-    for deg in range(0, 360, 18):
+    # Etoiles scintillantes dans la nuit
+    for _ in range(40):
+        im.pset(random.randrange(128), random.randrange(60), random.choice([7, 6, 12]))
+
+    # Le symbole PHI officiel de La France Insoumise (lettre grecque φ)
+    # Centre a (64, 53)
+    cx, cy = 64, 53
+
+    # Halo / lueur diffuse cyan derriere le Phi
+    for y in range(cy - 28, cy + 29):
+        for x in range(cx - 26, cx + 27):
+            dx, dy = x - cx, y - cy
+            d_out = (dx / 22.0) ** 2 + (dy / 17.0) ** 2
+            d_in = (dx / 9.0) ** 2 + (dy / 5.0) ** 2
+            in_stem = (abs(dx) <= 5) and (abs(dy) <= 26)
+            if (d_out <= 1.0 and d_in >= 1.0) or in_stem:
+                if (x + y) % 2 == 0:
+                    im.pset(x, y, 1)
+
+    # Ombre portee du Phi (noir/bleu sombre)
+    for y in range(cy - 25, cy + 26):
+        for x in range(cx - 22, cx + 23):
+            dx, dy = x - (cx + 1), y - (cy + 1)
+            d_out = (dx / 19.0) ** 2 + (dy / 14.0) ** 2
+            d_in = (dx / 12.0) ** 2 + (dy / 7.0) ** 2
+            in_loop = (d_out <= 1.0) and (d_in >= 1.0)
+            in_stem = (abs(dx) <= 3) and (abs(dy) <= 24)
+            if in_loop or in_stem:
+                im.pset(x, y, 0)
+
+    # Corps principal du Phi : CYAN officiel LFI (couleur 12)
+    for y in range(cy - 25, cy + 26):
+        for x in range(cx - 22, cx + 23):
+            dx, dy = x - cx, y - cy
+            d_out = (dx / 19.0) ** 2 + (dy / 14.0) ** 2
+            d_in = (dx / 12.0) ** 2 + (dy / 7.0) ** 2
+            in_loop = (d_out <= 1.0) and (d_in >= 1.0)
+            in_stem = (abs(dx) <= 3) and (abs(dy) <= 24)
+            if in_loop or in_stem:
+                im.pset(x, y, 12)
+
+    # Reflets et liseres blancs (7) pour donner le relief et la nettete du logo
+    # 1. Axe central blanc sur la hampe
+    for y in range(cy - 23, cy + 24):
+        im.pset(cx, y, 7)
+    # 2. Reflet blanc sur le haut et la gauche de la boucle
+    for deg in range(120, 240, 3):
         rad = math.radians(deg)
-        for dist in range(16, 42, 2):
-            rx = cx + int(dist * math.cos(rad))
-            ry = cy + int(dist * math.sin(rad))
-            if 0 <= rx < 128 and 0 <= ry < 85:
-                if dist % 4 == 0:
-                    im.pset(rx, ry, 12 if ry < 60 else 10)
+        rx = cx + int(17 * math.cos(rad))
+        ry = cy + int(12 * math.sin(rad))
+        im.pset(rx, ry, 7)
+    for deg in range(40, 90, 4):
+        rad = math.radians(deg)
+        rx = cx + int(17 * math.cos(rad))
+        ry = cy + int(12 * math.sin(rad))
+        im.pset(rx, ry, 7)
 
-    # Grand Phi d'or et cyan au centre (Phi officiel)
-    for r in range(17, 23):
-        im.circ(cx, cy, r, 1)
-    for r in range(13, 17):
-        im.circ(cx, cy, r, 12)
-    for r in range(9, 13):
-        im.circ(cx, cy, r, 12)
-    im.circ(cx, cy, 10, 7)
-    im.circ(cx, cy, 9, 10)
-    # Barre verticale du Phi
-    im.rectfill(cx - 3, cy - 20, cx + 3, cy + 20, 12)
-    im.rectfill(cx - 1, cy - 22, cx + 1, cy + 22, 7)
-    im.pset(cx, cy - 23, 10)
-    im.pset(cx, cy + 23, 10)
-
-    # Silhouette de la tribune / estrade et foule en ombre
+    # Silhouette de la foule en bas
     for x in range(128):
-        y = int(98 - 8 * math.exp(-((x - 64) / 45) ** 2))
+        y = int(100 - 6 * math.exp(-((x - 64) / 40) ** 2))
         im.rectfill(x, y, x, 127, 0)
-    im.rectfill(0, 106, 127, 127, 0)
+    im.rectfill(0, 108, 127, 127, 0)
 
-    # Drapeaux tricolores en fond (bleu cyan 12, blanc 7, rouge 8)
-    for fx, fy in ((10, 68), (30, 64), (92, 64), (112, 68)):
-        im.rectfill(fx, fy, fx, fy + 26, 5)
-        im.rectfill(fx, fy, fx + 3, fy + 7, 12)
-        im.rectfill(fx + 3, fy, fx + 6, fy + 7, 7)
-        im.rectfill(fx + 6, fy, fx + 9, fy + 7, 8)
-        im.pset(fx + 9, fy + 1, 8)
+    # Drapeaux tricolores et rouges dans la foule
+    flags = [
+        (8, 72, "tri"), (26, 68, "red"), (98, 68, "tri"), (114, 72, "red")
+    ]
+    for fx, fy, ftype in flags:
+        im.rectfill(fx, fy, fx, fy + 24, 5)  # hampe
+        if ftype == "tri":
+            im.rectfill(fx, fy, fx + 3, fy + 7, 12)  # bleu cyan
+            im.rectfill(fx + 3, fy, fx + 6, fy + 7, 7)   # blanc
+            im.rectfill(fx + 6, fy, fx + 9, fy + 7, 8)   # rouge
+        else:
+            im.rectfill(fx, fy, fx + 8, fy + 7, 8)   # drapeau rouge
 
     # Les 4 militants reunis au premier plan (taille x3)
-    # classes : 1 syndicaliste (8 rouge), 2 intellectuel (12 cyan),
-    # 3 organisateur (7 blanc), 4 fact-checker (11 vert)
     coords = [
-        (16, 78, 7),   # Organisateur
-        (40, 74, 8),   # Syndicaliste (au centre gauche)
-        (64, 74, 12),  # Intellectuel (au centre droit)
-        (88, 78, 11),  # Fact-checker
+        (16, 78, 7),   # Street Medic (7 blanc)
+        (40, 75, 8),   # Syndicaliste (8 rouge)
+        (64, 75, 12),  # Streamer / Militant (12 cyan)
+        (88, 78, 11),  # Fact-checker (11 vert)
     ]
     for mx, my, col in coords:
         im.sspr(0, 16, 8, 8, mx, my, 3, pal={8: col})
 
-    # Titre en haut
-    im.text("l'union", None, 4, 2, 7, shadow=2)
-    im.text("populaire", None, 17, 3, 12, shadow=1, outline=7)
-    im.text("rpg", None, 34, 2, 10, shadow=0, outline=1)
+    # Titre en haut, bien au-dessus du Phi pour ne pas le masquer
+    im.text("l'union", None, 5, 2, 7, shadow=1)
+    im.text("populaire", None, 17, 2, 12, shadow=1, outline=7)
+    im.text("rpg", None, 29, 1, 10, shadow=0)
 
-    # Bandeau du bas : mot d'ordre
-    im.rectfill(0, 118, 127, 127, 1)
-    im.rectfill(0, 118, 127, 118, 12)
+    # Bandeau du bas : mot d'ordre pour la 6e republique
+    im.rectfill(0, 117, 127, 127, 1)
+    im.rectfill(0, 117, 127, 117, 12)
     im.text("pour la 6e republique", None, 121, 1, 10, shadow=0)
 
     return im.px
