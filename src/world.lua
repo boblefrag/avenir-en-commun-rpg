@@ -116,7 +116,7 @@ function field_magic()
   elseif e==6 and h.hp>=h.pv then
    msg("conviction deja au maximum !")
   elseif e==3 and st!=dungeon then
-   msg("vous n'etes pas\ndans un donjon !")
+   msg("vous n'etes pas dans\nun bastion adverse !")
   else
    h.mp-=s[4]
    if e==3 then
