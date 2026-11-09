@@ -11,8 +11,8 @@ Un RPG rétro complet sur **PICO-8** autour de la campagne présidentielle de **
 Parcourez le pays de **Saint-Denis** à **Marseille** en passant par **Lille**, **Nantes** et **Toulouse**, débattez face aux éditorialistes, lobbyistes et technocrates, brisez les 4 grands monopoles (*Tour des Médias*, *Banque Offshore*, *Tour d'Austérité*, *Lobby Central*) pour inscrire les mesures phares de *L'Avenir en Commun* au programme, et instaurez la **6e République** !
 
 ### Les 4 Profils Militants
-- **Militant·e syndical·e** : Haute conviction et grande force d'argumentation directe sur le terrain.
-- **Streamer / Intellectuel·le** : Spécialiste de la mobilisation médiatique (*Débat en direct*, *Tribune libre*, *Onde populaire*, *Cordon syndical*).
+- **Militant** : Militant LFI de terrain, haute conviction et grande force d'argumentation directe en porte-à-porte et débat.
+- **Streamer** : Spécialiste de la mobilisation médiatique (*Débat en direct*, *Tribune libre*, *Onde populaire*, *Cordon syndical*).
 - **Street Medic** : Soutien solidaire de l'équipe (*Sérum phy*, *Services publics*, *Bouclier social*) jusqu'à l'action ultime *La Constituante*.
 - **Fact-checker** : Agilité maximale et *Recul médiatique* permettant d'esquiver la polémique et de contrer ×3.
 
