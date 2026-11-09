@@ -32,7 +32,7 @@ CART = ROOT / "main.p8"
 EXPORT = ROOT / "legend_of_the_gems.p8"
 HEADER = "-- legend of the gems\n-- by yohann gabory\n"
 SRC = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon", "decor"]
-KEEP = ["__gfx__", "__gff__", "__label__"]
+KEEP = ["__gfx__", "__gff__", "__label__", "__sfx__", "__music__"]
 ORDER = ["__lua__", "__gfx__", "__label__", "__gff__", "__map__", "__sfx__", "__music__"]
 
 def strip_code(code):
@@ -109,8 +109,11 @@ def main():
         sec["__gfx__"] = gfx
     sec["__lua__"] = [f"#include src/{f}.lua" for f in SRC]
     sec["__map__"], world, total = map_section()
-    sfx, music, _, used = build_music()
-    sec["__sfx__"], sec["__music__"] = sfx, music
+    if "__sfx__" not in sec or "--reset-music" in sys.argv:
+        sfx, music, _, used = build_music()
+        sec["__sfx__"], sec["__music__"] = sfx, music
+    else:
+        used = len(sec.get("__sfx__", []))
     out = ["pico-8 cartridge // http://www.pico-8.com", "version 42"]
     for k in ORDER:
         if k in sec:

@@ -1,9 +1,11 @@
 -- combat au tour par tour, un monstre face au joueur
 -- mo = ligne de la table mons, mhp = ses pv actuels
 
-battle={}
+battle={mus=8}
 
 function battle.init(m)
+ music(8)
+ mus_cur=8
  -- shd : bouclier actif, hid : voleur cache (prochain coup x3)
  -- combats de 3-4 tours : pv des monstres x2 et leurs degats x0.55
  -- (boss : pv x1.3, degats x0.75) ; mmax = pv max du monstre
@@ -13,7 +15,6 @@ function battle.init(m)
  -- decor (decor.lua) : donjon, ou selon la case du heros sur la carte
  local t=mget(px,py)
  bk=prev==dungeon and 4 or (t==4 or t==5) and 2 or (t==2 or t==9) and 3 or 1
- jingle(40,m[8]==15 and 32 or 24)
  msg("debat contre :\n"..m[1].." !",bmenu)
 end
 
@@ -169,7 +170,8 @@ function turn()
 end
 
 function win()
- jingle(41,-1)
+ music(-1)
+ mus_cur=-1
  safe=5  -- 5 pas sans rencontre apres le combat
  if mo[8]==15 then
   go(epilog)
@@ -179,7 +181,6 @@ function win()
  local up=gain(mo[6],mo[7])
  local function fin()
   if up then
-   jingle(43,-1)
    -- nouvelles competences apprises avec ce(s) niveau(x)
    local t=""
    for i=olv+1,nspells() do
@@ -225,7 +226,8 @@ end
 
 -- repli militant en cas de perte de conviction : rechargement du dernier QG
 function lose()
- jingle(42,-1)
+ music(-1)
+ mus_cur=-1
  msg("conviction epuisee...\nrepli strategique vers le\ndernier qg de campagne.",function()
   -- le repli est compte avant de recharger (load_game le relit)
   h.dth+=1

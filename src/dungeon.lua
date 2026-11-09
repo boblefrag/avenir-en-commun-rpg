@@ -3,7 +3,7 @@
 -- seen = cases deja vues, qui restent visibles (perdues en quittant
 -- le donjon) ; le reste est noir
 
-dungeon={mus=16}
+dungeon={mus=0}
 
 function dungeon.init(p)
  dp,wx,wy,seen=p,px,py,{}

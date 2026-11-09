@@ -144,7 +144,10 @@ end
 
 world={mus=0}
 
-function world.init() end
+function world.init()
+ music(0)
+ mus_cur=0
+end
 
 function world.update()
  if btnp(5) then

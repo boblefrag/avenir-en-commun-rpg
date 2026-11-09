@@ -1,7 +1,7 @@
 -- ville : un ecran de menu, meme mise en page que le combat
 -- tw = le lieu (table places)
 
-town={mus=8}
+town={mus=0}
 
 function town.init(p)
  tw=p
