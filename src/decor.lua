@@ -128,7 +128,7 @@ function epilog.update() end
 
 -- sprites agrandis : heros x4 (8 -> 32), princesse x2 (16 -> 32)
 function epi_hero(x,y,k)
- hero_pal(h.cl)
+ pal(8,classes[h.cl][2])
  sspr(0,16,8,8,x,y,8*k,8*k)
  pal()
 end
@@ -200,8 +200,11 @@ function epilog.draw()
    epi_hero(56,48,2)
    print("L'AUBE DU PEUPLE",32,8,7)
   else
+   local sk,hr=split("15,4,9,15"),split("4,0,0,0")
    for i=1,4 do
-    hero_pal(i)
+    pal(8,classes[i][2])
+    pal(15,sk[i])
+    pal(4,hr[i])
     sspr(0,16,8,8,18+i*20,44,16,16)
    end
    pal()
@@ -215,7 +218,7 @@ end
 -- bilan de la partie, entre la cinematique et le generique :
 -- stats, score et rang, puis initiales a l'ancienne (haut/bas : lettre,
 -- o : lettre suivante) et tableau des 5 meilleurs scores
-results={mus=8,notime=true}
+results={mus=16,notime=true}
 
 function results.init()
  rs,rr=score()

@@ -139,7 +139,7 @@ function crawl(t)
 end
 
 -- generique de fin, apres la cinematique
-credits={mus=48,notime=true}
+credits={mus=16,notime=true}
 credits.init=intro.init
 
 function credits.update()
