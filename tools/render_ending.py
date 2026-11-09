@@ -115,7 +115,7 @@ def render_all():
     s1.draw_box(14, 10, 100, 76)
     s1.rectfill(16, 12, 111, 83, 1)
     s1.print_text(">> 20:00 - election <<", 20, 16, 7)
-    s1.print_text("victoire de l'up !", 28, 28, 10)
+    s1.print_text("victoire de lfi !", 30, 28, 10)
     s1.rectfill(24, 42, 78, 56, 12)
     s1.rectfill(79, 42, 104, 56, 8)
     s1.print_text("54.0 %", 38, 46, 7)
