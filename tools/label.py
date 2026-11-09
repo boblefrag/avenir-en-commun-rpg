@@ -110,58 +110,59 @@ def draw():
     for _ in range(40):
         im.pset(random.randrange(128), random.randrange(60), random.choice([7, 6, 12]))
 
-    # Le symbole PHI officiel de La France Insoumise (lettre grecque φ)
-    # Centre a (64, 53)
-    cx, cy = 64, 53
-
-    # Halo / lueur diffuse cyan derriere le Phi
-    for y in range(cy - 28, cy + 29):
-        for x in range(cx - 26, cx + 27):
-            dx, dy = x - cx, y - cy
-            d_out = (dx / 22.0) ** 2 + (dy / 17.0) ** 2
-            d_in = (dx / 9.0) ** 2 + (dy / 5.0) ** 2
-            in_stem = (abs(dx) <= 5) and (abs(dy) <= 26)
-            if (d_out <= 1.0 and d_in >= 1.0) or in_stem:
-                if (x + y) % 2 == 0:
-                    im.pset(x, y, 1)
-
-    # Ombre portee du Phi (noir/bleu sombre)
-    for y in range(cy - 25, cy + 26):
-        for x in range(cx - 22, cx + 23):
-            dx, dy = x - (cx + 1), y - (cy + 1)
-            d_out = (dx / 19.0) ** 2 + (dy / 14.0) ** 2
-            d_in = (dx / 12.0) ** 2 + (dy / 7.0) ** 2
-            in_loop = (d_out <= 1.0) and (d_in >= 1.0)
-            in_stem = (abs(dx) <= 3) and (abs(dy) <= 24)
-            if in_loop or in_stem:
-                im.pset(x, y, 0)
-
-    # Corps principal du Phi : CYAN officiel LFI (couleur 12)
-    for y in range(cy - 25, cy + 26):
-        for x in range(cx - 22, cx + 23):
-            dx, dy = x - cx, y - cy
-            d_out = (dx / 19.0) ** 2 + (dy / 14.0) ** 2
-            d_in = (dx / 12.0) ** 2 + (dy / 7.0) ** 2
-            in_loop = (d_out <= 1.0) and (d_in >= 1.0)
-            in_stem = (abs(dx) <= 3) and (abs(dy) <= 24)
-            if in_loop or in_stem:
-                im.pset(x, y, 12)
-
-    # Reflets et liseres blancs (7) pour donner le relief et la nettete du logo
-    # 1. Axe central blanc sur la hampe
-    for y in range(cy - 23, cy + 24):
-        im.pset(cx, y, 7)
-    # 2. Reflet blanc sur le haut et la gauche de la boucle
-    for deg in range(120, 240, 3):
-        rad = math.radians(deg)
-        rx = cx + int(17 * math.cos(rad))
-        ry = cy + int(12 * math.sin(rad))
-        im.pset(rx, ry, 7)
-    for deg in range(40, 90, 4):
-        rad = math.radians(deg)
-        rx = cx + int(17 * math.cos(rad))
-        ry = cy + int(12 * math.sin(rad))
-        im.pset(rx, ry, 7)
+    # Le symbole PHI cursif officiel de La France Insoumise (φ)
+    # Silhouette exacte extraite du logo officiel LFI (36x40)
+    phi_rows = [
+        ".............#####..................",
+        "..........#########.................",
+        "........############................",
+        ".......#############................",
+        ".....##############.....#####.......",
+        "....###############...#########.....",
+        "....######..######..############....",
+        "...######....####..##############...",
+        "..######..........########.#######..",
+        ".######...........#####......#####..",
+        ".#####...........######.......#####.",
+        ".#####...........#####.........#####",
+        "#####...........#####..........#####",
+        "#####...........#####..........#####",
+        "#####..........#####...........#####",
+        "#####..........#####...........#####",
+        "#####..........#####...........#####",
+        "#####.........#####............#####",
+        ".#####........#####...........#####.",
+        ".#####........#####...........#####.",
+        "..#####......#####...........#####..",
+        "..######.....#####..........######..",
+        "...######....#####.........######...",
+        "....#######..#####.......#######....",
+        ".....#############.....########.....",
+        "......########################......",
+        "........####################........",
+        "..........################..........",
+        "............############............",
+        ".............######.................",
+        ".............#####..................",
+        ".............#####..................",
+        "..............#####.................",
+        "..............#####.................",
+        "..............#####.................",
+        "..............#####.................",
+        "...............####.................",
+        "...............####.................",
+    ]
+    px0, py0 = 64 - len(phi_rows[0]) // 2, 35
+    # Ombre portee noire (decalee de 1px) pour detacher le Phi du fond nocturne
+    for ry, row in enumerate(phi_rows):
+        for rx, ch in enumerate(row):
+            if ch == "#":
+                im.pset(px0 + rx + 1, py0 + ry + 1, 0)
+    # Corps du Phi en rouge officiel LFI (8)
+    for ry, row in enumerate(phi_rows):
+        for rx, ch in enumerate(row):
+            if ch == "#":
+                im.pset(px0 + rx, py0 + ry, 8)
 
     # Silhouette de la foule en bas
     for x in range(128):
@@ -191,6 +192,7 @@ def draw():
         (88, 78, 11, 15, 0),  # Asiatique (Fact-checker : tunique 11, peau 15 ivoire, cheveux 0 noirs)
     ]
     for mx, my, col, skin, hair in coords:
+        im.rectfill(mx + 6, my + 6, mx + 17, my + 8, 0)
         im.sspr(0, 16, 8, 8, mx, my, 3, pal={8: col, 15: skin, 4: hair})
 
     # Titre en haut, bien au-dessus du Phi pour ne pas le masquer
