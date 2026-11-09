@@ -127,11 +127,19 @@ def main():
         if k in sec:
             exp += [k] + sec[k]
     EXPORT.write_text("\n".join(exp) + "\n")
-    # cart de test : memes donnees, code + tests/smoke.lua
+    # carts de test : scindes en deux pour rester sous la limite de 8192 tokens PICO-8
+    # 1. tests/smoke.p8 : moteur de jeu, heros, combat, donjons, contenu
+    src_engine = ["main", "ui", "data", "places", "hero", "world", "battle", "town", "dungeon"]
     test = ["pico-8 cartridge // http://www.pico-8.com", "version 42", "__lua__"]
-    test += [f"#include ../src/{f}.lua" for f in SRC] + ["#include smoke.lua", "__map__"]
+    test += [f"#include ../src/{f}.lua" for f in src_engine] + ["#include smoke.lua", "__map__"]
     test += sec["__map__"]
     (ROOT / "tests/smoke.p8").write_text("\n".join(test) + "\n")
+    # 2. tests/smoke_story.p8 : chrono, score, fin, bilan, initiales, hof, generique
+    src_story = ["main", "ui", "data", "places", "hero", "world", "decor"]
+    test_story = ["pico-8 cartridge // http://www.pico-8.com", "version 42", "__lua__"]
+    test_story += [f"#include ../src/{f}.lua" for f in src_story] + ["#include smoke_story.lua", "__map__"]
+    test_story += sec["__map__"]
+    (ROOT / "tests/smoke_story.p8").write_text("\n".join(test_story) + "\n")
     print(f"{EXPORT.name} : code nettoye {len(code)} -> {len(small)} caracteres")
     print(f"{CART.name} : carte {world} o + donjons {total - world} o = {total}/4096, "
           f"sfx {used}/64, tokens ~{count_tokens(code)}/8192")

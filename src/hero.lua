@@ -168,7 +168,7 @@ end
 function items()
  -- iid[i] : numero d'objet (pour use_item) de la ligne i du menu ;
  -- syndicaliste et fact-checker (0 pm) ne voient pas les fiches d'argument
- local t,l,c={},split("cafe militant,repas solidaire,fiche argument,revue ideol.,programme up,retour"),{h.pot,h.spo,h.eth,h.spe}
+ local t,l,c={},split("cafe militant,repas solidaire,fiche argument,revue politique,le programme,retour"),{h.pot,h.spo,h.eth,h.spe}
  iid={}
  for i=1,6 do
   if h.pm>0 or i<3 or i>4 then
@@ -184,17 +184,17 @@ end
 function use_item(o)
  if o<3 then
   local k=o==1 and "pot" or "spo"
-  if (h[k]<1) return "plus de "..(o==1 and "cafe militant" or "repas solidaire").." !"
+  if (h[k]<1) return "plus de "..(o==1 and "cafe !" or "repas !").."\npassez au qg de campagne."
   if (h.hp>=h.pv) return "conviction deja au maximum !"
   h[k]-=1
-  return "vous prenez un "..(o==1 and "cafe militant" or "repas solidaire").." !\n"..heal(o==1 and 20 or 80),true
+  return (o==1 and "cafe militant savoure !" or "repas solidaire partage !").."\n"..heal(o==1 and 20 or 80),true
  elseif o==5 then
   return rnd(towel)
  elseif o<5 then
-  -- fiche argument (+15 pm) ou revue ideologique (+50 pm)
-  local k,n=o==3 and "eth" or "spe",(o==3 and "fiche argument" or "revue ideologique")
+  -- fiche argument (+15 pm) ou revue politique (+50 pm)
+  local k,n=o==3 and "eth" or "spe",(o==3 and "fiche argument" or "revue politique")
   if (h[k]<1) return "plus de\n"..n.." !"
-  if (h.mp>=h.pm) return "force arg. deja au max !"
+  if (h.mp>=h.pm) return "force argumentative\ndeja au maximum !"
   local g=min(o==3 and 15 or 50,h.pm-h.mp)
   h[k]-=1
   h.mp+=g

@@ -106,33 +106,43 @@ def draw():
     for _ in range(40):
         im.pset(random.randrange(128), random.randrange(60), random.choice([5, 6, 7, 10]))
 
-    # grand Phi dore rayonnant au centre
-    cx, cy = 64, 50
-    for r in range(12, 16):
-        im.circ(cx, cy, r, 2)
-    im.rectfill(cx - 1, cy - 12, cx + 1, cy + 12, 10)
-    im.circ(cx, cy, 8, 10)
-    im.circ(cx, cy, 7, 9)
-    im.pset(cx, cy - 13, 7)
-    im.pset(cx, cy + 13, 7)
+    # grand Phi officiel LFI rayonnant au centre (Bleu Cyan 12 et Blanc 7)
+    cx, cy = 64, 54
+    # aura lumineuse cyan
+    for r in range(16, 22):
+        im.circ(cx, cy, r, 1)
+    for r in range(13, 16):
+        im.circ(cx, cy, r, 12)
+    # anneau circulaire du Phi
+    for r in range(9, 12):
+        im.circ(cx, cy, r, 12)
+    im.circ(cx, cy, 10, 7)
+    # barre verticale centrale du Phi qui traverse l'anneau
+    im.rectfill(cx - 2, cy - 18, cx + 2, cy + 18, 12)
+    im.rectfill(cx - 1, cy - 19, cx + 1, cy + 19, 7)
+    im.pset(cx, cy - 20, 7)
+    im.pset(cx, cy + 20, 7)
 
     # silhouette de ville / monuments et drapeaux
     for x in range(128):
         y = int(96 - 10 * math.exp(-((x - 64) / 40) ** 2))
         im.rectfill(x, y, x, 127, 0)
-    # drapeaux qui flottent
-    for i, fx in enumerate((20, 36, 88, 106)):
+    # drapeaux qui flottent (tricolores et rouges)
+    for i, fx in enumerate((18, 34, 90, 108)):
         im.rectfill(fx, 72, fx, 96, 5)
-        im.rectfill(fx, 72, fx + 8, 78, 8 if i % 2 == 0 else 12)
-        im.pset(fx + 9, 73, 7)
+        # drapeau tricolore LFI (bleu cyan 12, blanc 7, rouge 8)
+        im.rectfill(fx, 72, fx + 3, 78, 12)
+        im.rectfill(fx + 3, 72, fx + 6, 78, 7)
+        im.rectfill(fx + 6, 72, fx + 9, 78, 8)
+        im.pset(fx + 10, 73, 7)
 
-    # militant au premier plan (x4)
+    # militant au premier plan (x4) avec veste rouge et badge cyan
     im.sspr(0, 16, 8, 8, 8, 84, 4, pal={8: 8})
 
     # titre
-    im.text("l'union", None, 6, 2, 7, shadow=5)
-    im.text("populaire", None, 20, 3, 10, shadow=8, outline=0)
-    im.text("campagne presidentielle", None, 120, 1, 11, shadow=0)
+    im.text("l'union", None, 6, 2, 7, shadow=1)
+    im.text("populaire", None, 20, 3, 12, shadow=1, outline=7)
+    im.text("campagne presidentielle", None, 120, 1, 10, shadow=0)
     return im.px
 
 

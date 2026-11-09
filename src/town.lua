@@ -34,13 +34,13 @@ function tact(i)
 end
 
 -- materiel : cafe (10e), repas solidaire (60e), fiche argument (25e), revue (100e)
--- syndicaliste et fact-checker (0 pm) : pas de fiches d'argument en rayon
+-- militant et fact-checker (0 pm) : pas de fiches d'argument en rayon
 function item_shop()
- local ks,pr,nm=split("pot,spo,eth,spe"),split("10,60,25,100"),split("cafe militant,repas solidaire,fiche arg.,revue theorique")
+ local ks,pr,nm=split("pot,spo,eth,spe"),split("10,60,25,100"),split("cafe militant,repas solidaire,fiche argument,revue politique")
  local it,ids={},{}
  for i=1,4 do
   if h.pm>0 or i<3 then
-   add(it,(i==4 and "revue theorique" or nm[i]).." - "..pr[i].."e ("..h[ks[i]].."/9)")
+   add(it,nm[i].." - "..pr[i].."e ("..h[ks[i]].."/9)")
    add(ids,i)
   end
  end

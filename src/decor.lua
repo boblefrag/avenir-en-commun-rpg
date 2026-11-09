@@ -136,61 +136,79 @@ end
 function epilog.draw()
  ft+=1
  local t=ft/30
- if fi<6 then
-  cls(0)
-  if fi<=2 then
-   -- ecran tv des resultats 20:00
-   rectfill(16,14,112,78,1)
-   rect(16,14,112,78,6)
-   rectfill(20,18,108,74,0)
-   print("20:00 - estimation",28,24,10)
-   print("l'union populaire",30,36,8)
-   print("53.8 %",52,48,7)
-   print("victoire !",44,60,11)
-  elseif fi==3 then
-   -- foule place de la republique
-   rectfill(0,0,127,90,1)
-   -- monument de la republique
-   rectfill(58,20,70,70,5)
-   circfill(64,16,6,7)
-   -- drapeaux en liesse
-   for i=0,6 do
-    spr(36,6+i*18+sin(t+i)*2,50+cos(t/2+i)*3)
-   end
-  elseif fi==4 then
-   -- meeting et tribune
-   rectfill(0,0,127,90,1)
-   spr(37,56,66)
-   spr(38,64,66)
-   epi_hero(58,38,3)
-   for i=0,5 do
-    spr(36,6+i*22+sin(t+i)*2,56+cos(t/2+i)*2)
-   end
-  elseif fi==5 then
-   -- decret n.1 / urne constituante
-   rectfill(0,0,127,90,1)
-   sspr(16,16,16,16,48,22,32,32)
-   print("decret n.1",44,60,10)
-   print("assemblee constituante",20,72,7)
+ cls(1)
+ if fi==1 then
+  box(14,12,100,72)
+  rectfill(18,16,110,80,1)
+  print(">> 20:00 - ELECTION <<",20,20,7)
+  print("VICTOIRE DE L'UP !",28,34,10)
+  rectfill(24,50,78,60,12)
+  rectfill(79,50,104,60,8)
+  print("54.0 %",42,52,7)
+  print("46 %",86,52,7)
+  print("LE PEUPLE L'EMPORTE",24,68,11)
+ elseif fi==2 then
+  rectfill(0,0,127,90,1)
+  rectfill(12,24,116,74,5)
+  rect(12,24,116,74,0)
+  rectfill(56,38,72,56,9)
+  circfill(64,36,6,10)
+  rectfill(0,74,127,90,0)
+  rectfill(68,76,108,86,0)
+  circfill(112,82,6,10)
+  print("PALAIS DESERTE",36,14,7)
+ elseif fi==3 then
+  rectfill(0,0,127,90,1)
+  for i=1,5 do
+   local fx,fy=16+i*22+sin(t*2+i)*4,16+cos(t*3+i)*4
+   circ(fx,fy,4+sin(t+i)*2,i%2==0 and 8 or 10)
   end
+  rectfill(52,50,76,78,5)
+  rectfill(60,26,68,50,6)
+  circfill(64,22,6,7)
+  for i=0,6 do
+   spr(36,6+i*18+sin(t+i)*2,54+cos(t/2+i)*2)
+  end
+ elseif fi==4 then
+  rectfill(0,0,127,90,1)
+  epi_hero(52,24,3)
+  spr(37,56,56)
+  spr(38,64,56)
+  rectfill(12,66,116,78,12)
+  print("L'AVENIR EN COMMUN",26,70,7)
+  for i=0,6 do
+   spr(36,4+i*19+sin(t+i)*2,58+cos(t/2+i)*2)
+  end
+ elseif fi==5 then
+  rectfill(24,12,104,78,7)
+  rect(24,12,104,78,10)
+  print("REPUBLIQUE FRANCAISE",26,18,1)
+  print("DECRET N. 1",44,28,8)
+  print("ASSEMBLEE CONSTITUANTE",26,40,1)
+  print("POUR LA 6E REPUBLIQUE",27,50,12)
+  circfill(64,66,8,12)
+  circfill(64,66,5,7)
+  circfill(64,66,3,8)
  else
-  -- aube nouvelle : bandes de ciel tricolore et lever de soleil
-  cls(1)
-  local c=split("2,8,9,10")
-  for i=1,4 do rectfill(0,24+i*8,127,31+i*8,c[i]) end
-  local y=68-min(ft+(fi-6)*90,120)/3
+  local c=split("2,8,9,10,12")
+  for i=1,5 do rectfill(0,16+i*8,127,23+i*8,c[i]) end
+  local y=58-min(ft+(fi-6)*90,120)/4
   circfill(64,y,12,10)
   circfill(64,y,8,7)
-  -- ville en ombre
-  local hs=split("8,14,6,22,10,16,7,12,20,9,11")
-  for i=1,11 do
-   local x,y=i*12-14,64-hs[i]
-   rectfill(x,y,x+10,64,1)
-   for j=0,5 do line(x+j,y-j,x+10-j,y-j,1) end
+  rectfill(0,56,127,127,3)
+  if fi==6 then
+   epi_hero(56,48,2)
+   print("L'AUBE DU PEUPLE",32,8,7)
+  else
+   for i=1,4 do
+    pal(8,classes[i][2])
+    sspr(0,16,8,8,18+i*20,44,16,16)
+   end
+   pal()
+   circ(64,24,7,12)
+   line(64,14,64,34,7)
+   print("PLACE AU PEUPLE !",30,8,10)
   end
-  rectfill(0,64,127,127,3)
-  epi_hero(48,66,2)
-  if (fi==7) print("l'union populaire",30,12,7)
  end
 end
 

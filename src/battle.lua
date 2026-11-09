@@ -18,8 +18,8 @@ function battle.init(m)
 end
 
 function bmenu()
- -- le fact-checker n'a pas de magie : il prend du recul mediatique a la place
- menu(split("attaque,"..(h.cl==4 and "recul med." or "actions")..",materiel,retrait"),4,74,bact,true)
+ -- le fact-checker n'a pas de magie : il prend du recul a la place
+ menu(split("attaque,"..(h.cl==4 and "recul" or "actions")..",materiel,retrait"),4,74,bact,true)
 end
 
 function bact(i)
@@ -80,7 +80,7 @@ function bmagic()
   if not s then
    bmenu()
   elseif h.mp<s[4] then
-   msg("force argument. epuisee !",bmenu)
+   msg("force argumentative\nepuisee !",bmenu)
   elseif e==6 and h.hp>=h.pv then
    msg("conviction deja au maximum !",bmenu)
   else
@@ -132,7 +132,7 @@ function monster_turn(k,x)
  elseif sp==5 then
   if rnd()<.25 then
    mhp-=n
-   n,s=0,spn[5]..mo[1].."\nperd "..n.." conv."
+   n,s=0,spn[5]..mo[1].."\nperd "..n.." conviction"
   end
  elseif sp==2 and c then
   mhp=min(mhp+25,mmax)
@@ -151,7 +151,7 @@ function monster_turn(k,x)
  if s=="" then
   s=mo[1].."\n"..(matk[mo[9]] or "attaque").." !\n"
  end
- if (n>0) s..="vous perdez "..n.." conv."
+ if (n>0) s..="vous perdez "..n.." conviction"
  msg(s,function()
   if mhp<=0 then win()
   elseif h.hp<=0 then lose()
@@ -194,14 +194,14 @@ function win()
   end
  end
  local k=fin
- -- seuls les boss des donjons 1..4 (zones 11..14) donnent un levier de rupture ;
+ -- seuls les boss des donjons 1..4 (zones 11..14) valident un pilier du programme ;
  -- les opposants de donjon (zones 21..25) n'en donnent pas
  if mo[8]>10 and mo[8]<15 then
   h.gems|=dp.g
   mset(px,py,17)
   local g=gems[dp.d]
   k=function()
-   msg("vous obtenez le levier\n"..g[1].." !\n"..g[2],fin)
+   msg("mesure au programme :\n"..g[1].." !\n"..g[2],fin)
   end
  end
  msg(mo[1].."\nrejoint l'union populaire !\n+"..mo[6].." xp  +"..mo[7].."e"..loot(),k)
@@ -215,7 +215,7 @@ function loot()
   local k=h.pm>0 and rnd()<.5 and (big and "spe" or "eth") or big and "spo" or "pot"
   if h[k]<9 then
    h[k]+=1
-   return "\ndon : "..({pot="cafe militant",spo="repas solidaire",eth="fiche argument",spe="revue ideol."})[k]
+   return "\ndon : "..({pot="cafe militant",spo="repas solidaire",eth="fiche argument",spe="revue politique"})[k]
   end
  end
  local i=flr(rnd(min(6,1+mo[7]\12)))+1

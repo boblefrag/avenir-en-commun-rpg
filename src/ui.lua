@@ -99,8 +99,8 @@ end
 -- bandeau d'etat en haut de l'ecran
 -- couleur pv : vert si >50%, jaune si 25..50%, rouge si <25%
 -- bip d'alerte si pv<25% (toutes les 90 frames env.)
--- gemmes : vent(gris clair), eau(bleu clair), feu(rouge), terre(marron)
-gem_col=split("6,12,8,4")
+-- 4 mesures du programme : nouvelle france(cyan 12), blocage des prix(jaune 10), eco-region(vert 11), 6e rep(rouge 8)
+gem_col=split("12,10,11,8")
 bip_cd=0
 function hud()
  rectfill(0,0,127,7,0)

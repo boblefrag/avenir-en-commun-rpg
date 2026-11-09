@@ -154,7 +154,7 @@ end
 function choose_class()
  local cl={}
  for c in all(classes) do add(cl,c[1]) end
- menu(cl,40,60,function(c)
+ menu(cl,26,60,function(c)
   new_hero(c)
   save()
   start()

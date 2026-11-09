@@ -8,14 +8,15 @@ Jouer sur la console : [docs/trimui.md](docs/trimui.md).
 - `src/*.lua` : le code, un fichier par état ou système, inclus avec `#include`.
 - `assets/world.png` (128×128) et `assets/dungeon1..5.png` (32×32) : les plans, retouchables à la main.
 - `tools/` : scripts Python (aucune dépendance).
-- `tests/smoke.lua` : tests lancés sans écran.
+- `tests/smoke.lua`, `tests/smoke_story.lua` : tests lancés sans écran.
 
 ## Commandes
 | Quoi | Commande |
 |---|---|
 | Assembler le cart | `python3 tools/build.py` |
 | Jouer | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -run main.p8` |
-| Tests | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke.p8` |
+| Tests (moteur et contenu) | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke.p8` |
+| Tests (chrono, fin et score) | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke_story.p8` |
 | Écouter les musiques sans PICO-8 | `python3 tools/preview_music.py` |
 | Compter les tokens | `python3 tools/tokens.py src/*.lua` |
 | Régénérer carte et donjons (**écrase les PNG**) | `python3 tools/gen_map.py` |

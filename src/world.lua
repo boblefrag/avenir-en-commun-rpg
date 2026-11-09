@@ -86,7 +86,7 @@ function field_menu()
    for p=1,5 do
     if (h.arm[p] or 0)>0 then arm_cnt+=1 end
    end
-   msg(classes[h.cl][1].." niv "..h.lv.."  xp "..h.xp.."\npv "..h.hp.."/"..h.pv.." pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | arm "..arm_cnt.."/5")
+   msg(classes[h.cl][1].." (niv "..h.lv..")\npv "..h.hp.."/"..h.pv.."  pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | "..h.gold.."e")
   elseif i==2 then
    -- jamais vide : il reste toujours la serviette
    menu(items(),4,12,function(o)
