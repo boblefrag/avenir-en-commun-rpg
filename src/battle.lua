@@ -19,8 +19,8 @@ function battle.init(m)
 end
 
 function bmenu()
- -- le fact-checker n'a pas de magie : il prend du recul a la place
- menu(split("attaque,"..(h.cl==4 and "recul" or "actions")..",materiel,retrait"),4,74,bact,true)
+ -- le fact-checker n'a pas d'actions : il prend du recul a la place
+ menu(split("convaincre,"..(h.cl==4 and "recul" or "actions")..",materiel,retrait"),4,74,bact,true)
 end
 
 function bact(i)
@@ -97,7 +97,7 @@ function bmagic()
     t..=heal(s[3])
    else
     shd=max(shd,s[3])
-    t..="degats reduits de "..shd
+    t..="impact reduit de "..shd
    end
    msg(t,function()
     if mhp<=0 then win() else monster_turn(bmenu) end
@@ -150,7 +150,7 @@ function monster_turn(k,x)
   sfx(55,3)
  end
  if s=="" then
-  s=mo[1].."\n"..(matk[mo[9]] or "attaque").." !\n"
+  s=mo[1].."\n"..(matk[mo[9]] or "polemique").." !\n"
  end
  if (n>0) s..="vous perdez "..n.." conviction"
  msg(s,function()

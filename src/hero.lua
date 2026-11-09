@@ -142,11 +142,11 @@ function sp(i)
  return spells[h.cl][i]
 end
 
--- rend jusqu'a n pv ; renvoie le texte du gain
+-- rend jusqu'a n pv (conviction) ; renvoie le texte du gain
 function heal(n)
  local g=min(n,h.pv-h.hp)
  h.hp+=g
- return "+"..g.." pv (pv "..h.hp.."/"..h.pv..")"
+ return "+"..g.." conviction ("..h.hp.."/"..h.pv..")"
 end
 
 -- sorts connus dont l'effet passe le filtre f ; renvoie libelles et indices

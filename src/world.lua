@@ -78,7 +78,7 @@ end
 
 -- menu hors combat (x)
 function field_menu()
- menu(split("statut,objets,magie"),4,12,function(i)
+ menu(split("statut,materiel,actions"),4,12,function(i)
   close()
   if i==1 then
    local wep=wep_name(h.wep)
@@ -100,11 +100,11 @@ function field_menu()
  end)
 end
 
--- magie hors combat : evasion, retour, repousse, soin
+-- actions hors combat : evasion, retour, repousse, soin
 function field_magic()
  local it,ids=spell_list(function(e) return e>2 and e<7 end)
  if #it==0 then
-  msg("aucun sort utilisable\nici !")
+  msg("aucune action utilisable\nici !")
   return
  end
  menu(it,4,12,function(o)
@@ -112,9 +112,9 @@ function field_magic()
   local s=sp(ids[o])
   local e=s[2]
   if h.mp<s[4] then
-   msg("pas assez de pm !")
+   msg("force argumentative\nepuisee !")
   elseif e==6 and h.hp>=h.pv then
-   msg("pv deja au maximum !")
+   msg("conviction deja au maximum !")
   elseif e==3 and st!=dungeon then
    msg("vous n'etes pas\ndans un donjon !")
   else
@@ -127,7 +127,7 @@ function field_magic()
    elseif e==5 then
     rep=s[3]
    end
-   msg(s[1].." !"..(e==5 and "\nles monstres vous evitent." or e==6 and "\n"..heal(s[3]) or ""))
+   msg(s[1].." !"..(e==5 and "\nles opposants vous evitent." or e==6 and "\n"..heal(s[3]) or ""))
   end
  end)
 end
