@@ -1,4 +1,4 @@
--- legend of the gems
+-- l'union populaire rpg
 -- boucle principale et machine a etats
 -- chaque etat : init(...), update(), draw(), mus (musique)
 

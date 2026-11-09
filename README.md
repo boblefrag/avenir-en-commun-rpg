@@ -1,32 +1,34 @@
-# Legend of the Gems
+# φ L'Union Populaire : Le RPG (PICO-8)
 
-RPG PICO-8. Specs : `Specs — RPG PICO-8 (v1).pdf`, décisions : `decisions.md`.
-Jouer sur la console : [docs/trimui.md](docs/trimui.md).
+Un RPG rétro complet sur **PICO-8** autour de la campagne présidentielle de **l'Union Populaire** et du programme *L'Avenir en Commun* pour la **6e République**.
 
-## Arborescence
-- `main.p8` : le cart (généré, sauf les sprites).
-- `src/*.lua` : le code, un fichier par état ou système, inclus avec `#include`.
-- `assets/world.png` (128×128) et `assets/dungeon1..5.png` (32×32) : les plans, retouchables à la main.
-- `tools/` : scripts Python (aucune dépendance).
-- `tests/smoke.lua`, `tests/smoke_story.lua` : tests lancés sans écran.
+👉 **Jouer directement dans le navigateur (PC, Mobile & Manette) :**
+**[https://boblefrag.github.io/union-populaire-rpg/](https://boblefrag.github.io/union-populaire-rpg/)**
 
-## Commandes
-| Quoi | Commande |
+![Jaquette L'Union Populaire RPG](label_preview.png)
+
+## ✊ Présentation
+Parcourez le pays de **Saint-Denis** à **Marseille** en passant par **Lille**, **Nantes** et **Toulouse**, débattez face aux éditorialistes, lobbyistes et technocrates, brisez les 4 grands monopoles (*Tour des Médias*, *Banque Offshore*, *Tour d'Austérité*, *Lobby Central*) pour inscrire les mesures phares de *L'Avenir en Commun* au programme, et instaurez la **6e République** !
+
+### Les 4 Profils Militants
+- **Militant·e syndical·e** : Haute conviction et grande force d'argumentation directe sur le terrain.
+- **Streamer / Intellectuel·le** : Spécialiste de la mobilisation médiatique (*Débat en direct*, *Tribune libre*, *Onde populaire*, *Cordon syndical*).
+- **Street Medic** : Soutien solidaire de l'équipe (*Sérum phy*, *Services publics*, *Bouclier social*) jusqu'à l'action ultime *La Constituante*.
+- **Fact-checker** : Agilité maximale et *Recul médiatique* permettant d'esquiver la polémique et de contrer ×3.
+
+## 🎮 Commandes
+- **Flèches directionnelles** : Se déplacer / Naviguer dans les menus
+- **Bouton O (`Z`, `C` ou `N`)** : Valider / Convaincre / Interagir
+- **Bouton X (`X`, `V` ou `M`)** : Annuler / Ouvrir le menu de terrain (*Statut, Matériel, Mobilisation*)
+- **Entrée / `P`** : Menu Pause PICO-8
+
+## 🛠️ Développement & Commandes PICO-8
+| Action | Commande |
 |---|---|
-| Assembler le cart | `python3 tools/build.py` |
-| Jouer | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -run main.p8` |
-| Tests (moteur et contenu) | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke.p8` |
-| Tests (chrono, fin et score) | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke_story.p8` |
-| Écouter les musiques sans PICO-8 | `python3 tools/preview_music.py` |
-| Compter les tokens | `python3 tools/tokens.py src/*.lua` |
-| Régénérer carte et donjons (**écrase les PNG**) | `python3 tools/gen_map.py` |
+| Assembler la cartouche | `python3 tools/build.py` |
+| Lancer dans PICO-8 | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -run main.p8` |
+| Exporter la page web | `./pico-8/PICO-8.app/Contents/MacOS/pico8 legend_of_the_gems.p8 -export index.html && python3 tools/build_pages.py` |
+| Exporter la cartouche `.p8.png` | `./pico-8/PICO-8.app/Contents/MacOS/pico8 legend_of_the_gems.p8 -export union_populaire_rpg.p8.png` |
+| Lancer les tests | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke.p8 && ./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke_story.p8` |
 
-## Ce que `build.py` écrit dans `main.p8`
-- Régénéré à chaque fois : `__lua__` (les includes), `__map__` (depuis les PNG), `__sfx__` et `__music__` (depuis `tools/gen_music.py`).
-- Conservé : `__gfx__`, `__gff__`, `__label__`. On dessine les sprites dans l'éditeur PICO-8, puis on sauvegarde : le build ne les écrase pas.
-- Les sons retouchés dans l'éditeur PICO-8 sont écrasés au build suivant : retoucher la musique dans `gen_music.py`.
-
-## Couleurs des PNG
-Monde : eau `#1d2b53`, gué `#29adff`, plaine `#00e436`, forêt `#008751`, ronces `#7e2553`, montagne `#ab5236`, col `#ffccaa`, grande chaîne `#5f574f`.
-Donjons : mur `#5f574f`, sol `#c2c3c7`, sortie `#ffec27`, boss `#ff004d`, table `#ab5236`, lit `#ff77a8`, coffre `#29adff`, étagère `#7e2553`.
-Les lieux (villes, donjons) sont dans `src/places.lua`, pas dans le PNG.
+Jouer sur console portable rétro (TrimUI Brick, Miyoo, Anbernic…) : voir [docs/trimui.md](docs/trimui.md).
