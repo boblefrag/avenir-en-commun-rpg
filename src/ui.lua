@@ -5,11 +5,12 @@ wins={}
 
 -- menu : items = textes, cb(i) appele a la validation
 -- nox : on ne peut pas le fermer avec x
+-- desc : descriptions explicatives affichees en bas pour chaque item
 -- le cb ferme lui-meme le menu (close()) s'il le faut
-function menu(it,x,y,cb,nox)
+function menu(it,x,y,cb,nox,desc)
  local w=0
  for s in all(it) do w=max(w,#s*4) end
- add(wins,{x=x,y=y,w=w+12,h=#it*7+5,it=it,sel=1,cb=cb,nox=nox})
+ add(wins,{x=x,y=y,w=w+12,h=#it*7+5,it=it,sel=1,cb=cb,nox=nox,desc=desc})
 end
 
 -- boite de messages en bas ; f appelee une fois validee
@@ -93,6 +94,11 @@ function ui_draw()
    end
    if (w==wins[#wins]) print(">",w.x+3,w.y+w.sel*7-3,10)
   end
+ end
+ local top=wins[#wins]
+ if top and top.desc and top.desc[top.sel] then
+  box(2,102,124,24)
+  print(top.desc[top.sel],6,106,10)
  end
 end
 

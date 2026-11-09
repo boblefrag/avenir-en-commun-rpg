@@ -36,7 +36,7 @@ gems=tbl("nouvelle france#les cols du grand nord\ns'ouvrent devant vous.|blocage
 spells={}
 spells[2]=tbl("debat en direct,1,18,3|bouclier social,2,3,3|tribune libre,1,33,5|blocage des prix,2,6,5|debrayage,3,0,4|decret d'urgence,1,54,8|regie publique,2,10,8|retour au qg,4,0,6|onde populaire,1,80,12|pacte social,2,15,12|cordon syndical,5,150,6")
 spells[3]=tbl("serum phy,6,15,3|bouclier social,2,3,3|debrayage,3,0,4|soin d'urgence,6,35,5|blocage des prix,2,6,5|retour au qg,4,0,5|cordon syndical,5,150,5|services publics,6,80,9|regie publique,2,10,8|pacte social,2,15,11|la constituante,7,180,18")
-sdesc=split("arguments massue,bloque la hausse des prix,quitter les lieux,retourner au qg,eloigne les provocateurs,rend de la conviction,le peuple convoque la 6e !")
+sdesc=split("arguments massue :\nfait baisser la conviction|bouclier social :\nreduit la perte de conviction|debrayage populaire :\nquitte le bastion adverse|repli strategique :\nretourne au dernier qg|cordon syndical :\neloigne les provocateurs|soutien solidaire :\nredonne de la conviction|la constituante populaire !\nfrappe a pleine puissance","|")
 
 -- tresors et soutiens financiers pour la campagne
 -- nom,valeur de don

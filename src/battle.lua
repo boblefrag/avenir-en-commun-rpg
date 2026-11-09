@@ -19,8 +19,8 @@ function battle.init(m)
 end
 
 function bmenu()
- -- le fact-checker n'a pas de mobilisation : il prend du recul a la place
- menu(split("convaincre,"..(h.cl==4 and "recul" or "mobilisation")..",materiel,retrait"),4,74,bact,true)
+ local d=split("debat d'idees direct pour\nconvaincre l'opposant,"..(h.cl==4 and "prend du recul pour esquiver\net contrer au prochain tour" or "actions collectives et\nmesures fortes du programme")..",utiliser un objet utile de\nvotre sacoche militante,quitter le debat et se\nreplier strategiquement")
+ menu(split("convaincre,"..(h.cl==4 and "recul" or "mobilisation")..",materiel,retrait"),4,66,bact,true,d)
 end
 
 function bact(i)
@@ -31,7 +31,8 @@ function bact(i)
   if h.cl==4 then hide() else bmagic() end
  elseif i==3 then
   hid=false
-  menu(items(),4,56,function(o)
+  local it,ds=items()
+  menu(it,4,50,function(o)
    close()
    local t,u=use_item(iid[o])
    if not t then
@@ -39,7 +40,7 @@ function bact(i)
    else
     msg(t,u and function() monster_turn(bmenu) end or bmenu)
    end
-  end,true)
+  end,true,ds)
  elseif i==4 then
   -- cache, le fact-checker se replie bien plus facilement (agi x6)
   local a=h.agi*(hid and 6 or 1)
@@ -68,13 +69,22 @@ end
 
 -- actions politiques en combat : conviction, bouclier, soutien, constituante
 function bmagic()
- local it,ids=spell_list(function(e) return e<3 or e>5 end)
+ local it,ids,ds={},{},{}
+ for i=1,nspells() do
+  local s=sp(i)
+  if s[2]<3 or s[2]>5 then
+   add(it,s[1].." "..s[4].."pm")
+   add(ids,i)
+   add(ds,sdesc[s[2]])
+  end
+ end
  if #it==0 then
   msg("aucun argument pret !",bmenu)
   return
  end
  add(it,"retour")
- menu(it,4,40,function(o)
+ add(ds,"revenir au debat")
+ menu(it,4,10,function(o)
   close()
   local s=ids[o] and sp(ids[o])
   local e=s and s[2]
@@ -103,7 +113,7 @@ function bmagic()
     if mhp<=0 then win() else monster_turn(bmenu) end
    end)
   end
- end,true)
+ end,true,ds)
 end
 
 -- k : diviseur de la def (2 pour le heros qui frappe, 4 pour les

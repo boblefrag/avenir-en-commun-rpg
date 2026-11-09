@@ -169,14 +169,17 @@ function items()
  -- iid[i] : numero d'objet (pour use_item) de la ligne i du menu ;
  -- syndicaliste et fact-checker (0 pm) ne voient pas les cahiers thematiques
  local t,l,c={},split("cafe militant,repas solidaire,cahier thematique,revue politique,le programme,retour"),{h.pot,h.spo,h.eth,h.spe}
+ local d=split("cafe chaud et revigorant :\nrend 20 pts de conviction|grand banquet fraternel :\nrend 80 pts de conviction|cahier thematique etudie :\nrend 15 pts de mobilisation|revue d'analyse politique :\nrend 50 pts de mobilisation|l'avenir en commun :\nle lire donne de l'espoir !|refermer la sacoche militante","|")
+ local ds={}
  iid={}
  for i=1,6 do
   if h.pm>0 or i<3 or i>4 then
    add(iid,i)
    add(t,l[i]..(c[i] and " (x"..c[i]..")" or ""))
+   add(ds,d[i])
   end
  end
- return t
+ return t,ds
 end
 
 -- utilise l'objet o : renvoie le message (nil si retour)

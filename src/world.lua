@@ -78,6 +78,7 @@ end
 
 -- menu hors combat (x)
 function field_menu()
+ local d=split("fiche du militant : stats,\nmobilisation et equipement,ouvrir la sacoche pour\nutiliser vivres et cahiers,actions collectives du\nprogramme sur le terrain")
  menu(split("statut,materiel,mobilisation"),4,12,function(i)
   close()
   if i==1 then
@@ -89,24 +90,35 @@ function field_menu()
    msg(classes[h.cl][1].." (niv "..h.lv..")\npv "..h.hp.."/"..h.pv.."  pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | "..h.gold.."e")
   elseif i==2 then
    -- jamais vide : il reste toujours la serviette
-   menu(items(),4,12,function(o)
+   local it,ds=items()
+   menu(it,4,12,function(o)
     close()
     local t=use_item(iid[o])
     if (t) msg(t)
-   end)
+   end,nil,ds)
   else
    field_magic()
   end
- end)
+ end,nil,d)
 end
 
 -- mobilisation hors combat : debrayage, retour, cordon syndical, soin
 function field_magic()
- local it,ids=spell_list(function(e) return e>2 and e<7 end)
+ local it,ids,ds={},{},{}
+ for i=1,nspells() do
+  local s=sp(i)
+  if s[2]>2 and s[2]<7 then
+   add(it,s[1].." "..s[4].."pm")
+   add(ids,i)
+   add(ds,sdesc[s[2]])
+  end
+ end
  if #it==0 then
   msg("aucune mobilisation\npossible ici !")
   return
  end
+ add(it,"retour")
+ add(ds,"fermer la mobilisation")
  menu(it,4,12,function(o)
   close()
   local s=sp(ids[o])
@@ -129,7 +141,7 @@ function field_magic()
    end
    msg(s[1].." !"..(e==5 and "\nles opposants vous evitent." or e==6 and "\n"..heal(s[3]) or ""))
   end
- end)
+ end,nil,ds)
 end
 
 -- rencontre aleatoire sur la tuile s (4 fois moins sous repousse)
