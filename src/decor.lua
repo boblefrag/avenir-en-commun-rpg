@@ -126,10 +126,26 @@ end
 
 function epilog.update() end
 
--- sprites agrandis : heros x4 (8 -> 32), princesse x2 (16 -> 32)
+-- sprites agrandis : heros, melenchon (32x32 en 2 moities) et macron (boss 192)
 function epi_hero(x,y,k)
+ rectfill(x+2*k,y+2*k,x+6*k-1,y+3*k,0)
  pal(8,classes[h.cl][2])
  sspr(0,16,8,8,x,y,8*k,8*k)
+ pal()
+end
+
+function jlm(x,y,w)
+ w=w or 32
+ pal(1,0)
+ sspr(64,8,32,16,x,y,w,w/2)
+ sspr(96,8,32,16,x,y+w/2,w,w/2)
+ pal()
+end
+
+function mac(x,y,w)
+ w=w or 32
+ pal(13,0)
+ sspr(0,96,32,32,x,y,w,w)
  pal()
 end
 
@@ -138,57 +154,85 @@ function epilog.draw()
  local t=ft/30
  cls(1)
  if fi==1 then
-  box(14,10,100,74)
-  rectfill(16,12,111,81,1)
-  print(">> 20:00 - ELECTION <<",20,16,7)
-  print("VICTOIRE DE LFI !",30,30,10)
-  rectfill(24,46,78,58,12)
-  rectfill(79,46,104,58,8)
-  print("54.0 %",40,49,7)
-  print("46 %",86,49,7)
-  print("LE PEUPLE L'EMPORTE",26,66,11)
+  box(4,4,120,88)
+  rectfill(6,6,121,89,1)
+  rectfill(6,6,121,15,8)
+  print("20:00 - VICTOIRE DE LFI !",14,8,10)
+  rectfill(12,18,58,64,12)
+  rect(12,18,58,64,7)
+  jlm(19,20,32)
+  print("MELENCHON",17,56,7)
+  rectfill(70,18,116,64,2)
+  rect(70,18,116,64,6)
+  mac(77,20,32)
+  print("MACRON",81,56,6)
+  rectfill(12,68,69,80,12)
+  rectfill(70,68,116,80,8)
+  rect(12,68,116,80,7)
+  print("54.0 %",24,72,7)
+  print("46.0 %",82,72,7)
  elseif fi==2 then
-  rectfill(0,0,127,90,1)
-  rectfill(12,24,116,74,5)
-  rect(12,24,116,74,0)
-  rectfill(56,38,72,56,9)
-  circfill(64,36,6,10)
-  rectfill(0,74,127,90,0)
-  rectfill(68,76,108,86,0)
-  circfill(112,82,6,10)
-  print("PALAIS DESERTE",36,14,7)
+  rectfill(0,0,127,92,1)
+  rectfill(8,24,84,72,6)
+  rectfill(8,20,84,24,5)
+  for x=14,74,18 do rectfill(x,26,x+4,72,7) end
+  for x=22,62,18 do rectfill(x,32,x+8,50,0) end
+  rectfill(40,56,52,72,8)
+  rectfill(44,12,47,18,12)
+  rectfill(48,12,51,18,7)
+  rectfill(52,12,55,18,8)
+  rectfill(0,72,127,92,5)
+  rectfill(80,64,88,72,4)
+  rect(80,64,88,72,9)
+  mac(88,42,32)
+  print("PALAIS DE L'ELYSEE",28,4,10)
  elseif fi==3 then
-  rectfill(0,0,127,90,1)
+  rectfill(0,0,127,92,1)
   for i=1,5 do
-   local fx,fy=16+i*22+sin(t*2+i)*4,16+cos(t*3+i)*4
+   local fx,fy=14+i*20+sin(t*2+i)*4,18+cos(t*3+i)*4
    circ(fx,fy,4+sin(t+i)*2,i%2==0 and 8 or 10)
   end
-  rectfill(52,50,76,78,5)
-  rectfill(60,26,68,50,6)
-  circfill(64,22,6,7)
+  rectfill(12,42,28,76,5)
+  rectfill(16,26,24,42,6)
+  circfill(20,22,4,11)
+  rectfill(38,68,90,88,2)
+  rect(38,68,90,88,12)
+  print("VIVE LA 6E !",42,76,7)
+  jlm(48,36,32)
   for i=0,6 do
-   spr(36,6+i*18+sin(t+i)*2,54+cos(t/2+i)*2)
+   if (i<2 or i>4) spr(36,4+i*18+sin(t+i)*2,68+cos(t/2+i)*2)
   end
+  print("PLACE DE LA REPUBLIQUE",20,6,10)
  elseif fi==4 then
-  rectfill(0,0,127,90,1)
-  epi_hero(52,24,3)
-  spr(37,56,56)
-  spr(38,64,56)
-  rectfill(12,66,116,78,12)
-  print("L'AVENIR EN COMMUN",28,70,7)
-  for i=0,6 do
-   spr(36,4+i*19+sin(t+i)*2,58+cos(t/2+i)*2)
-  end
+  rectfill(0,0,127,92,1)
+  jlm(6,22,32)
+  epi_hero(38,42,2)
+  spr(37,38,32)
+  spr(38,46,32)
+  box(56,16,68,62)
+  rectfill(58,18,121,26,12)
+  print("URGENCE SOCIALE",60,20,7)
+  print("> SMIC A 1700E",60,31,10)
+  print("> PRIX BLOQUES",60,41,11)
+  print("> RETRAITE 60",60,51,7)
+  print("> 6E REPUBLIQUE",60,61,8)
+  rectfill(6,80,121,90,8)
+  print("L'AVENIR EN COMMUN EN ACTES",10,83,7)
  elseif fi==5 then
-  rectfill(16,10,111,84,7)
-  rect(16,10,111,84,10)
-  print("REPUBLIQUE FRANCAISE",24,18,1)
-  print("DECRET N. 1",42,28,8)
-  print("ASSEMBLEE CONSTITUANTE",20,40,1)
-  print("POUR LA 6E REPUBLIQUE",22,50,12)
-  circfill(64,68,7,12)
-  circfill(64,68,4,7)
-  circfill(64,68,2,8)
+  jlm(3,30,32)
+  rectfill(38,8,124,86,7)
+  rect(38,8,124,86,10)
+  rectfill(42,12,67,14,12)
+  rectfill(68,12,94,14,7)
+  rectfill(95,12,120,14,8)
+  print("REPUBLIQUE FRANCAISE",42,18,1)
+  print("DECRET N. 1",60,28,8)
+  print("ASSEMBLEE",64,39,1)
+  print("CONSTITUANTE",58,47,1)
+  print("6E REPUBLIQUE",56,57,12)
+  circfill(82,74,7,12)
+  circfill(82,74,4,7)
+  circfill(82,74,2,8)
  else
   local c=split("2,8,9,10,12")
   for i=1,5 do rectfill(0,16+i*8,127,23+i*8,c[i]) end
@@ -197,20 +241,23 @@ function epilog.draw()
   circfill(64,y,8,7)
   rectfill(0,56,127,127,3)
   if fi==6 then
-   epi_hero(56,48,2)
-   print("L'AUBE DU PEUPLE",32,8,7)
+   rectfill(12,44,36,56,1)
+   for x=14,34,5 do line(x,46,x,56,5) end
+   jlm(42,36,32)
+   epi_hero(78,46,2)
+   print("L'AUBE DU PEUPLE",32,6,7)
   else
-   local sk,hr=split("15,4,9,15"),split("4,0,0,0")
+   jlm(48,36,32)
+   local sk,hr,xs=split("15,4,9,15"),split("4,0,0,0"),split("6,26,84,104")
    for i=1,4 do
+    rectfill(xs[i]+4,52,xs[i]+11,54,0)
     pal(8,classes[i][2])
     pal(15,sk[i])
     pal(4,hr[i])
-    sspr(0,16,8,8,18+i*20,44,16,16)
+    sspr(0,16,8,8,xs[i],48,16,16)
    end
    pal()
-   circ(64,24,7,12)
-   line(64,14,64,34,7)
-   print("PLACE AU PEUPLE !",30,8,10)
+   print("PLACE AU PEUPLE !",30,4,10)
   end
  end
 end

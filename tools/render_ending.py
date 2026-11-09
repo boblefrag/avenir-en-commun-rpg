@@ -35,9 +35,10 @@ FONT_3X5 = {
     "8": ["111", "101", "111", "101", "111"], "9": ["111", "101", "111", "001", "111"],
     ":": ["000", "010", "000", "010", "000"], "%": ["101", "001", "010", "100", "101"],
     "-": ["000", "000", "111", "000", "000"], ".": ["000", "000", "000", "000", "010"],
-    "!": ["010", "010", "010", "000", "010"], "'": ["010", "010", "000", "000", "000"],
-    ">": ["100", "010", "001", "010", "100"], "<": ["001", "010", "100", "010", "001"],
-    "/": ["001", "001", "010", "100", "100"], " ": ["000", "000", "000", "000", "000"],
+    ",": ["000", "000", "000", "010", "100"], "!": ["010", "010", "010", "000", "010"],
+    "'": ["010", "010", "000", "000", "000"], ">": ["100", "010", "001", "010", "100"],
+    "<": ["001", "010", "100", "010", "001"], "/": ["001", "001", "010", "100", "100"],
+    " ": ["000", "000", "000", "000", "000"],
 }
 
 
@@ -72,88 +73,126 @@ class Screen(Img):
         self.draw_box(2, 96, 124, 30)
         self.print_text(text, 6, 100, 7)
 
+    def jlm(self, x, y, k=1):
+        self.sspr(64, 8, 32, 16, x, y, k, pal={1: 0})
+        self.sspr(96, 8, 32, 16, x, y + 16 * k, k, pal={1: 0})
+
+    def mac(self, x, y, k=1):
+        self.sspr(0, 96, 32, 32, x, y, k, pal={13: 0})
+
+    def hero(self, x, y, k=2, tunic=8):
+        self.rectfill(x + 2 * k, y + 2 * k, x + 6 * k - 1, y + 3 * k, 0)
+        self.sspr(0, 16, 8, 8, x, y, k, pal={8: tunic})
+
 
 def render_all():
     CART_TEXT = (ROOT / "src/data.lua").read_text(encoding="utf-8")
     import re
     m = re.search(r'ending=split\("([^"]+)"', CART_TEXT)
-    dialogues = m.group(1).split("|") if m else []
+    dialogues = m.group(1).replace("\\n", "\n").split("|") if m else []
 
     scenes = []
 
-    # Scene 1: 20:00 - ELECTION
+    # Scene 1: 20:00 - ELECTION (Face-a-face TV Melenchon 54% vs Macron 46%)
     s1 = Screen()
     for y in range(128): s1.rectfill(0, y, 127, y, 1)
-    s1.draw_box(14, 10, 100, 74)
-    s1.rectfill(16, 12, 111, 81, 1)
-    s1.print_text(">> 20:00 - election <<", 20, 16, 7)
-    s1.print_text("victoire de lfi !", 30, 30, 10)
-    s1.rectfill(24, 46, 78, 58, 12)
-    s1.rectfill(79, 46, 104, 58, 8)
-    s1.print_text("54.0 %", 40, 49, 7)
-    s1.print_text("46 %", 86, 49, 7)
-    s1.print_text("le peuple l'emporte", 26, 66, 11)
+    s1.draw_box(4, 4, 120, 88)
+    s1.rectfill(6, 6, 121, 89, 1)
+    s1.rectfill(6, 6, 121, 15, 8)
+    s1.print_text("20:00 - victoire de lfi !", 14, 8, 10)
+    s1.rectfill(12, 18, 58, 64, 12)
+    s1.rect(12, 18, 58, 64, 7)
+    s1.jlm(19, 20, 1)
+    s1.print_text("melenchon", 17, 56, 7)
+    s1.rectfill(70, 18, 116, 64, 2)
+    s1.rect(70, 18, 116, 64, 6)
+    s1.mac(77, 20, 1)
+    s1.print_text("macron", 81, 56, 6)
+    s1.rectfill(12, 68, 69, 80, 12)
+    s1.rectfill(70, 68, 116, 80, 8)
+    s1.rect(12, 68, 116, 80, 7)
+    s1.print_text("54.0 %", 24, 72, 7)
+    s1.print_text("46.0 %", 82, 72, 7)
     s1.draw_msg(dialogues[0])
     scenes.append(("ending_1_election.png", s1))
 
-    # Scene 2: PALAIS DESERTE
+    # Scene 2: PALAIS DE L'ELYSEE DESERTE PAR MACRON
     s2 = Screen()
     for y in range(128): s2.rectfill(0, y, 127, y, 1)
-    s2.rectfill(12, 24, 116, 74, 5)
-    s2.rect(12, 24, 116, 74, 0)
-    s2.rectfill(56, 38, 72, 56, 9)
-    s2.circfill(64, 36, 6, 10)
-    s2.rectfill(0, 74, 127, 90, 0)
-    s2.rectfill(68, 76, 108, 86, 0)
-    s2.circfill(112, 82, 6, 10)
-    s2.print_text("palais deserte", 36, 14, 7)
+    s2.rectfill(8, 24, 84, 72, 6)
+    s2.rectfill(8, 20, 84, 24, 5)
+    for x in range(14, 75, 18): s2.rectfill(x, 26, x + 4, 72, 7)
+    for x in range(22, 63, 18): s2.rectfill(x, 32, x + 8, 50, 0)
+    s2.rectfill(40, 56, 52, 72, 8)
+    s2.rectfill(44, 12, 47, 18, 12)
+    s2.rectfill(48, 12, 51, 18, 7)
+    s2.rectfill(52, 12, 55, 18, 8)
+    s2.rectfill(0, 72, 127, 92, 5)
+    s2.rectfill(80, 64, 88, 72, 4)
+    s2.rect(80, 64, 88, 72, 9)
+    s2.mac(88, 42, 1)
+    s2.print_text("palais de l'elysee", 28, 4, 10)
     s2.draw_msg(dialogues[1])
     scenes.append(("ending_2_palais.png", s2))
 
-    # Scene 3: PLACE DE LA REPUBLIQUE
+    # Scene 3: PLACE DE LA REPUBLIQUE AVEC MELENCHON A LA TRIBUNE
     s3 = Screen()
     for y in range(128): s3.rectfill(0, y, 127, y, 1)
     for i in range(1, 6):
-        fx = 16 + i * 20
-        fy = 16 + (i % 2) * 8
-        s3.circ(fx, fy, 6, 8 if i % 2 == 0 else 10)
-        s3.circ(fx, fy, 3, 7)
-    s3.rectfill(52, 50, 76, 78, 5)
-    s3.rectfill(60, 26, 68, 50, 6)
-    s3.circfill(64, 22, 6, 7)
-    # foule et drapeaux
+        fx = 14 + i * 20
+        fy = 18 + (i % 2) * 6
+        s3.circ(fx, fy, 5, 8 if i % 2 == 0 else 10)
+        s3.circ(fx, fy, 2, 7)
+    s3.rectfill(12, 42, 28, 76, 5)
+    s3.rectfill(16, 26, 24, 42, 6)
+    s3.circfill(20, 22, 4, 11)
+    s3.rectfill(38, 68, 90, 88, 2)
+    s3.rect(38, 68, 90, 88, 12)
+    s3.print_text("vive la 6e !", 42, 76, 7)
+    s3.jlm(48, 36, 1)
     for i in range(7):
-        dx = 6 + i * 17
-        s3.rectfill(dx, 62, dx + 4, 76, 12)
-        s3.rectfill(dx + 2, 62, dx + 4, 68, 7)
-        s3.rectfill(dx + 4, 62, dx + 6, 68, 8)
-        s3.circfill(dx + 2, 74, 2, 15)
+        if i < 2 or i > 4:
+            s3.sspr(32, 16, 8, 8, 4 + i * 18, 68, 1)
+    s3.print_text("place de la republique", 20, 6, 10)
     s3.draw_msg(dialogues[2])
     scenes.append(("ending_3_republique.png", s3))
 
-    # Scene 4: MESURES D'URGENCE & PROGRAMME
+    # Scene 4: MESURES D'URGENCE & L'AVENIR EN COMMUN
     s4 = Screen()
     for y in range(128): s4.rectfill(0, y, 127, y, 1)
-    # heros avec l'avenir en commun
-    s4.sspr(0, 16, 8, 8, 52, 24, 3, pal={8: 8})
-    s4.rectfill(12, 66, 116, 78, 12)
-    s4.print_text("l'avenir en commun", 28, 70, 7)
+    s4.jlm(6, 22, 1)
+    s4.hero(38, 42, 2)
+    s4.sspr(40, 16, 8, 8, 38, 32, 1)
+    s4.sspr(48, 16, 8, 8, 46, 32, 1)
+    s4.draw_box(56, 16, 68, 62)
+    s4.rectfill(58, 18, 121, 26, 12)
+    s4.print_text("urgence sociale", 60, 20, 7)
+    s4.print_text("> smic a 1700e", 60, 31, 10)
+    s4.print_text("> prix bloques", 60, 41, 11)
+    s4.print_text("> retraite 60", 60, 51, 7)
+    s4.print_text("> 6e republique", 60, 61, 8)
+    s4.rectfill(6, 80, 121, 90, 8)
+    s4.print_text("l'avenir en commun en actes", 10, 83, 7)
     s4.draw_msg(dialogues[3])
     scenes.append(("ending_4_programme.png", s4))
 
-    # Scene 5: ASSEMBLEE CONSTITUANTE
+    # Scene 5: ASSEMBLEE CONSTITUANTE (Melenchon + Decret n°1)
     s5 = Screen()
     for y in range(128): s5.rectfill(0, y, 127, y, 1)
-    s5.rectfill(16, 10, 111, 84, 7)
-    s5.rect(16, 10, 111, 84, 10)
-    s5.print_text("republique francaise", 24, 18, 1)
-    s5.print_text("decret n. 1", 42, 28, 8)
-    s5.print_text("assemblee constituante", 20, 40, 1)
-    s5.print_text("pour la 6e republique", 22, 50, 12)
-    # Sceau tricolore
-    s5.circfill(64, 68, 7, 12)
-    s5.circfill(64, 68, 4, 7)
-    s5.circfill(64, 68, 2, 8)
+    s5.jlm(3, 30, 1)
+    s5.rectfill(38, 8, 124, 86, 7)
+    s5.rect(38, 8, 124, 86, 10)
+    s5.rectfill(42, 12, 67, 14, 12)
+    s5.rectfill(68, 12, 94, 14, 7)
+    s5.rectfill(95, 12, 120, 14, 8)
+    s5.print_text("republique francaise", 42, 18, 1)
+    s5.print_text("decret n. 1", 60, 28, 8)
+    s5.print_text("assemblee", 64, 39, 1)
+    s5.print_text("constituante", 58, 47, 1)
+    s5.print_text("6e republique", 56, 57, 12)
+    s5.circfill(82, 74, 7, 12)
+    s5.circfill(82, 74, 4, 7)
+    s5.circfill(82, 74, 2, 8)
     s5.draw_msg(dialogues[4])
     scenes.append(("ending_5_constituante.png", s5))
 
@@ -161,34 +200,37 @@ def render_all():
     s6 = Screen()
     cols = [2, 8, 9, 10, 12]
     for i, c in enumerate(cols):
-        s6.rectfill(0, 12 + i * 8, 127, 19 + i * 8, c)
-    s6.circfill(64, 38, 13, 10)
-    s6.circfill(64, 38, 9, 7)
+        s6.rectfill(0, 16 + (i + 1) * 8, 127, 23 + (i + 1) * 8, c)
+    s6.circfill(64, 38, 12, 10)
+    s6.circfill(64, 38, 8, 7)
     s6.rectfill(0, 56, 127, 127, 3)
-    s6.sspr(0, 16, 8, 8, 56, 48, 2, pal={8: 8})
-    s6.print_text("l'aube du peuple", 32, 8, 7)
+    s6.rectfill(12, 44, 36, 56, 1)
+    for x in range(14, 35, 5):
+        for y in range(46, 57): s6.pset(x, y, 5)
+    s6.jlm(42, 36, 1)
+    s6.hero(78, 46, 2)
+    s6.print_text("l'aube du peuple", 32, 6, 7)
     s6.draw_msg(dialogues[5])
     scenes.append(("ending_6_aube.png", s6))
 
-    # Scene 7: PLACE AU PEUPLE !
+    # Scene 7: PLACE AU PEUPLE ! (Melenchon + les 4 militants diversifies)
     s7 = Screen()
     for i, c in enumerate(cols):
-        s7.rectfill(0, 12 + i * 8, 127, 19 + i * 8, c)
+        s7.rectfill(0, 16 + (i + 1) * 8, 127, 23 + (i + 1) * 8, c)
     s7.circfill(64, 36, 12, 10)
     s7.circfill(64, 36, 8, 7)
     s7.rectfill(0, 56, 127, 127, 3)
-    # les 4 militants : un blanc, un noir, un arabe, un asiatique
+    s7.jlm(48, 36, 1)
     militants = [
-        (8, 15, 4),   # Blanc : rouge, peau claire 15, cheveux chatains 4
-        (12, 4, 0),   # Noir : cyan, peau foncee 4, cheveux noirs 0
-        (7, 9, 0),    # Arabe : blanc, peau mate ambree 9, cheveux noirs 0
-        (11, 15, 0),  # Asiatique : vert, peau ivoire 15, cheveux noirs 0
+        (6, 8, 15, 4),    # Blanc : rouge, peau claire 15, cheveux chatains 4
+        (26, 12, 4, 0),   # Noir : cyan, peau foncee 4, cheveux noirs 0
+        (84, 7, 9, 0),    # Arabe : blanc, peau mate ambree 9, cheveux noirs 0
+        (104, 11, 15, 0), # Asiatique : vert, peau ivoire 15, cheveux noirs 0
     ]
-    for i, (tunic, skin, hair) in enumerate(militants):
-        s7.sspr(0, 16, 8, 8, 18 + (i + 1) * 20, 44, 2, pal={8: tunic, 15: skin, 4: hair})
-    s7.circ(64, 24, 7, 12)
-    for y in range(14, 35): s7.pset(64, y, 7)
-    s7.print_text("place au peuple !", 30, 8, 10)
+    for mx, tunic, skin, hair in militants:
+        s7.rectfill(mx + 4, 52, mx + 11, 54, 0)
+        s7.sspr(0, 16, 8, 8, mx, 48, 2, pal={8: tunic, 15: skin, 4: hair})
+    s7.print_text("place au peuple !", 30, 4, 10)
     s7.draw_msg(dialogues[6])
     scenes.append(("ending_7_victoire.png", s7))
 
