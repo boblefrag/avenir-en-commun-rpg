@@ -8,7 +8,7 @@ Un RPG rétro complet sur **PICO-8** autour de la campagne présidentielle de **
 ![Jaquette L'Union Populaire RPG](label_preview.png)
 
 ## ✊ Présentation
-Parcourez le pays de **Saint-Denis** à **Marseille** en passant par **Lille**, **Nantes** et **Toulouse**, débattez face aux éditorialistes, lobbyistes et technocrates, brisez les 4 grands monopoles (*Tour des Médias*, *Banque Offshore*, *Tour d'Austérité*, *Lobby Central*) pour inscrire les mesures phares de *L'Avenir en Commun* au programme, et instaurez la **6e République** !
+Parcourez le pays de **Saint-Denis** à **Marseille** en passant par **Lille**, **Lyon** et **Le Bourget**, débattez face aux éditorialistes, lobbyistes et technocrates, brisez les 4 grands monopoles (*Tour des Médias*, *Banque Offshore*, *Tour d'Austérité*, *Lobby Central*) pour inscrire les mesures phares de *L'Avenir en Commun* au programme, et instaurez la **6e République** !
 
 ### Les 4 Profils Militants
 - **Militant** : Militant LFI de terrain, haute conviction et grande force d'argumentation directe en porte-à-porte et débat.
