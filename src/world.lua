@@ -122,6 +122,7 @@ function field_magic()
  menu(it,4,12,function(o)
   close()
   local s=sp(ids[o])
+  if (not s) return
   local e=s[2]
   if h.mp<s[4] then
    msg("mobilisation\nepuisee !")

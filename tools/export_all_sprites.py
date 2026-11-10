@@ -26,6 +26,7 @@ PICO8_PAL = [
     (131, 118, 156),  # d indigo / lavande
     (255, 119, 168),  # e rose
     (255, 204, 170),  # f chair / beige
+    (22, 27, 42),     # 16 fond ardoise sombre pour detacher les contours noirs (0)
 ]
 PALETTE_DEF = [("", rgb) for rgb in PICO8_PAL]
 
@@ -62,22 +63,26 @@ NAMES = {
 
 def export_png():
     scale = 3
-    # 6 colonnes x 4 lignes pour les 23 monstres (16x16)
-    # puis ligne de 5 boss (32x32)
-    col_w = 16 * scale + 6
-    row_h = 16 * scale + 6
-    gw = 6 * col_w + 10
-    gh = 4 * row_h + (32 * scale + 12) + 16
+    # 6 colonnes x 4 lignes pour les 23 monstres + permanent QG (16x16)
+    # puis ligne de 5 boss (32x32) sans chevauchement
+    col_w = 16 * scale + 8
+    row_h = 16 * scale + 8
+    boss_cell_w = 32 * scale + 8
+    gw = max(6 * col_w + 16, 5 * boss_cell_w + 16)
+    gh = 4 * row_h + (32 * scale + 16) + 20
 
     grid = [[0 for _ in range(gw)] for _ in range(gh)]
 
-    # 1. 23 Monstres (16x16)
-    monsters_list = [sid for sid in sorted(MONSTERS.keys()) if sid in NAMES]
+    # 1. 23 Monstres + Permanent QG (16x16)
+    NAMES_WITH_QG = dict(NAMES)
+    NAMES_WITH_QG[230] = "Permanent QG (Syndicaliste)"
+    monsters_list = [sid for sid in sorted(MONSTERS.keys()) if sid in NAMES_WITH_QG]
+    m_x_offset = (gw - (6 * col_w - 8)) // 2
     for idx, sid in enumerate(monsters_list):
         col = idx % 6
         row = idx // 6
-        x0 = 8 + col * col_w
-        y0 = 8 + row * row_h
+        x0 = m_x_offset + col * col_w
+        y0 = 10 + row * row_h
         rows = MONSTERS[sid]
 
         # Cadre gris
@@ -93,17 +98,16 @@ def export_png():
         for py in range(16):
             for px in range(16):
                 ch = rows[py][px]
-                c = 0 if ch == "." else int(ch, 16)
+                c = 16 if ch == "." else int(ch, 16)
                 for sy in range(scale):
                     for sx in range(scale):
                         grid[y0 + py * scale + sy][x0 + px * scale + sx] = c
 
     # 2. 5 Boss (32x32)
-    boss_y0 = 4 * row_h + 16
-    boss_w = 32 * scale + 10
-    # On centre ou étale les 5 boss
+    boss_y0 = 4 * row_h + 18
+    b_x_offset = (gw - (5 * boss_cell_w - 8)) // 2
     for idx, bid in enumerate(sorted(BOSSES.keys())):
-        x0 = 8 + int(idx * (gw - 16 - 32 * scale) / 4)
+        x0 = b_x_offset + idx * boss_cell_w
         y0 = boss_y0
         rows = BOSSES[bid]
 
@@ -120,7 +124,7 @@ def export_png():
         for py in range(32):
             for px in range(32):
                 ch = rows[py][px]
-                c = 0 if ch == "." else int(ch, 16)
+                c = 16 if ch == "." else int(ch, 16)
                 for sy in range(scale):
                     for sx in range(scale):
                         grid[y0 + py * scale + sy][x0 + px * scale + sx] = c

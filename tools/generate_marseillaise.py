@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Genere la Marseillaise authentique en SFX 17..34 et Music 16..21 dans main.p8."""
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 ROOT = Path(__file__).resolve().parent.parent
 CART = ROOT / "main.p8"
@@ -119,8 +122,18 @@ mus_idx = text.index("__music__")
 
 sfx_part = text[sfx_idx + 8:mus_idx]
 sfx_lines = [l for l in sfx_part.split("\n") if l.strip()]
-# On garde les 17 premiers (0..16) et on ajoute les 18 nouveaux (17..34)
-sfx_lines = sfx_lines[:17] + new_sfx_lines
+# On garde les 17 premiers (0..16), on ajoute les 18 nouveaux (17..34),
+# puis on complete jusqu'a 52 et on conserve/regenere les bruitages 53..55
+from gen_music import build as build_gen_music  # noqa: E402
+gen_sfx, _, _, _ = build_gen_music()
+empty_sfx = "01100000" + "0" * 160
+sfx_lines = (
+    sfx_lines[:17]
+    + new_sfx_lines
+    + [empty_sfx] * (53 - 35)
+    + gen_sfx[53:56]
+    + [empty_sfx] * (64 - 56)
+)
 new_sfx_block = "__sfx__\n" + "\n".join(sfx_lines) + "\n"
 
 # Music : on garde les 16 premiers (0..15) et on ajoute les 6 nouveaux (16..21)

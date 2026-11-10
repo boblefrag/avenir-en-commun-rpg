@@ -89,7 +89,7 @@ def render_gameplay():
             s1.rectfill(x, y - 3 - rng.randrange(4), x + 3, y - 1, rng.choice([8, 12, 11, 9, 14, 7]))
     for y in range(76, 128, 7):
         s1.line(0, y, 127, y, 2)
-    s1.sspr(48, 112, 16, 16, 40, 20, 3, pal={4: 6})
+    s1.sspr(48, 112, 16, 16, 40, 20, 3, pal={13: 0})
     s1.rectfill(0, 60, 127, 75, 2)
     s1.line(0, 60, 127, 60, 15)
     s1.line(0, 61, 127, 61, 9)
@@ -131,7 +131,7 @@ def render_gameplay():
         y = 64 + rng.randrange(63)
         s2.line(x, y, x + (y - 60) // 12, y, 11)
     # Opposant : Editorialiste star (sprite 100 -> sx=32, sy=48, 16x16 x3 = 48x48)
-    s2.sspr(32, 48, 16, 16, 40, 20, 3)
+    s2.sspr(32, 48, 16, 16, 40, 20, 3, pal={13: 0})
     s2.draw_hud(hp=38, pv=48, mp=16, pm=20, gold=145, gems=3)
     s2.draw_menu(
         ["convaincre", "mobilisation", "materiel", "retrait"],
@@ -199,7 +199,6 @@ def render_gameplay():
     for fname, scr in scenes:
         big = [[scr.px[y // k][x // k] for x in range(128 * k)] for y in range(128 * k)]
         write_png(ROOT / fname, big, PAL_RGB)
-        write_png(ART_DIR / fname, big, PAL_RGB)
         print(f"{fname} genere avec succes")
 
 

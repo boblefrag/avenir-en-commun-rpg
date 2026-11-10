@@ -286,8 +286,6 @@ def render_all():
         big = [[scr.px[y // k][x // k] for x in range(128 * k)] for y in range(128 * k)]
         # Sauvegarde racine
         write_png(ROOT / fname, big, PAL_RGB)
-        # Sauvegarde artefact
-        write_png(ART_DIR / fname, big, PAL_RGB)
         print(f"{fname} genere avec succes")
 
 

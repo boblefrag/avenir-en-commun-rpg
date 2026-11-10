@@ -95,8 +95,8 @@ function shop()
   end
  end
  for y=76,127,7 do line(0,y,127,y,2) end
- -- cheveux gris : le brun (4) se confondait avec le mur
- pal(4,6)
+ -- permanent du qg (sprite 230 en 16x16, noir opaque en 13)
+ pal(13,0)
  sspr(48,112,16,16,40,20,48,48)
  pal()
  rectfill(0,60,127,75,2)

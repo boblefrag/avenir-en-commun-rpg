@@ -101,6 +101,10 @@ ok(nspells()==1 and sp(1)[1]=="debat en direct","streamer niv 1 : debat en direc
 h.lv=5
 local it,ids=spell_list(function(e) return e>2 end)
 ok(#it==1 and sp(ids[1])[2]==3,"streamer niv 5 : debrayage utilisable hors combat")
+wins={}
+field_magic()
+wins[#wins].cb(#wins[#wins].it)
+ok(#wins==0,"mobilisation hors combat : bouton retour sans crash")
 h.lv=23
 ok(nspells()==11 and #spells[2]==11,"streamer niv max : 11 sorts")
 new_hero(3)

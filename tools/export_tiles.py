@@ -26,6 +26,7 @@ PICO8_PAL = [
     (131, 118, 156),  # d indigo / lavande
     (255, 119, 168),  # e rose
     (255, 204, 170),  # f chair / beige
+    (22, 27, 42),     # 16 fond ardoise sombre pour detacher les contours noirs (0)
 ]
 
 PALETTE_DEF = [("", rgb) for rgb in PICO8_PAL]
@@ -35,10 +36,10 @@ TILE_INFO = {
     2: ("Gue / Riviere", "Franchissable une fois le Blocage des prix valide"),
     3: ("Plaine / Herbe", "Terrain de marche de base sur la carte"),
     4: ("Foret", "Terrain boise naturel (rencontres zone 2)"),
-    5: ("Ronces / Pollution", "Barrage infranchissable, efface par l'Eco-Region"),
+    5: ("Barricade / Pollution", "Barrage infranchissable, efface par l'Eco-Region"),
     6: ("Montagne", "Massif montagneux infranchissable"),
     7: ("Col de montagne", "Passage en altitude, ouvert par la Nouvelle France"),
-    8: ("Chaine d'austerite", "Verrou du chateau, brise par la 6eme Republique"),
+    8: ("Barrage CRS / Chaine", "Verrou du chateau, brise par la 6eme Republique"),
     9: ("Sable / Cote", "Plage et rivage cotiers (zone 5)"),
     10: ("Agora / Ville", "Bulle urbaine et lieu de rassemblement citoyen"),
     11: ("Donjon / Bastion", "Entree de donjon sur la carte du monde"),
@@ -47,48 +48,62 @@ TILE_INFO = {
     17: ("Sol de donjon", "Dalle interieure praticable"),
     18: ("Escalier / Sortie", "Issue du donjon vers la carte monde"),
     19: ("Coffre / Dossier", "Tresor de campagne (cotisations/materiel)"),
-    20: ("Table de QG", "Mobilier des permanences citoyennes"),
-    21: ("Banniere / Urne", "Element symbolique de permanence"),
-    22: ("Bureau militant", "Mobilier des permanences"),
-    23: ("Rayonnage tracts", "Bibliotheque et documentation de campagne"),
+    20: ("Brasero de greve", "Mobilier de lutte et permanence (#9)"),
+    21: ("Urne republicaine", "Urne de vote et souverainete (#11)"),
+    22: ("Barricade de palettes", "Barricade militante et bureau (#10)"),
+    23: ("Stand merguez", "Convivialite syndicale et barbecue (#14)"),
+    32: ("Militant au megaphone (debout)", "Heros sur la carte - repos (#1)"),
+    33: ("Militant au megaphone (marche)", "Heros sur la carte - marche (#1)"),
+    36: ("Drapeau militant", "Drapeau tricolore et rouge FI"),
+    37: ("L'Avenir en Commun (G)", "Page gauche avec Phi cyan"),
+    38: ("L'Avenir en Commun (D)", "Page droite du programme"),
+    48: ("Syndicaliste metallo (8x8)", "Casque jaune, gilet rouge et cle (#2)"),
+    49: ("Deputee / Oratrice (8x8)", "Echarpe tricolore a la tribune (#3)"),
+    52: ("Colleur d'affiches (8x8)", "Bonnet rouge, rouleau et affiche (#4)"),
+    53: ("Technocrate (8x8)", "Costume gris strict et dossier (#5)"),
+    54: ("Banquier haut-de-forme (8x8)", "Haut-de-forme noir/or et monocle (#6)"),
+    55: ("Editorialiste TV (8x8)", "Brushing, costume et micro (#7)"),
+    56: ("CRS avec bouclier (8x8)", "Casque a visiere et bouclier (#8)"),
+    57: ("Brasero ardent (8x8)", "Variante brasero de piquet de greve (#9)"),
+    58: ("Stand merguez festif (8x8)", "Variante stand merguez et fanion (#14)"),
 }
 
 def export_png():
-    # 5 colonnes de 4 tuiles (20 slots de 8x8)
-    # Agrandissement x8 : chaque pixel 8x8 devient 8x8 (donc 64x64 par tuile) + marge
+    # 6 colonnes x 6 lignes (jusqu'a 36 tuiles 8x8)
     scale = 8
-    cols, rows = 5, 4
+    cols = 6
+    tiles_list = sorted(TILE_INFO.keys())
+    rows = (len(tiles_list) + cols - 1) // cols
     tile_w, tile_h = 8, 8
-    margin = 4
-    pad = 2
+    margin = 6
     
     gw = margin + cols * (tile_w * scale + margin)
     gh = margin + rows * (tile_h * scale + margin)
     
     grid = [[0 for _ in range(gw)] for _ in range(gh)]
     
-    tiles_list = sorted(TILE_INFO.keys())
     for idx, tid in enumerate(tiles_list):
         col = idx % cols
         row = idx // cols
         tx0 = margin + col * (tile_w * scale + margin)
         ty0 = margin + row * (tile_h * scale + margin)
         
-        # cadre gris clair
+        # cadre gris clair (ou jaune pour les personnages/galerie >= 32)
+        border_col = 10 if tid >= 32 else 5
         for y in range(ty0 - 1, ty0 + tile_h * scale + 1):
             if 0 <= y < gh:
-                if 0 <= tx0 - 1 < gw: grid[y][tx0 - 1] = 5
-                if 0 <= tx0 + tile_w * scale < gw: grid[y][tx0 + tile_w * scale] = 5
+                if 0 <= tx0 - 1 < gw: grid[y][tx0 - 1] = border_col
+                if 0 <= tx0 + tile_w * scale < gw: grid[y][tx0 + tile_w * scale] = border_col
         for x in range(tx0 - 1, tx0 + tile_w * scale + 1):
             if 0 <= x < gw:
-                if 0 <= ty0 - 1 < gh: grid[ty0 - 1][x] = 5
-                if 0 <= ty0 + tile_h * scale < gh: grid[ty0 + tile_h * scale][x] = 5
+                if 0 <= ty0 - 1 < gh: grid[ty0 - 1][x] = border_col
+                if 0 <= ty0 + tile_h * scale < gh: grid[ty0 + tile_h * scale][x] = border_col
 
         lines = TILES.get(tid, ["........"] * 8)
         for py in range(8):
             for px in range(8):
                 ch = lines[py][px]
-                c = 0 if ch == "." else int(ch, 16)
+                c = 16 if ch == "." else int(ch, 16)
                 for sy in range(scale):
                     for sx in range(scale):
                         grid[ty0 + py * scale + sy][tx0 + px * scale + sx] = c
