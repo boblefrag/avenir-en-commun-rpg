@@ -228,7 +228,7 @@ ABOVE_HTML = """
 <div class="up-wrap">
   <header class="up-header">
     <div class="up-badge">φ Contribution Militante — La France Insoumise</div>
-    <h1 class="up-title">L'UNION <span>POPULAIRE</span> — LE RPG</h1>
+    <h1 class="up-title">L'AVENIR <span>EN COMMUN</span> — LE RPG</h1>
     <p class="up-sub">
       Parcourez le pays de <strong>Saint-Denis</strong> à <strong>Marseille</strong> en passant par <strong>Lille</strong>, <strong>Lyon</strong> et <strong>Le Bourget</strong>, débattez face aux éditorialistes et lobbyistes, débloquez les 4 piliers de <em>L'Avenir en Commun</em> et instaurez la <strong>6e République</strong> !
     </p>
