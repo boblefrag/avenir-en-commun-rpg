@@ -199,7 +199,7 @@ end
 
 -- contenu
 ok(#classes==4 and #rumors==5,"tables de contenu")
-for m in all(mons) do ok(#m==12,"monstre "..m[1]) end
+for m in all(mons) do ok(#m==10,"monstre "..m[1]) end
 for z in all(split("1,2,3,4,5,21,22,23,24,25,11,12,13,14,15")) do
  local n=0
  for m in all(mons) do if (m[8]==z) n+=1 end

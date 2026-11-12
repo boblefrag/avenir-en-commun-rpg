@@ -111,23 +111,17 @@ function hud()
  if p<.25 then
   bip_cd-=1
   if (bip_cd<=0) sfx(53) bip_cd=90
- else
-  bip_cd=0
  end
- print("pv "..h.hp.."/"..h.pv,2,1,hcol)
- print("pm "..h.mp.."/"..h.pm,44,1,7)
- print(h.gold.."e",80,1,10)
- -- 4 gemmes a droite (x 111..125) : losange colore si possedee,
- -- simple point gris sinon
+ print(h.hp.."/"..h.pv..(h.pm>0 and " "..h.mp.."m" or "").." n."..h.lv.." "..max(0,h.lv*h.lv*18-h.xp).."xp "..h.gold.."e",2,1,hcol)
  for i=0,3 do
-  local x=111+i*4
+  local x=112+i*4
   if h.gems&1<<i>0 then
    local c=gem_col[i+1]
-   rectfill(x,2,x+2,4,c)
-   pset(x+1,1,c)
-   pset(x+1,5,c)
+   rectfill(x-1,2,x+1,4,c)
+   pset(x,1,c)
+   pset(x,5,c)
   else
-   pset(x+1,3,5)
+   pset(x,3,5)
   end
  end
 end

@@ -70,7 +70,7 @@ end
 title={mus=8,notime=true}
 
 function title.init()
- local it={"nouvelle partie"}
+ local it=split"nouvelle partie"
  if (@0x5e00==1) add(it,"continuer",1)
  menu(it,30,70,function(i)
   if (it[i]=="continuer") load_game() start() else go(intro)

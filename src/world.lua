@@ -127,9 +127,9 @@ function field_magic()
   if (not s) return
   local e=s[2]
   if h.mp<s[4] then
-   msg("mobilisation\nepuisee !")
+   msg(mep)
   elseif e==6 and h.hp>=h.pv then
-   msg("conviction deja au maximum !")
+   msg(mxc)
   elseif e==3 and st!=dungeon then
    msg("vous n'etes pas dans\nun bastion adverse !")
   else
@@ -181,10 +181,7 @@ function world.update()
    if (pass(mget(x,y))) tx,ty=x,y
   end
   for p in all(places) do
-   if p.x==px and p.y==py then
-    go(p.t=="v" and town or dungeon,p)
-    return
-   end
+   if (p.x==px and p.y==py) go(p.t=="v" and town or dungeon,p) return
   end
   local s=mget(px,py)
   -- au nord de la grande chaine (y<27) : zones 3 et 4, plus fortes

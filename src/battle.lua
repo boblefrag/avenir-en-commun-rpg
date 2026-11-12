@@ -17,10 +17,13 @@ function battle.init(m)
  msg("debat contre :\n"..m[1].." !",bmenu)
 end
 
+function mhit(n) return mo[1].."\nperd "..n.." conviction" end
+function bnxt() if mhp<=0 then win() else monster_turn(bmenu) end end
+
 function bmenu()
  local c=h.cl==4
- local it=split(c and "convaincre,recul,materiel,retrait" or "convaincre,mobilisation,materiel,retrait")
- local d=split(c and "debat d'idees,esquive et contre,sacoche militante,se replier" or "debat d'idees,actions collectives,sacoche militante,se replier")
+ local it=split("convaincre,"..(c and "recul" or "mobilisation")..",materiel,retrait")
+ local d=split("debat d'idees,"..(c and "esquive et contre" or "actions collectives")..",sacoche militante,se replier")
  if (h.ferv>=100) add(it,"coup d'eclat") add(d,"ferveur populaire !")
  menu(it,4,#it>4 and 58 or 66,bact,true,d)
 end
@@ -63,9 +66,9 @@ function b_eclat()
  if (c==4) n=dmg(mo[3]*2,mo[4])+10
  mhp-=n
  local t=split"megaphone populaire !,clip viral : bad buzz !,solidarite citoyenne !,dementi en direct !"[c]
- if (n>0) t..="\n"..mo[1].."\nperd "..n.." conviction"
+ if (n>0) t..="\n"..mhit(n)
  msg(t,function()
-  if mhp<=0 then win() elseif c==4 then bmenu() else monster_turn(bmenu) end
+  if (c==4 and mhp>0) bmenu() else bnxt()
  end)
 end
 
@@ -99,9 +102,9 @@ function bmagic()
   if not s then
    bmenu()
   elseif h.mp<s[4] then
-   msg("mobilisation\nepuisee !",bmenu)
+   msg(mep,bmenu)
   elseif e==6 and h.hp>=h.pv then
-   msg("conviction deja au maximum !",bmenu)
+   msg(mxc,bmenu)
   else
    h.mp-=s[4]
    sfx(50,3)
@@ -112,16 +115,14 @@ function bmagic()
     blk,bonom=10,"DEBAT !"
     if (rnd()<.4 and not mstat) mstat="indignation"
     if (e==7) t..="appel a la 6e !\n"
-    t..=mo[1].."\nperd "..n.." conviction"
+    t..=mhit(n)
    elseif e==6 then
     t..=heal(s[3])
    else
     shd=max(shd,s[3])
     t..="impact reduit de "..shd
    end
-   msg(t,function()
-    if mhp<=0 then win() else monster_turn(bmenu) end
-   end)
+   msg(t,bnxt)
   end
  end,true,ds)
 end
@@ -140,9 +141,8 @@ function hero_turn(k)
  add_ferv(15)
  bonom=hid and "IMPARABLE !" or rnd(split"ARGUMENT !,CONVICTION !,REPLIQUE !")
  if (n>12 and rnd()<.35 and not mstat) mstat="doute"
- local s=hid and "fact-checking imparable !" or hatk[h.cl].." !"
+ local s=(hid and "fact-checking imparable !" or hatk[h.cl].." !").."\n"..mhit(n)
  hid=false
- s..="\n"..mo[1].."\nperd "..n.." conviction"
  msg(s,function()
   if mhp<=0 then win() else (k or bmenu)() end
  end)
@@ -161,13 +161,13 @@ function monster_turn(k,x)
   msg(mo[1].." hesite :\n'je dois relire mes fiches...'\nil passe son tour !",bmenu)
   return
  end
- local sp,n,s,c=mo[12],max(1,dmg(mo[3],h.def,4)*mdk\1)*(x or 1),"",bt%3==0
+ local sp,n,s,c=mo[10],max(1,dmg(mo[3],h.def,4)*mdk\1)*(x or 1),"",bt%3==0
  if sp==4 and bt%3==2 then
   n,s=0,"l'oligarque prepare\nson offensive..."
  elseif sp==5 then
   if rnd()<.25 then
    mhp-=n
-   n,s=0,spn[5]..mo[1].."\nperd "..n.." conviction"
+   n,s=0,spn[5]..mhit(n)
   end
  elseif sp==2 and c then
   mhp=min(mhp+25,mmax)
@@ -280,8 +280,6 @@ function battle.draw()
  if (blk>0) blk-=1
  if (hit>4 and hit<10) camera(rnd(5)\1-2,rnd(5)\1-2) else camera()
  if (hit>5 and hit<9) cls(8) else backdrop(bk)
- pal(11,mo[10])
- pal(3,mo[11])
  pal(13,0)
  -- 16x16 agrandi x3, boss 32x32 agrandi x2
  local n,s,w=mo[9],16,48

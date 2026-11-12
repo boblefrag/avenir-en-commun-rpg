@@ -94,7 +94,7 @@ function ngems()
   if (h.gems&1<<i>0) n+=1
  end
  return n
- end
+end
 
 -- sauvegarde (0x5e00, voir decisions.md)
 -- 0 marqueur, 1 classe, 2 niveau, 3 gemmes, 4 ville, 5 pot, 6 wep
@@ -178,11 +178,12 @@ end
 
 -- utilise l'objet o : renvoie le message (nil si retour)
 -- et true si l'objet a ete bu ou consulte
+mxc,mep="conviction deja au maximum !","mobilisation\nepuisee !"
 function use_item(o)
  if o<3 then
   local k=it_k[o]
-  if (h[k]<1) return "plus de "..(o==1 and "cafe !" or "repas !").."\npassez au qg de campagne."
-  if (h.hp>=h.pv) return "conviction deja au maximum !"
+  if (h[k]<1) return "plus de "..it_nm[o].." !\npassez au qg de campagne."
+  if (h.hp>=h.pv) return mxc
   h[k]-=1
   return (o==1 and "cafe militant savoure !" or "repas solidaire partage !").."\n"..heal(o==1 and 20 or 80),true
  elseif o==5 then

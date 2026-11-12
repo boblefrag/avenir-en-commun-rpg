@@ -31,6 +31,10 @@ function tact(i)
  end
 end
 
+function tbuy(n,pr,ret,cb)
+ confirm("acheter "..n.."\n("..pr.."e) ?",pr,cb,ret)
+end
+
 -- materiel : cafe (10e), repas solidaire (60e), cahier thematique (25e), revue (100e)
 -- militant et fact-checker (0 pm) : pas de cahiers thematiques en rayon
 function item_shop()
@@ -55,10 +59,10 @@ function item_shop()
   if h[k]>=9 then
    msg("sacoche pleine !",item_shop)
   else
-   confirm("acheter "..n.."\n("..p.."e) ?",p,function()
+   tbuy(n,p,item_shop,function()
     h[k]+=1
     msg(n.." obtenu !\nvous en avez "..h[k].."/9.",item_shop)
-   end,item_shop)
+   end)
   end
  end,true,ds)
 end
@@ -107,11 +111,11 @@ function armor_shop()
    msg("inadapte pour un\n"..classes[h.cl][1].." !",armor_shop)
   else
    local n,pr=arm_names[o].." "..m,arm_prices[o]*tier_mult[t]
-   confirm("acheter "..n.."\n("..pr.."e) ?",pr,function()
+   tbuy(n,pr,armor_shop,function()
     h.arm[o]=t
     stats()
     msg(n.." equipe !\ndef "..h.def,armor_shop)
-   end,armor_shop)
+   end)
   end
  end,true,ds)
 end
@@ -128,11 +132,11 @@ function weapon_shop()
   elseif eq then
    msg("deja equipe !",weapon_shop)
   else
-   confirm("acheter "..wn.."\n("..pr.."e) ?",pr,function()
+   tbuy(wn,pr,weapon_shop,function()
     h.wep=t
     stats()
     msg(wn.." equipee !\natt "..h.att,weapon_shop)
-   end,weapon_shop)
+   end)
   end
  end,true,{"attaque +"..wep_att[t]})
 end
