@@ -3,13 +3,29 @@
 
 town={mus=8}
 
+function dons_all()
+ local g,c=0,0
+ for i=1,6 do
+  c+=h.tr[i]
+  g+=h.tr[i]*tres[i][2]
+  h.tr[i]=0
+ end
+ if (g>0) h.gold=min(9999,h.gold+g)
+ return g,c
+end
+
 function town.init(p)
  tw=p
- if p.txt then msg(p.txt,function() go(world) end) elseif not p.tut then tmenu() end
+ if p.txt then
+  msg(p.txt,function() go(world) end)
+ elseif not p.tut then
+  local g,c=dons_all()
+  if g>0 then sfx(51,3) msg("vous donnez "..c.." soutien"..(c>1 and "s" or "").."\nau qg de campagne : +"..g.."e !",tmenu) else tmenu() end
+ end
 end
 
 function tmenu()
- local d=split"reposer et sauvegarder,ravitaillement et dons,equipements de defense,materiel de conviction,rumeurs et temoignages,repartir sur la carte"
+ local d=split"reposer et sauvegarder,ravitaillement de campagne,equipements de defense,materiel de conviction,rumeurs et temoignages,repartir sur la carte"
  menu(split"qg militant,materiel,protections,arguments,rumeurs,sortir",4,44,tact,true,d)
 end
 
@@ -46,15 +62,11 @@ function item_shop()
    add(ds,idesc[i])
   end
  end
- add(it,"vendre") add(ds,"verser les dons a la caisse")
  add(it,"retour") add(ds,"retour au menu du qg")
  menu(it,4,40,function(o)
   close()
   local i=ids[o]
-  if not i then
-   if (o==#it) tmenu() else sell_shop()
-   return
-  end
+  if (not i) tmenu() return
   local k,p,n=it_k[i],pr[i],it_nm[i]
   if h[k]>=9 then
    msg("sacoche pleine !",item_shop)
@@ -67,37 +79,12 @@ function item_shop()
  end,true,ds)
 end
 
--- dons et soutiens de campagne : versement un par un ou d'un coup
-function sell_shop()
- local it={}
- for i=1,6 do add(it,tres[i][1].." x"..h.tr[i].." - "..tres[i][2].."e") end
- add(it,"verser tous les dons")
- add(it,"retour")
- menu(it,4,24,function(o)
-  close()
-  if (o>7) item_shop() return
-  local g=0
-  if o==7 then
-   for i=1,6 do
-    g+=h.tr[i]*tres[i][2]
-    h.tr[i]=0
-   end
-  elseif h.tr[o]>0 then
-   g,h.tr[o]=tres[o][2],h.tr[o]-1
-  end
-  if (g==0) msg("aucun don a verser !",sell_shop) return
-  h.gold=min(9999,h.gold+g)
-  sfx(51,3)
-  msg("don verse ! +"..g.."e",sell_shop)
- end,true)
-end
-
 -- armurier : les 5 pieces au palier de la ville (town_tier)
 function armor_shop()
  local t,it,ds=town_tier[tw.i],{},{}
  local m=mat[t]
  for p=1,5 do
-  add(it,arm_names[p].." "..m.." - "..(h.arm[p]>=t and "equipe" or arm_prices[p]*tier_mult[t].."e"))
+  add(it,arm_names[p].." "..m.." - "..(h.arm[p]>=t and "equipe" or t>arm_cap[h.cl] and "inadapte" or arm_prices[p]*tier_mult[t].."e"))
   add(ds,"defense +"..(arm_base[p]*t))
  end
  add(it,"retour")

@@ -10,7 +10,7 @@ function battle.init(m)
  -- (boss : pv x1.3, degats x0.75) ; mmax = pv max du monstre
  local b=m[8]\10==1
  mmax,mdk=flr(m[2]*(b and 1.3 or 2)),b and .75 or .55
- mo,mhp,bt,shd,hid,hit,blk=m,mmax,0,0,false,0,0
+ mo,mhp,bt,shd,hid,hit,blk,mstat,bmid=m,mmax,0,0,false,0,0
  -- decor (decor.lua) : donjon, ou selon la case du heros sur la carte
  local t=mget(px,py)
  bk=prev==dungeon and 4 or (t==4 or t==5) and 2 or (t==2 or t==9) and 3 or 1
@@ -19,7 +19,16 @@ end
 
 function mhit(n) return mo[1].."\nperd "..n.." conviction" end
 function bm() monster_turn(bmenu) end
-function bnxt() if mhp<=0 then win() else bm() end end
+function bnxt()
+ if mhp<=0 then
+  win()
+ elseif mo[10]>0 and mhp<=mmax/2 and not bmid then
+  bmid=true
+  msg(mo[1].." :\n'"..bmid_txt[mo[10]].."'",bm)
+ else
+  bm()
+ end
+end
 
 function bmenu()
  local c=h.cl==4
@@ -216,7 +225,7 @@ function win()
    msg("mesure au programme :\n"..g[1].." !\n"..g[2],fin)
   end
  end
- msg(mo[1].."\nrejoint l'union populaire !\n+"..mo[6].." xp  +"..mo[7].."e"..loot(),k)
+ msg(mo[1].."\nrejoint la france insoumise !\n+"..mo[6].." xp  +"..mo[7].."e"..loot(),k)
 end
 
 -- soutien militant : 25% des debats (40% pour le fact-checker, toujours sur un boss)
@@ -266,8 +275,8 @@ function battle.draw()
  local bob=sin(time()*.8)*1.5\1
  if (blk%4<2) sspr(n%16*8,n\16*8,s,s,64-w/2-sin(hit/24)*10,44-w/2+bob,w,w)
  pal()
- if (bonom and (blk>4 or hit>4)) print(bonom,64-#bonom*2,20,blk>4 and 10 or 8)
- if (mstat) print("["..mstat.."]",64-#mstat*2-4,10,12)
+ if (bonom and (blk>4 or hit>4)) print(bonom,64-#bonom*2,23,blk>4 and 10 or 8)
+ if (mstat) print("["..mstat.."]",64-#mstat*2-4,16,12)
  camera()
  hud()
  local f,bw,mf=h.ferv,28*max(0,mhp)/mmax\1,h.ferv>=100

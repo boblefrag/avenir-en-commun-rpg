@@ -47,7 +47,8 @@ it_k,it_nm,idesc=split"pot,spo,eth,spe",split"cafe militant,repas solidaire,cahi
 towel=split("l'avenir en commun.\nle programme populaire.|chapitre 6e republique.\nlimpide !|la bifurcation ecologique\nest chiffree au centime.|un militant sait toujours\nou est son programme.|vous agitez le programme.\nune idee en jaillit !|gardez espoir !\nl'harmonie est proche.","|")
 
 -- fin du jeu, 7 boites de messages (lignes de 24 car. max pour respiration)
-ending=split("20h00 pile !\nl'union populaire gagne\navec 54% des suffrages !|le president sortant\nquitte enfin le palais.\nle peuple entre en scene !|place de la republique,\nla foule chante !\ndans la nuit, mille phi !|mesures d'urgence :\nsmic a 1700e, prix bloques\net retraite a 60 ans !|decret n.1 signe :\nblocage immediat des prix\nde premiere necessite !|apres tant de luttes,\nle peuple reprend son destin.\nl'harmonie est la !|la campagne est gagnee.\nmerci a chaque citoyen.\nvictoire populaire !","|")
+ending=split("20h00 pile !\nla france insoumise gagne\navec 54% des suffrages !|le president sortant\nquitte enfin le palais.\nle peuple entre en scene !|place de la republique,\nla foule chante !\ndans la nuit, mille phi !|mesures d'urgence :\nsmic a 1700e, prix bloques\net retraite a 60 ans !|decret n.1 signe :\nblocage immediat des prix\nde premiere necessite !|apres tant de luttes,\nle peuple reprend son destin.\nl'harmonie est la !|la campagne est gagnee.\nmerci a chaque citoyen.\nvictoire populaire !","|")
+bmid_txt=split"un peu de pedagogie !,ruissellement en cours !,ceci n'est pas un plan.,silence sur le plateau !,qu'ils viennent me chercher !"
 
 -- message d'entree des donjons 1..5
 dtxt=split("projecteurs eblouissants,\nmicros ouverts.|l'argent coule a flot.\nparadis fiscal.|rigueur glaciale.\nbudgets rabotes.|couloirs feutres.\nlobbies en action.|'palais du monarque.\ncourbez l'echine.'","|")
