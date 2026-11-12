@@ -3,7 +3,7 @@
 Un RPG rétro complet sur **PICO-8** autour de la campagne présidentielle de **La France insoumise** et du programme *L'Avenir en commun* pour la **6e République**.
 
 👉 **Jouer directement dans le navigateur (PC, Mobile & Manette) :**
-**[https://boblefrag.github.io/union-populaire-rpg/](https://boblefrag.github.io/union-populaire-rpg/)**
+**[https://boblefrag.github.io/avenir-en-commun-rpg/](https://boblefrag.github.io/avenir-en-commun-rpg/)**
 
 ![Jaquette L'Avenir en commun RPG](label_preview.png)
 
@@ -28,7 +28,7 @@ Parcourez le pays de **Saint-Denis** à **Marseille** en passant par **Lille**, 
 | Assembler la cartouche | `python3 tools/build.py` |
 | Lancer dans PICO-8 | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -run main.p8` |
 | Exporter la page web | `./pico-8/PICO-8.app/Contents/MacOS/pico8 legend_of_the_gems.p8 -export index.html && python3 tools/build_pages.py` |
-| Exporter la cartouche `.p8.png` | `./pico-8/PICO-8.app/Contents/MacOS/pico8 legend_of_the_gems.p8 -export union_populaire_rpg.p8.png` |
+| Exporter la cartouche `.p8.png` | `./pico-8/PICO-8.app/Contents/MacOS/pico8 legend_of_the_gems.p8 -export avenir_en_commun_rpg.p8.png` |
 | Lancer les tests | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke.p8 && ./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke_story.p8` |
 
 Jouer sur console portable rétro (TrimUI Brick, Miyoo, Anbernic…) : voir [docs/trimui.md](docs/trimui.md).
