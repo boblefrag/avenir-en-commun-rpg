@@ -41,13 +41,13 @@ sdesc=split("arguments massue :\nconvainc l'adversaire|bouclier social :\nreduit
 -- tresors et soutiens financiers pour la campagne
 -- nom,valeur de don
 tres=tbl("adhesion,15|don de soutien,30|recu fiscal,60|cotisation,100|cagnotte,180|mandat citoyen,350")
-it_k,it_nm=split"pot,spo,eth,spe",split"cafe militant,repas solidaire,cahier thematique,revue politique"
+it_k,it_nm,idesc=split"pot,spo,eth,spe",split"cafe militant,repas solidaire,cahier thematique,revue politique",split"rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation"
 
 -- le programme de l'avenir en commun (source d'inspiration permanente)
 towel=split("l'avenir en commun.\nle programme populaire.|chapitre 6e republique.\nlimpide !|la bifurcation ecologique\nest chiffree au centime.|un militant sait toujours\nou est son programme.|vous agitez le programme.\nune idee en jaillit !|gardez espoir !\nl'harmonie est proche.","|")
 
 -- fin du jeu, 7 boites de messages (lignes de 24 car. max pour respiration)
-ending=split("20h00 pile !\nl'union populaire gagne\navec 54% des suffrages !|le president sortant\nquitte enfin le palais.\nle peuple entre en scene !|place de la republique,\nla foule chante !\ndans la nuit, mille phi !|mesures d'urgence :\nsmic a 1700e, prix bloques\net retraite a 60 ans !|decret n.1 signe :\nconvocation immediate\nd'une constituante !|apres tant de luttes,\nle peuple reprend son destin.\nl'harmonie est la !|la campagne est gagnee.\nmerci a chaque citoyen.\nvictoire populaire !","|")
+ending=split("20h00 pile !\nl'union populaire gagne\navec 54% des suffrages !|le president sortant\nquitte enfin le palais.\nle peuple entre en scene !|place de la republique,\nla foule chante !\ndans la nuit, mille phi !|mesures d'urgence :\nsmic a 1700e, prix bloques\net retraite a 60 ans !|decret n.1 signe :\nblocage immediat des prix\nde premiere necessite !|apres tant de luttes,\nle peuple reprend son destin.\nl'harmonie est la !|la campagne est gagnee.\nmerci a chaque citoyen.\nvictoire populaire !","|")
 
 -- message d'entree des donjons 1..5
 dtxt=split("projecteurs eblouissants,\nmicros ouverts.|l'argent coule a flot.\nparadis fiscal.|rigueur glaciale.\nbudgets rabotes.|couloirs feutres.\nlobbies en action.|'palais du monarque.\ncourbez l'echine.'","|")
@@ -83,7 +83,7 @@ rate=split"0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,7,0,0,0,0,0,0"
 zone=split"0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
 
 -- rumeurs d'agoras (# separe les villes, | les rumeurs)
-rumors=tbl("tour des medias : au nord-est.|banque offshore : sur la\ncote ouest.|le monarque tweete :\n'je sui le plu grant chef.'#le blocage des prix permet\nde passer les gues.|une ile au sud abrite\nun port populaire.|la nouvelle france ouvre\nles cols du grand nord.#la tour d'austerite garde\nle vote de l'eco-region.|au nord : neige et\ntechnocrates.|le monarque vante encore\nle travail gratuit.#l'eco-region planifiee\nbrule les ronces du pays.|le lobby central dort sous\nla foret maudite.|ici on tracte tard.\nconviction intacte.#le monarque craint la foule.|la chaine du pouvoir s'ouvre\navec la 6e republique.|les meilleurs tracts\nsont a prix coutant.","#","|")
+rumors=tbl("tour des medias au nord-est.|banque offshore : sur la\ncote ouest.|le monarque tweete :\n'je sui le plu grant chef.'#le blocage des prix permet\nde passer les gues.|une ile au sud abrite\nun port populaire.|la nouvelle france ouvre\nles cols du grand nord.#la tour d'austerite garde\nle vote de l'eco-region.|au nord : neige et\ntechnocrates.|le monarque vante encore\nle travail gratuit.#l'eco-region planifiee\nbrule les ronces du pays.|le lobby central dort sous\nla foret maudite.|ici on tracte tard.\nconviction intacte.#le monarque craint la foule.|la chaine du pouvoir s'ouvre\navec la 6e republique.|les meilleurs tracts\nsont a prix coutant.","#","|")
 
 -- texte d'introduction (style retro annees 80)
 intro_lines=split("annee electorale...|au coeur de la|5e republique...||le pays sombrait|dans l'austerite.|le monarque regnait|depuis son palais,|entoure d'oligarques|et de lobbyistes.||les services publics|s'effondraient et les|plateaux tv semaient|la division.||face a la tourmente,|un mouvement populaire|se leva partout.||'nous sommes la force|du nombre !' chantaient|les agoras.||pour instaurer|la 6e republique,|brisez les 4 verrous|des monopoles||et battez le monarque|dans son bastion !||un ancien vous tend|l'avenir en commun :|'c'est risque de militer|seul, prends ceci !'||'avec conviction|et solidarite,|nous allons gagner.'||la campagne commence !","|")
@@ -92,4 +92,4 @@ intro_lines=split("annee electorale...|au coeur de la|5e republique...||le pays 
 qg_intro=split("bienvenue a saint-denis !\nla campagne commence ici.|deplace-toi aux fleches\net debats avec les opposants.|brise les 4 bastions pour\nouvrir l'elysee !|reviens ici te reposer\net sauvegarder.|prends ce cafe militant et\nfais entendre ta voix !","|")
 
 -- generique de fin (32 caracteres max par ligne, sans accents)
-credits_lines=split("l'union populaire rpg|campagne presidentielle||- game design & dev -|yohann gabory||pour une 6e republique|democratique, ecologique|et sociale.||merci aux militantes|et militants de terrain :|tractages, collages,|porte-a-porte et repas.||l'harmonie humaine|est a notre portee.||victoire populaire !","|",false)
+credits_lines=split("l'avenir en commun rpg|campagne presidentielle||- game design & dev -|yohann gabory||pour une 6e republique|democratique, ecologique|et sociale.||merci aux militantes|et militants de terrain :|tractages, collages,|porte-a-porte et repas.||l'harmonie humaine|est a notre portee.||victoire populaire !","|",false)

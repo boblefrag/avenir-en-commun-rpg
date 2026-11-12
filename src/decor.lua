@@ -58,7 +58,7 @@ function backdrop(k)
   persp(5)
  else
   sky()
-  local g,d=split"3,3,15"[k],split"11,11,9"[k]
+  local g,d=k>2 and 15 or 3,k>2 and 9 or 11
   if k==1 then
    -- collines au loin
    for x=0,159,40 do circfill(x,72,26,13) end
@@ -80,7 +80,7 @@ function backdrop(k)
   rectfill(0,64,127,127,g)
   -- ombre a l'horizon (trame 2 couleurs)
   fillp(0b1010010110100101)
-  rectfill(0,64,127,69,g+16*split"1,1,4"[k])
+  rectfill(0,64,127,69,g+16*(k>2 and 4 or 1))
   fillp()
   -- touffes, plus longues au premier plan
   for i=1,70 do
@@ -97,7 +97,7 @@ function shop()
  local bg=split"1,12,8,9,0"[ti]
  cls(bg)
  if ti==1 then
-  dcmd"r,8,6,24,52,8|r,104,6,120,52,8|r,30,10,98,22,1,7|p,34,14,10,PERMANENCE CITOYENNE"
+  dcmd("r,8,6,24,52,8|r,104,6,120,52,8|r,20,19,108,27,1,7|"..(tw and tw.jlm and "p,29,21,10,institut la boetie" or "p,35,21,10,groupe d'action"))
  elseif ti==2 then
   dcmd"c,110,16,10,10|c,110,16,7,9|r,0,46,127,59,1"
   for x=4,124,16 do line(x,50,x+6,50,7) end
@@ -113,9 +113,13 @@ function shop()
   dcmd"c,64,18,5,12|l,64,11,64,25,12"
  end
  for y=76,127,7 do line(0,y,127,y,2) end
- pal(13,0)
- sspr(48,112,16,16,40,20,48,48)
- pal()
+ if tw and tw.jlm then
+  jlm(48,28)
+ else
+  pal(13,0)
+  sspr(48,112,16,16,40,28,48,48)
+  pal()
+ end
  dcmd"r,0,60,127,75,2|l,0,60,127,60,15|l,0,61,127,61,9"
  for x=0,127,16 do rect(x+2,64,x+13,72,4) end
 end
@@ -174,7 +178,7 @@ function epilog.draw()
  elseif fi==4 then
   dcmd"r,0,0,127,92,1|j,6,22|h,38,42,2|s,37,38,32|s,38,46,32|b,56,16,68,62|r,58,18,121,26,12|p,60,20,7,URGENCE SOCIALE|p,60,31,10,> SMIC A 1700E|p,60,41,11,> PRIX BLOQUES|p,60,51,7,> RETRAITE 60|p,60,61,8,> 6E REPUBLIQUE|r,6,80,121,90,8|p,10,83,7,L'AVENIR EN COMMUN EN ACTES"
  elseif fi==5 then
-  dcmd"j,3,30|r,38,8,124,86,7,10|r,42,12,67,14,12|r,68,12,94,14,7|r,95,12,120,14,8|p,42,18,1,REPUBLIQUE FRANCAISE|p,60,28,8,DECRET N. 1|p,64,39,1,ASSEMBLEE|p,58,47,1,CONSTITUANTE|p,56,57,12,6E REPUBLIQUE|c,82,74,7,12|c,82,74,4,7|c,82,74,2,8"
+  dcmd"j,3,30|r,38,8,124,86,7,10|r,42,12,67,14,12|r,68,12,94,14,7|r,95,12,120,14,8|p,42,18,1,REPUBLIQUE FRANCAISE|p,60,28,8,DECRET N. 1|p,62,39,1,BLOCAGE DES|p,72,47,1,PRIX !|p,56,57,12,6E REPUBLIQUE|c,82,74,7,12|c,82,74,4,7|c,82,74,2,8"
  else
   local c=split"2,8,9,10,12"
   for i=1,5 do rectfill(0,16+i*8,127,23+i*8,c[i]) end

@@ -282,50 +282,62 @@ INTER_PATTERNS = [
 
 
 # ==============================================================================
-# 3. LA MARSEILLAISE (Sol majeur, 4/4, partition authentique de Rouget de Lisle 1792, 112 BPM, speed=16)
+# 3. LA MARSEILLAISE (Fa majeur, 4/4, partition Rouget de Lisle 1792, 112 BPM, speed=16)
 # ==============================================================================
 MARSEILLAISE_SFX = {
-    # M1 & M2 : "Allons enfants de la patrie..."
-    "m0": voice(".*12 d4*4  g4*4 g4*3 a4*1  b4*4 b4*3 c5*1", "pulse", 5),
-    "h0": voice(".*12 b3:4*4  d4:4*4 d4:4*3 f#4:4*1  g4:4*4 g4:4*3 a4:4*1", "sqr", 4),
-    "b0": voice("g2*2 g3*2 d3*2 g2*2  b2*2 d3*2 g2*2 b2*2  g2*2 g3*2 d3*2 g2*2  b2*2 d3*2 g2*2 b2*2", "saw", 5),
-    "d0": drums("k . h . s . h .  k . h . s . h .  k . h . s . h .  k . h . s s s s"),
+    # Bloc 0 : Anacrouse tambour + "Allons enfants de la Patrie..."
+    "m0": voice(".*3 c4*1 f4*3 f4*1  f4*4 f4*4 g4*4 g4*4  a4~vib*6 g4*2", "pulse", 5),
+    "h0": voice(".*4 c4:3*3 c4:3*1  a3:3*4 c4:3*4 e4:3*4 e4:3*4  f4:4*2 c4:3*2 a3:3*2 e4:3*2", "sqr", 4),
+    "b0": voice(".*4 c3*2 c2*2  f2*2 f3*2 c3*2 a2*2  c3*2 g2*2 e2*2 c2*2  f2*2 f3*2 c3*2 a2*2", "saw", 5),
+    "d0": drums("r r r r s s s s  k . h . s . h k  k . h . s . h .  k . h . s . h k"),
 
-    # M3 & M4 : "...le jour de gloire est arrive ! Contre nous..."
-    "m1": voice("d5*6 c5*2  b4*4 a4*4  g4~vib*8  d4*4 g4*4", "pulse", 5),
-    "h1": voice("b4:4*6 a4:4*2  g4:4*4 f#4:4*4  d4~vib:4*4 b3:4*2 d4:4*2  g4:4*4 b4:4*4", "sqr", 4),
-    "b1": voice("g2*2 g3*2 d3*2 g2*2  d3*2 f#3*2 a2*2 d3*2  g2*2 b2*2 d3*2 g3*2  b2*2 d3*2 g2*2 b2*2", "saw", 5),
-    "d1": drums("k . h . s . h .  k . h . s . h .  k . h . s . h .  k . h . s s s ."),
+    # Bloc 1 : "...le jour de gloire est arrive !" (fanfare ascendante sur "arrive !")
+    "m1": voice("f4*3 a4*1 f4*4  d4*4 a#4~vib*8 g4*3 e4*1  f4~vib*8", "pulse", 5),
+    "h1": voice("c4:3*3 f4:3*1 c4:3*4  a#3:3*4 d4:4*4 f4:4*4 e4:3*3 c4:3*1  c4:4*2 f4:4*2 a4:4*2 c5:4*2", "sqr", 4),
+    "b1": voice("f2*2 a2*2 c3*2 f2*2  a#2*2 a#3*2 f3*2 d3*2  c3*2 c2*2 g2*2 c3*2  f2*2 f3*2 c3*2 a2*2", "saw", 5),
+    "d1": drums("k . h . s . h .  k . h k s . h .  k . h . s . h .  k . h . s s s s"),
 
-    # M5 & M6 : "...de la tyrannie, l'etendard sanglant est leve !"
-    "m2": voice("g4*3 a4*1 b4*4  b4*3 c5*1 d5*4  d5*6 c5*2  b4*4 a4*4", "pulse", 5),
-    "h2": voice("d4:4*3 f#4:4*1 g4:4*4  g4:4*3 a4:4*1 b4:4*4  b4:4*6 a4:4*2  g4:4*4 f#4:4*4", "sqr", 4),
-    "b2": voice("g2*2 g3*2 d3*2 g2*2  g2*2 b2*2 d3*2 g3*2  g2*2 g3*2 d3*2 g2*2  d3*2 f#3*2 a2*2 d3*2", "saw", 5),
-    "d2": drums("k . h . s . h .  k . h . s . h .  k . h . s . h .  k . s . s s s s"),
+    # Bloc 2 : "Contre nous de la tyrannie..." (reponse de cuivres + reprise tambour)
+    "m2": voice(".*4 f4*3 g4*1  a4*4 a4*4 a4*4 a#4*3 a4*1  a4*4 g4*4", "pulse", 5),
+    "h2": voice("f4:3*2 c4:3*2 c4:3*3 e4:3*1  f4:3*4 f4:3*4 f4:3*4 g4:3*3 f4:3*1  f4:3*4 e4:3*4", "sqr", 4),
+    "b2": voice("f2*2 c3*2 f2*2 c2*2  f2*2 f3*2 c3*2 a2*2  f2*2 g2*2 a2*2 a#2*2  c3*2 g2*2 e2*2 c2*2", "saw", 5),
+    "d2": drums("k . h . r r s s  k . h . s . h k  k . h . s . h .  k . h . s . h k"),
 
-    # M7 & M8 : Refrain 1 : "Aux armes, citoyens !"
-    "m3": voice("g4~vib*8  d5*6 b4*2  g4*4 d4*4  a4~vib*8", "pulse", 5),
-    "h3": voice("d4~vib:4*8  b4:4*6 g4:4*2  d4:4*4 b3:4*4  f#4~vib:4*4 d4:4*4", "sqr", 4),
-    "b3": voice("g2*2 g3*2 d3*2 g2*2  g2*2 b2*2 d3*2 g3*2  g2*2 b2*2 d3*2 g2*2  d3*2 f#3*2 a2*2 d3*2", "saw", 5),
-    "d3": drums("k . h . s . h .  k . h . s . h .  k . h . s . h .  k . h . s s s s"),
+    # Bloc 3 : "...l'etendard sanglant est leve !" (arpege heroique final)
+    "m3": voice("g4*4 g4*3 a4*1  a#4*4 a#4*4 a#4*4 c5*3 a#4*1  a4~vib*8", "pulse", 5),
+    "h3": voice("e4:3*4 e4:3*3 f4:3*1  g4:3*4 g4:3*4 g4:3*4 a#4:3*3 g4:3*1  f4:4*2 a4:4*2 c5:4*2 f5:4*2", "sqr", 4),
+    "b3": voice("c2*2 e2*2 g2*2 c3*2  c3*2 c2*2 g2*2 a#2*2  c3*2 g2*2 e2*2 c2*2  f2*2 c3*2 a2*2 f2*2", "saw", 5),
+    "d3": drums("k . h . s . h .  k . h k s . h .  k . h . s . h .  k . s . s s s s"),
 
-    # M9 & M10 : Refrain 2 : "Formez vos bataillons ! Marchons..."
-    "m4": voice("d5*6 c5*2  b4*4 a4*4  g4~vib*8  d5*4 d5*4", "pulse", 5),
-    "h4": voice("b4:4*6 a4:4*2  g4:4*4 f#4:4*4  d4~vib:4*8  b4:4*4 b4:4*4", "sqr", 4),
-    "b4": voice("g2*2 g3*2 d3*2 g2*2  d3*2 f#3*2 a2*2 d3*2  g2*2 b2*2 d3*2 g3*2  g2*2 g3*2 b2*2 d3*2", "saw", 5),
-    "d4": drums("k . h . s . h .  k . h . s . h .  k . h . s . h .  k . s . k . s ."),
+    # Bloc 4 : Refrain 1 : "Aux armes, citoyens !" (appel de cuivres + batterie martiale)
+    "m4": voice(".*7 c5*1  c5~vib*8 c5*3 a4*1 f4*3 f4*1  g4~vib*8", "pulse", 5),
+    "h4": voice("c4:3*2 e4:3*2 g4:3*3 a4:4*1  a4:4*4 f4:4*4 a4:3*3 f4:3*1 c4:3*3 c4:3*1  e4:4*2 g4:4*2 c5:4*4", "sqr", 4),
+    "b4": voice("f2*2 c3*2 c2*2 c3*2  f2*2 f3*2 c3*2 a2*2  f2*2 a2*2 c3*2 f2*2  c3*2 c2*2 g2*2 c3*2", "saw", 5),
+    "d4": drums("k . r r s s s s  k . h k s . h .  k . h . s . h k  k . h . s s s ."),
 
-    # M11 & M12 : Refrain 3 : "...marchons ! Qu'un sang impur..."
-    "m5": voice("d5*4 d5*4  e5*4 d5*4  c5*4 b4*4  a4*4 g4*4", "pulse", 5),
-    "h5": voice("b4:4*4 b4:4*4  c5:4*4 b4:4*4  a4:4*4 g4:4*4  f#4:4*4 e4:4*4", "sqr", 4),
-    "b5": voice("g2*2 g3*2 b2*2 d3*2  c3*2 g3*2 e3*2 c3*2  d3*2 a3*2 f#3*2 d3*2  g2*2 b2*2 d3*2 g3*2", "saw", 5),
-    "d5": drums("k . h . s . h .  k . h . s . h .  k . h . s . h .  k . h . s s s ."),
+    # Bloc 5 : Refrain 2 : "Formez vos bataillons !"
+    "m5": voice("g4*4 c5*3 c5*1  c5~vib*8 c5*3 a4*1 f4*3 f4*1  g4~vib*8", "pulse", 5),
+    "h5": voice("e4:3*4 a4:4*3 a4:4*1  a4:4*4 f4:4*4 a4:3*3 f4:3*1 c4:3*3 c4:3*1  e4:4*2 g4:4*2 c5:4*4", "sqr", 4),
+    "b5": voice("c2*2 e2*2 g2*2 c3*2  f2*2 f3*2 c3*2 a2*2  f2*2 a2*2 c3*2 f2*2  c3*2 c2*2 g2*2 c3*2", "saw", 5),
+    "d5": drums("k . h . s . h k  k . h k s . h .  k . h . s . h k  k . h . s s s s"),
 
-    # M13 & M14 : Refrain 4 / Coda : "...abreuve nos sillons !"
-    "m6": voice("a4*4 d5*4  b4*4 g4*4  a4*4 f#4*4  g4~vib*8", "pulse", 5),
-    "h6": voice("f#4:4*4 b4:4*4  g4:4*4 d4:4*4  f#4:4*4 d4:4*4  d4~vib:4*8", "sqr", 4),
-    "b6": voice("d3*2 a3*2 d3*2 f#3*2  g2*2 b2*2 d3*2 g3*2  d3*2 a2*2 d3*2 f#3*2  g2*2 b2*2 g2*4", "saw", 5),
-    "d6": drums("k . h . s . h .  k . h . s . h .  k . s . s s s s  k . . . . . . ."),
+    # Bloc 6 : Refrain 3 : "Marchons, marchons !" (montee dramatique sur F7)
+    "m6": voice("g4*4 c4*4  f4~vib*12 f4*4  a4~vib*8", "pulse", 5),
+    "h6": voice("e4:3*4 g3:3*4  c4:4*4 f4:4*4 a4:4*4 c4:3*4  f4:4*2 a4:4*2 c5:4*2 d#5:4*2", "sqr", 4),
+    "b6": voice("c2*2 e2*2 g2*2 c3*2  f2*2 f3*2 c3*2 a2*2  f2*2 c3*2 a2*2 f2*2  f2*2 a2*2 c3*2 d#3*2", "saw", 5),
+    "d6": drums("k . h . s . h .  k . h k s . h .  k . h . s . h .  k . s . s s s s"),
+
+    # Bloc 7 : Refrain 4 : "Qu'un sang impur..."
+    "m7": voice("a4*8  a#4*8 c5*4 d5*4  e4~vib*8", "pulse", 5),
+    "h7": voice("f4:4*4 c4:4*4  f4:4*4 d4:4*4 g4:4*4 a#4:4*4  c4:4*2 e4:4*2 g4:4*2 c5:4*2", "sqr", 4),
+    "b7": voice("f2*2 a2*2 c3*2 f3*2  a#2*2 a#3*2 f3*2 d3*2  a#2*2 d3*2 f3*2 a#2*2  c3*2 g2*2 e2*2 c2*2", "saw", 5),
+    "d7": drums("k . h k s . h .  k . h k s . h .  k . h . s . h k  k . h . s s s ."),
+
+    # Bloc 8 : Refrain 5 / Coda : "...abreuve nos sillons !"
+    "m8": voice("e4*4 d5*4  c5*8 c5*3 a4*1 a#4*3 g4*1  f4~vib*8", "pulse", 5),
+    "h8": voice("c4:3*4 g4:4*4  a4:4*4 f4:4*4 a4:3*3 f4:3*1 g4:3*3 e4:3*1  c4:4*2 f4:4*2 a4:4*4", "sqr", 4),
+    "b8": voice("c2*2 e2*2 g2*2 c3*2  f2*2 f3*2 c3*2 a2*2  c3*2 g2*2 e2*2 c2*2  f2*2 c3*2 f2*4", "saw", 5),
+    "d8": drums("k . h . s . h k  k . h k s . h .  k . s . s s s s  k . . . k . . ."),
 }
 MARSEILLAISE_PATTERNS = [
     ["m0", "h0", "b0", "d0"],
@@ -335,6 +347,8 @@ MARSEILLAISE_PATTERNS = [
     ["m4", "h4", "b4", "d4"],
     ["m5", "h5", "b5", "d5"],
     ["m6", "h6", "b6", "d6"],
+    ["m7", "h7", "b7", "d7"],
+    ["m8", "h8", "b8", "d8"],
 ]
 
 
@@ -342,7 +356,7 @@ HTML_PLAYER = """<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Ecoute des Musiques Militantes — L'Union Populaire RPG</title>
+<title>Ecoute des Musiques Militantes — L'Avenir en commun RPG</title>
 <style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -406,7 +420,7 @@ HTML_PLAYER = """<!DOCTYPE html>
 <body>
 
 <h1>✊ Ecoute des Musiques Militantes</h1>
-<p class="sub">Arrangements 8-bit PICO-8 pour <em>L'Union Populaire RPG</em></p>
+<p class="sub">Arrangements 8-bit PICO-8 pour <em>L'Avenir en commun RPG</em></p>
 
 <div style="text-align: center; margin-bottom: 22px;">
   <a href="player.html" style="display: inline-block; background: #ff004d; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: bold; border: 2px solid #ffec27;">🎮 Tester la Cartouche PICO-8 Interactive (player.html)</a>

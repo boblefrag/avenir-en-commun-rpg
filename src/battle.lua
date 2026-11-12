@@ -18,7 +18,8 @@ function battle.init(m)
 end
 
 function mhit(n) return mo[1].."\nperd "..n.." conviction" end
-function bnxt() if mhp<=0 then win() else monster_turn(bmenu) end end
+function bm() monster_turn(bmenu) end
+function bnxt() if mhp<=0 then win() else bm() end end
 
 function bmenu()
  local c=h.cl==4
@@ -33,7 +34,7 @@ function bact(i)
  if i==1 then
   turn()
  elseif i==2 then
-  if (h.cl==4) hide() else bmagic()
+  (h.cl==4 and hide or bmagic)()
  elseif i==3 then
   hid=false
   local it,ds=items()
@@ -41,16 +42,12 @@ function bact(i)
    close()
    local id=iid[o]
    local t,u=use_item(id)
-   if not t then
-    bmenu()
-   else
-    msg(t,(u or id==5) and function() monster_turn(bmenu) end or bmenu)
-   end
+   if not t then bmenu() else msg(t,(u or id==5) and bm or bmenu) end
   end,true,ds)
  elseif i==4 then
   local a=h.agi*(hid and 6 or 1) hid=false
-  if (rnd(a+mo[5])<a) msg("vous vous repliez !",back) else msg("retrait impossible !",function() monster_turn(bmenu) end)
- elseif i==5 then
+  if (rnd(a+mo[5])<a) msg("vous vous repliez !",back) else msg("retrait impossible !",bm)
+ else
   b_eclat()
  end
 end
@@ -88,43 +85,25 @@ end
 
 -- actions politiques en combat : conviction, bouclier, soutien, constituante
 function bmagic()
- local it,ids,ds=spell_list(function(e) return e<3 or e>5 end)
- if #it==0 then
-  msg("aucun argument pret !",bmenu)
-  return
- end
- add(it,"retour")
- add(ds,"revenir au debat")
- menu(it,4,10,function(o)
-  close()
-  local s=ids[o] and sp(ids[o])
-  local e=s and s[2]
-  if not s then
-   bmenu()
-  elseif h.mp<s[4] then
-   msg(mep,bmenu)
-  elseif e==6 and h.hp>=h.pv then
-   msg(mxc,bmenu)
+ pick_spell(function(e) return e<3 or e>5 end,10,true,bmenu,"aucun argument pret !",function(s,e)
+  h.mp-=s[4]
+  sfx(50,3)
+  local t=s[1].." !\n"
+  if e==1 or e==7 then
+   local n=s[3]+flr(rnd(s[3]/4))
+   mhp-=n
+   blk,bonom=10,"DEBAT !"
+   if (rnd()<.4 and not mstat) mstat="indignation"
+   if (e==7) t..="appel a la 6e !\n"
+   t..=mhit(n)
+  elseif e==6 then
+   t..=heal(s[3])
   else
-   h.mp-=s[4]
-   sfx(50,3)
-   local t=s[1].." !\n"
-   if e==1 or e==7 then
-    local n=s[3]+flr(rnd(s[3]/4))
-    mhp-=n
-    blk,bonom=10,"DEBAT !"
-    if (rnd()<.4 and not mstat) mstat="indignation"
-    if (e==7) t..="appel a la 6e !\n"
-    t..=mhit(n)
-   elseif e==6 then
-    t..=heal(s[3])
-   else
-    shd=max(shd,s[3])
-    t..="impact reduit de "..shd
-   end
-   msg(t,bnxt)
+   shd=max(shd,s[3])
+   t..="impact reduit de "..shd
   end
- end,true,ds)
+  msg(t,bnxt)
+ end)
 end
 
 -- k : diviseur de la def (2 pour le heros qui frappe, 4 pour les
@@ -195,7 +174,7 @@ end
 function turn()
  -- cache, le fact-checker contre-attaque toujours en premier
  if hid or h.agi+rnd(4)>=mo[5]+rnd(4) then
-  hero_turn(function() monster_turn(bmenu) end)
+  hero_turn(bm)
  else
   monster_turn(function() hero_turn(bmenu) end)
  end
@@ -228,7 +207,7 @@ function win()
  local k=fin
  -- seuls les boss des donjons 1..4 (zones 11..14) valident un pilier du programme ;
  -- les opposants de donjon (zones 21..25) n'en donnent pas
- if mo[8]>10 and mo[8]<15 then
+ if mo[8]>10 then
   h.gems|=dp.g
   sfx(52,3)
   mset(px,py,17)

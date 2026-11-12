@@ -12,16 +12,16 @@ ROOT = Path(__file__).resolve().parent.parent
 HTML_PATH = ROOT / "index.html"
 
 HEAD_EXTRA = """<meta charset="utf-8">
-<title>L'Union Populaire RPG — Pour la 6e République (Jeu PICO-8)</title>
-<meta name="description" content="RPG rétro PICO-8 : incarnez un militant de l'Union Populaire, convainquez le pays, brisez les 4 grands monopoles et instaurez la 6e République !">
-<meta property="og:title" content="L'Union Populaire RPG — Pour la 6e République">
-<meta property="og:description" content="Un RPG rétro 8-bit complet jouable dans le navigateur (PC, Mobile, Manette) autour de L'Avenir en Commun.">
+<title>L'Avenir en commun RPG — Pour la 6e République (Jeu PICO-8)</title>
+<meta name="description" content="RPG rétro PICO-8 : incarnez un militant insoumis, convainquez le pays avec L'Avenir en commun, brisez les 4 grands monopoles et instaurez la 6e République !">
+<meta property="og:title" content="L'Avenir en commun RPG — Pour la 6e République">
+<meta property="og:description" content="Un RPG rétro 8-bit complet jouable dans le navigateur (PC, Mobile, Manette) autour de L'Avenir en commun.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://boblefrag.github.io/union-populaire-rpg/">
 <meta property="og:image" content="https://boblefrag.github.io/union-populaire-rpg/label_preview.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="L'Union Populaire RPG — Pour la 6e République">
-<meta name="twitter:description" content="RPG rétro PICO-8 jouable en 1 clic dans le navigateur : 4 classes militantes, 5 bastions, L'Avenir en Commun !">
+<meta name="twitter:title" content="L'Avenir en commun RPG — Pour la 6e République">
+<meta name="twitter:description" content="RPG rétro PICO-8 jouable en 1 clic dans le navigateur : 4 classes militantes, 5 bastions, L'Avenir en commun !">
 <meta name="twitter:image" content="https://boblefrag.github.io/union-populaire-rpg/label_preview.png">
 <link rel="icon" type="image/png" href="label_preview.png">
 """
@@ -326,7 +326,7 @@ BELOW_HTML = """
         <figcaption>Bastion : Face au Monarque</figcaption>
       </figure>
       <figure>
-        <img src="label_preview.png" alt="Jaquette L'Union Populaire RPG">
+        <img src="label_preview.png" alt="Jaquette L'Avenir en commun RPG">
         <figcaption>Jaquette officielle (φ LFI)</figcaption>
       </figure>
       <figure>
@@ -354,7 +354,7 @@ BELOW_HTML = """
   </section>
 
   <footer class="up-footer">
-    L'Union Populaire RPG — Conception &amp; développement : Yohann Gabory • Propulsé par PICO-8 • Licence libre AGPLv3
+    L'Avenir en commun RPG — Conception &amp; développement : Yohann Gabory • Propulsé par PICO-8 • Licence libre AGPLv3
   </footer>
 </div>
 """

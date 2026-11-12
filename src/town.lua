@@ -5,7 +5,7 @@ town={mus=8}
 
 function town.init(p)
  tw=p
- tmenu()
+ if p.txt then msg(p.txt,function() go(world) end) elseif not p.tut then tmenu() end
 end
 
 function tmenu()
@@ -38,7 +38,7 @@ end
 -- materiel : cafe (10e), repas solidaire (60e), cahier thematique (25e), revue (100e)
 -- militant et fact-checker (0 pm) : pas de cahiers thematiques en rayon
 function item_shop()
- local pr,it,ids,ds,idesc=split"10,60,25,100",{},{},{},split"rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation"
+ local pr,it,ids,ds=split"10,60,25,100",{},{},{}
  for i=1,4 do
   if h.pm>0 or i<3 then
    add(it,it_nm[i].." "..pr[i].."e ("..h[it_k[i]].."/9)")

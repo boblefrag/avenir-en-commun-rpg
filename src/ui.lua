@@ -36,7 +36,7 @@ end
 -- confirmation oui/non avec message et verification de prix
 function confirm(txt,price,yes,no)
  msg(txt)
- local m={x=94,y=74,w=24,h=19,it=split"oui,non",sel=1,onx=2,nox=true,cb=function(i)
+ menu(split"oui,non",94,74,function(i)
   close()
   close()
   if i==1 then
@@ -47,11 +47,11 @@ function confirm(txt,price,yes,no)
     sfx(51,3)
     yes()
    end
-  else
-   if (no) no()
+  elseif no then
+   no()
   end
- end}
- add(wins,m)
+ end,true)
+ wins[#wins].onx=2
 end
 
 function ui_update()
@@ -116,10 +116,7 @@ function hud()
  for i=0,3 do
   local x=112+i*4
   if h.gems&1<<i>0 then
-   local c=gem_col[i+1]
-   rectfill(x-1,2,x+1,4,c)
-   pset(x,1,c)
-   pset(x,5,c)
+   circfill(x,3,1,gem_col[i+1])
   else
    pset(x,3,5)
   end

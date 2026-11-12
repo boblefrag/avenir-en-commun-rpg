@@ -191,16 +191,16 @@ TRACKS.append(dict(name="jingle niveau", speed=5, jingle=True, sfx={
 }, patterns=[["m"]]))
 
 # ---------------------------------------------------------------- fin
-# 48. Epilogue / Fin : LA MARSEILLAISE (Sol majeur, 112 BPM, speed=16)
+# 48. Epilogue / Fin : LA MARSEILLAISE (Fa majeur, 112 BPM, speed=16)
 mars_sfx = {}
-for i in range(3, 7):
+for i in range(0, 4):
     mars_sfx[f"m{i}"] = ca.MARSEILLAISE_SFX[f"m{i}"]
     mars_sfx[f"b{i}"] = ca.MARSEILLAISE_SFX[f"b{i}"]
 TRACKS.append(dict(name="la marseillaise (fin)", speed=16, start=48, late=True, sfx=mars_sfx, patterns=[
+    ["m0", "b0"],
+    ["m1", "b1"],
+    ["m2", "b2"],
     ["m3", "b3"],
-    ["m4", "b4"],
-    ["m5", "b5"],
-    ["m6", "b6"],
 ]))
 
 # ---------------------------------------------------------------- export

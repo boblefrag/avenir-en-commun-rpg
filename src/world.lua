@@ -23,8 +23,8 @@ function map_init()
  -- sable : plaine au bord de l'eau, calcule ici
  for y=0,127 do
   for x=0,127 do
-   if mget(x,y)==3 and (mget(x-1,y)==1 or mget(x+1,y)==1 or mget(x,y-1)==1 or mget(x,y+1)==1) then
-    mset(x,y,9)
+   if mget(x,y)==3 then
+    for i=1,4 do if mget(x+dx[i],y+dy[i])==1 then mset(x,y,9) end end
    end
   end
  end
@@ -78,7 +78,7 @@ function agora()
   s..="fanfare : bella ciao !\nferveur populaire a 100% !"
  end
  sfx(50,3)
- msg(s)
+ go(town,{n="ga",txt=s})
 end
 
 -- lance un combat contre un monstre de la zone z
@@ -114,37 +114,22 @@ end
 
 -- mobilisation hors combat : debrayage, retour, cordon syndical, soin
 function field_magic()
- local it,ids,ds=spell_list(function(e) return e>2 and e<7 end)
- if #it==0 then
-  msg("aucune mobilisation\npossible ici !")
-  return
- end
- add(it,"retour")
- add(ds,"fermer la mobilisation")
- menu(it,4,12,function(o)
-  close()
-  local s=sp(ids[o])
-  if (not s) return
-  local e=s[2]
-  if h.mp<s[4] then
-   msg(mep)
-  elseif e==6 and h.hp>=h.pv then
-   msg(mxc)
-  elseif e==3 and st!=dungeon then
+ pick_spell(function(e) return e>2 and e<7 end,12,nil,nil,"aucune mobilisation\npossible ici !",function(s,e)
+  if e==3 and st!=dungeon then
    msg("vous n'etes pas dans\nun bastion adverse !")
-  else
-   h.mp-=s[4]
-   if e==3 then
-    px,py=wx,wy
-    go(world)
-   elseif e==4 then
-    start()
-   elseif e==5 then
-    rep=s[3]
-   end
-   msg(s[1].." !"..(e==5 and "\nles opposants vous evitent." or e==6 and "\n"..heal(s[3]) or ""))
+   return
   end
- end,nil,ds)
+  h.mp-=s[4]
+  if e==3 then
+   px,py=wx,wy
+   go(world)
+  elseif e==4 then
+   start()
+  elseif e==5 then
+   rep=s[3]
+  end
+  msg(s[1].." !"..(e==5 and "\nles opposants vous evitent." or e==6 and "\n"..heal(s[3]) or ""))
+ end)
 end
 
 -- rencontre aleatoire sur la tuile s (4 fois moins sous repousse)
@@ -173,10 +158,10 @@ function world.update()
    if (b==0) h.pot=min(9,h.pot+1) b="un cafe militant !"
    if (b==1) b="+40 xp !"..(gain(40,0) and " (up !)" or "")
    if (b==2) add_ferv(100) b="100% de ferveur !"
-   msg("la tortue insoumise :\nelle vous offre\n"..b)
+   go(town,{n="ga",jlm=true,txt="la tortue insoumise :\nelle vous offre\n"..b})
    return
   end
-  if not tx and rnd()<.08 or rnd()<.01 then
+  if not tx and rnd()<.015 then
    local x,y=px+rnd(11)\1-5,py+rnd(11)\1-5
    if (pass(mget(x,y))) tx,ty=x,y
   end

@@ -81,7 +81,7 @@ function title.update() end
 
 function title.draw()
  cls()
- print("l'union populaire rpg",22,30,10)
+ print("l'avenir en commun rpg",20,30,10)
  print("campagne presidentielle",18,40,13)
 end
 
@@ -151,12 +151,19 @@ function choose_class()
   new_hero(c)
   save()
   start(true)
- end,true)
+ end,true,split("costaud, frappe fort direct\nsans actions de mobilisation|fragile, attaque via le menu\nmobilisation (coute des pm)|equilibre, soigne et protege\nvia le menu mobilisation|agile : fais recul puis\nconvaincre pour frapper x3 !","|"))
 end
 
 -- place le heros a la ville de depart (ou de sauvegarde)
 function start(first)
  local p=places[h.town]
  px,py=p.x,p.y
- if (first) go(town,p) chain(qg_intro) else go(world)
+ if first then
+  p.tut=true
+  go(town,p)
+  p.tut=nil
+  chain(qg_intro,tmenu)
+ else
+  go(world)
+ end
 end

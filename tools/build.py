@@ -77,15 +77,38 @@ def read_sections(path):
     return sections
 
 
-def map_section():
+def map_section(extra=b""):
     data = rle(read_png(ROOT / "assets/world.png", WORLD))
     world = len(data)
     for i in range(1, 6):
         data += rle(read_png(ROOT / f"assets/dungeon{i}.png", DUNGEON))
-    assert len(data) <= 4096, f"carte trop grosse : {len(data)} octets / 4096"
-    data = data.ljust(4096, b"\0")
+    used = len(data)
+    assert used + len(extra) <= 4096, f"carte trop grosse : {used + len(extra)} octets / 4096"
+    data = (data + extra).ljust(4096, b"\0")
     rows = [data[i:i + 128].hex() for i in range(0, 4096, 128)]
-    return rows, world, len(data.rstrip(b"\0"))
+    return rows, world, used
+
+
+def offload_texts(code):
+    """Deplace intro_lines et credits_lines dans l'espace libre de __map__ pour legend_of_the_gems.p8."""
+    extra = bytearray()
+    base = 0x2000 + map_section()[2]
+    repls = []
+    for var in ("intro_lines", "credits_lines"):
+        m = re.search(rf'^{var}=split\("([^"]*)"\s*,\s*"\|"(?:\s*,\s*false)?\)$', code, re.M)
+        if not m:
+            continue
+        raw = m.group(1).replace("\\n", "\n").encode("latin1")
+        addr = base + len(extra)
+        extra.extend(raw)
+        repls.append((m.group(0), f"{var}=rdm(0x{addr:x},{len(raw)})"))
+    if not repls:
+        return code, b""
+    reader = 'function rdm(a,n) local s="" for i=0,n-1 do s..=chr(@(a+i)) end return split(s,"|",false) end\n'
+    code = reader + code
+    for old, new in repls:
+        code = code.replace(old, new, 1)
+    return code, bytes(extra)
 
 
 def main():
@@ -119,15 +142,19 @@ def main():
         if k in sec:
             out += [k] + sec[k]
     CART.write_text("\n".join(out) + "\n")
-    # cart d'export : meme contenu, code inline et nettoye
+    # cart d'export : meme contenu, code inline et nettoye, gros textes dans __map__
     code = "\n".join((ROOT / f"src/{f}.lua").read_text() for f in SRC)
     # les 2 premieres lignes de commentaire = titre et auteur de la
     # cartouche (affiches par splore et sur le .p8.png) : on les remet
-    small = HEADER + strip_code(code)
+    small_raw, extra = offload_texts(strip_code(code))
+    small = HEADER + small_raw
     check_syntax(small, EXPORT.name)
+    exp_map, _, _ = map_section(extra)
     exp = ["pico-8 cartridge // http://www.pico-8.com", "version 42", "__lua__"] + small.split("\n")
     for k in ORDER[1:]:
-        if k in sec:
+        if k == "__map__":
+            exp += ["__map__"] + exp_map
+        elif k in sec:
             exp += [k] + sec[k]
     EXPORT.write_text("\n".join(exp) + "\n")
     # carts de test : scindes en deux pour rester sous la limite de 8192 tokens PICO-8

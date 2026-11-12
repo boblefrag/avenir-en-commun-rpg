@@ -16,7 +16,8 @@ function wep_name(t)
 end
 
 function new_hero(cl)
- h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=1,spo=0,eth=0,spe=0,wep=0,arm=split"0,0,0,0,0",tr=split"0,0,0,0,0,0",ferv=0,dth=0,mn=0,sc=0}
+ h={cl=cl,lv=1,gold=20,town=1,pot=1,arm=split"0,0,0,0,0",tr=split"0,0,0,0,0,0"}
+ for k in all(split"xp,gems,spo,eth,spe,wep,ferv,dth,mn,sc") do h[k]=0 end
  stats()
  h.hp,h.mp=h.pv,h.pm
  clock()
@@ -105,20 +106,19 @@ sv=split"cl,lv,gems,town,pot,wep"
 function save()
  poke(0x5e00,1)
  for i,k in ipairs(sv) do poke(0x5e00+i,h[k]) end
- for i=1,5 do poke(0x5e06+i,h.arm[i]) end
+ poke(0x5e07,unpack(h.arm))
  poke(0x5e0c,h.eth,h.spo,h.spe)
  poke2(0x5e10,h.xp,h.gold,h.hp,h.mp)
- for i=1,6 do poke(0x5e17+i,h.tr[i]) end
+ poke(0x5e18,unpack(h.tr))
 end
 
 function load_game()
- h={arm={},tr={}}
- for i=1,6 do h.tr[i]=@(0x5e17+i) end
+ h={arm={peek(0x5e07,5)},tr={peek(0x5e18,6)}}
  for i,k in ipairs(sv) do h[k]=@(0x5e00+i) end
- for i=1,5 do h.arm[i]=@(0x5e06+i) end
- h.eth,h.spo,h.spe=@0x5e0c,@0x5e0d,@0x5e0e
+ h.eth,h.spo,h.spe=peek(0x5e0c,3)
  h.dth,h.mn,h.sc=@0x5e1e,peek2(0x5e20),@0x5e22
  h.xp,h.gold,h.hp,h.mp=peek2(0x5e10,4)
+ h.ferv=0
  stats()
 end
 
@@ -160,17 +160,38 @@ function spell_list(f)
  return it,ids,ds
 end
 
+function pick_spell(flt,y,nox,ret,empty,fn)
+ local it,ids,ds=spell_list(flt)
+ if (#it==0) msg(empty,ret) return
+ add(it,"retour")
+ add(ds,nox and "revenir au debat" or "fermer la mobilisation")
+ menu(it,4,y,function(o)
+  close()
+  local s=ids[o] and sp(ids[o])
+  local e=s and s[2]
+  if not s then
+   if (ret) ret()
+  elseif h.mp<s[4] then
+   msg(mep,ret)
+  elseif e==6 and h.hp>=h.pv then
+   msg(mxc,ret)
+  else
+   fn(s,e)
+  end
+ end,nox,ds)
+end
+
 -- objets : 1 potion (+20 pv), 2 super potion (+80 pv),
 -- 3 potion de magie (+15 pm),
 -- 4 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
 function items()
- local t,ds,l,d={},{},split"cafe militant,repas solidaire,cahier thematique,revue politique,le programme,retour",split"rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation,l'avenir en commun,fermer la sacoche"
+ local t,ds={},{}
  iid={}
  for i=1,6 do
   if h.pm>0 or i<3 or i>4 then
    add(iid,i)
-   add(t,l[i]..(i<5 and " (x"..h[it_k[i]]..")" or ""))
-   add(ds,d[i])
+   add(t,i<5 and it_nm[i].." (x"..h[it_k[i]]..")" or i==5 and "le programme" or "retour")
+   add(ds,i<5 and idesc[i] or i==5 and "l'avenir en commun" or "fermer la sacoche")
   end
  end
  return t,ds

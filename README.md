@@ -1,11 +1,11 @@
-# φ L'Union Populaire : Le RPG (PICO-8)
+# φ L'Avenir en commun : Le RPG (PICO-8)
 
-Un RPG rétro complet sur **PICO-8** autour de la campagne présidentielle de **l'Union Populaire** et du programme *L'Avenir en Commun* pour la **6e République**.
+Un RPG rétro complet sur **PICO-8** autour de la campagne présidentielle de **La France insoumise** et du programme *L'Avenir en commun* pour la **6e République**.
 
 👉 **Jouer directement dans le navigateur (PC, Mobile & Manette) :**
 **[https://boblefrag.github.io/union-populaire-rpg/](https://boblefrag.github.io/union-populaire-rpg/)**
 
-![Jaquette L'Union Populaire RPG](label_preview.png)
+![Jaquette L'Avenir en commun RPG](label_preview.png)
 
 ## ✊ Présentation
 Parcourez le pays de **Saint-Denis** à **Marseille** en passant par **Lille**, **Lyon** et **Le Bourget**, débattez face aux éditorialistes, lobbyistes et technocrates, brisez les 4 grands monopoles (*Tour des Médias*, *Banque Offshore*, *Tour d'Austérité*, *Lobby Central*) pour inscrire les mesures phares de *L'Avenir en Commun* au programme, et instaurez la **6e République** !
