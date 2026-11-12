@@ -89,7 +89,7 @@ def render_gameplay():
             s1.rectfill(x, y - 3 - rng.randrange(4), x + 3, y - 1, rng.choice([8, 12, 11, 9, 14, 7]))
     for y in range(76, 128, 7):
         s1.line(0, y, 127, y, 2)
-    s1.sspr(48, 112, 16, 16, 40, 20, 3, pal={13: 0})
+    s1.sspr(48, 112, 16, 16, 40, 28, 3, pal={13: 0})
     s1.rectfill(0, 60, 127, 75, 2)
     s1.line(0, 60, 127, 60, 15)
     s1.line(0, 61, 127, 61, 9)

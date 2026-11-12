@@ -196,8 +196,8 @@ def draw():
         im.sspr(0, 16, 8, 8, mx, my, 3, pal={8: col, 15: skin, 4: hair})
 
     # Titre en haut, bien au-dessus du Phi pour ne pas le masquer
-    im.text("l'union", None, 5, 2, 7, shadow=1)
-    im.text("populaire", None, 17, 2, 12, shadow=1, outline=7)
+    im.text("l'avenir", None, 5, 2, 7, shadow=1)
+    im.text("en commun", None, 17, 2, 12, shadow=1, outline=7)
     im.text("rpg", None, 29, 1, 10, shadow=0)
 
     # Bandeau du bas : mot d'ordre pour la 6e republique
