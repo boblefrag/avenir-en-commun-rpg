@@ -370,12 +370,16 @@ def main():
     html = html.replace("<!-- Add any content above the cart here -->", ABOVE_HTML, 1)
     # 4. Injecte les sections en dessous du lecteur
     html = html.replace("<!-- Add content below the cart here -->", BELOW_HTML, 1)
+    # 5. Cache-busting pour forcer le rechargement du binaire JS sur mobile et web
+    import time
+    ts = int(time.time())
+    html = html.replace('e.src = "index.js";', f'e.src = "index.js?v={ts}";', 1)
 
     HTML_PATH.write_text(html, encoding="utf-8")
 
     # Synchronise aussi union_populaire.html et union_populaire.js pour compatibilite des liens
     shutil.copyfile(ROOT / "index.js", ROOT / "union_populaire.js")
-    up_html = html.replace('e.src = "index.js";', 'e.src = "union_populaire.js";')
+    up_html = html.replace(f'e.src = "index.js?v={ts}";', f'e.src = "union_populaire.js?v={ts}";')
     (ROOT / "union_populaire.html").write_text(up_html, encoding="utf-8")
     print("index.html et union_populaire.html enrichis avec succes !")
 
