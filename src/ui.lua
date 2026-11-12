@@ -41,7 +41,7 @@ function confirm(txt,price,yes,no)
   close()
   if i==1 then
    if h.gold<price then
-    msg("fonds insuffisants !",no)
+    msg("parrainages insuffisants !",no)
    else
     h.gold-=price
     sfx(51,3)
@@ -112,7 +112,7 @@ function hud()
   bip_cd-=1
   if (bip_cd<=0) sfx(53) bip_cd=90
  end
- print(h.hp.."/"..h.pv..(h.pm>0 and " "..h.mp.."m" or "").." n."..h.lv.." "..max(0,h.lv*h.lv*18-h.xp).."xp "..h.gold.."e",2,1,hcol)
+ print(h.hp.."/"..h.pv..(h.pm>0 and " "..h.mp.."m" or "").." n."..h.lv.." "..max(0,h.lv*h.lv*18-h.xp).."xp "..h.gold.."p",2,1,hcol)
  for i=0,3 do
   local x=112+i*4
   if h.gems&1<<i>0 then

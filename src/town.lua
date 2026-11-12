@@ -20,7 +20,7 @@ function town.init(p)
   msg(p.txt,function() go(world) end)
  elseif not p.tut then
   local g,c=dons_all()
-  if g>0 then sfx(51,3) msg("vous donnez "..c.." soutien"..(c>1 and "s" or "").."\nau qg de campagne : +"..g.."e !",tmenu) else tmenu() end
+  if g>0 then sfx(51,3) msg("vous donnez "..c.." soutien"..(c>1 and "s" or "").."\nau qg : +"..g.." parrainages !",tmenu) else tmenu() end
  end
 end
 
@@ -32,7 +32,7 @@ end
 function tact(i)
  close()
  if i==1 then
-  confirm("reposer l'equipe ("..tw.c.."e) ?",tw.c,function()
+  confirm("reposer l'equipe ("..tw.c.."p) ?",tw.c,function()
    h.hp,h.mp,h.town=h.pv,h.pm,tw.i
    save()
    sfx(50,3)
@@ -48,16 +48,16 @@ function tact(i)
 end
 
 function tbuy(n,pr,ret,cb)
- confirm("acheter "..n.."\n("..pr.."e) ?",pr,cb,ret)
+ confirm("obtenir "..n.."\n("..pr.." parrainages) ?",pr,cb,ret)
 end
 
--- materiel : cafe (10e), repas solidaire (60e), cahier thematique (25e), revue (100e)
+-- materiel : cafe (10p), repas solidaire (60p), cahier thematique (25p), revue (100p)
 -- militant et fact-checker (0 pm) : pas de cahiers thematiques en rayon
 function item_shop()
  local pr,it,ids,ds=split"10,60,25,100",{},{},{}
  for i=1,4 do
   if h.pm>0 or i<3 then
-   add(it,it_nm[i].." "..pr[i].."e ("..h[it_k[i]].."/9)")
+   add(it,it_nm[i].." "..pr[i].."p ("..h[it_k[i]].."/9)")
    add(ids,i)
    add(ds,idesc[i])
   end
@@ -84,7 +84,7 @@ function armor_shop()
  local t,it,ds=town_tier[tw.i],{},{}
  local m=mat[t]
  for p=1,5 do
-  add(it,arm_names[p].." "..m.." - "..(h.arm[p]>=t and "equipe" or t>arm_cap[h.cl] and "inadapte" or arm_prices[p]*tier_mult[t].."e"))
+  add(it,arm_names[p].." "..m.." - "..(h.arm[p]>=t and "equipe" or t>arm_cap[h.cl] and "inadapte" or arm_prices[p]*tier_mult[t].."p"))
   add(ds,"defense +"..(arm_base[p]*t))
  end
  add(it,"retour")
@@ -112,7 +112,7 @@ function weapon_shop()
  local t=town_tier[tw.i]
  local wn,pr=wep_name(t),wep_prices[t]
  local eq=h.wep>=t
- menu({wn.." - "..(eq and "equipe" or pr.."e"),"retour"},4,44,function(o)
+ menu({wn.." - "..(eq and "equipe" or pr.."p"),"retour"},4,44,function(o)
   close()
   if o>1 then
    tmenu()

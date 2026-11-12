@@ -225,7 +225,7 @@ function win()
    msg("mesure au programme :\n"..g[1].." !\n"..g[2],fin)
   end
  end
- msg(mo[1].."\nrejoint la france insoumise !\n+"..mo[6].." xp  +"..mo[7].."e"..loot(),k)
+ msg(mo[1].."\nrejoint la france insoumise !\n+"..mo[6].." xp  +"..mo[7].." parr."..loot(),k)
 end
 
 -- soutien militant : 25% des debats (40% pour le fact-checker, toujours sur un boss)

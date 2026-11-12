@@ -72,7 +72,7 @@ function agora()
   s..="echange sur le smic 1700e !\n+25 xp"..(g and " (niveau up !)" or "")
  elseif e==2 then
   h.gold=min(9999,h.gold+20); sfx(51,3)
-  s..="colleurs d'affiches !\n+20e de dons pour la caisse"
+  s..="colleurs d'affiches !\n+20 parrainages collectes !"
  else
   h.ferv=100; sfx(52,3)
   s..="fanfare : bella ciao !\nferveur populaire a 100% !"
@@ -98,7 +98,7 @@ function field_menu()
  menu(split"statut,materiel,mobilisation",4,12,function(i)
   close()
   if i==1 then
-   msg(classes[h.cl][1].." (niv "..h.lv..")\npv "..h.hp.."/"..h.pv.."  pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep_name(h.wep).." | "..h.gold.."e")
+   msg(classes[h.cl][1].." (niv "..h.lv..")\npv "..h.hp.."/"..h.pv.."  pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep_name(h.wep).." | "..h.gold.." parr.")
   elseif i==2 then
    local it,ds=items()
    menu(it,4,12,function(o)
