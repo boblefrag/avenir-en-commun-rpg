@@ -304,6 +304,19 @@ TILES = {
         "44....44",
     ],
 
+    # #34 : La Tortue (vue de dessus classique : tete, 4 pattes, carapace bombee et queue)
+    # Tete et 4 pattes en vert vif (b), carapace marron (4) avec ecailles ambrees (9) et bord olive (3).
+    34: [
+        "...bb...",
+        "b..bb..b",
+        "bb3443bb",
+        ".349943.",
+        ".349943.",
+        "bb3443bb",
+        "b..33..b",
+        "....b...",
+    ],
+
     # #36 : Drapeau militant LFI / Republique (utilise dans epilog scene 3)
     36: [
         "6c77888.",

@@ -24,7 +24,7 @@ function chain(t,k,i)
  i=i or 1
  if t[i] then
   msg(t[i],function() chain(t,k,i+1) end)
- else
+ elseif k then
   k()
  end
 end
@@ -36,7 +36,7 @@ end
 -- confirmation oui/non avec message et verification de prix
 function confirm(txt,price,yes,no)
  msg(txt)
- local m={x=94,y=74,w=24,h=19,it=split("oui,non"),sel=1,onx=2,nox=true,cb=function(i)
+ local m={x=94,y=74,w=24,h=19,it=split"oui,non",sel=1,onx=2,nox=true,cb=function(i)
   close()
   close()
   if i==1 then
@@ -70,23 +70,20 @@ function ui_update()
    sfx(47,3)
    w.cb(w.sel)
   elseif btnp(5) then
-   if w.onx then
-    w.cb(w.onx)
-   elseif not w.nox then
-    sfx(48,3)
-    close()
-   end
+   if w.onx then w.cb(w.onx) elseif not w.nox then sfx(48,3) close() end
   end
  end
  return true
 end
 
 function box(x,y,w,h)
- rectfill(x,y,x+w-1,y+h-1,0)
- rect(x,y,x+w-1,y+h-1,7)
+ local x2,y2=x+w-1,y+h-1
+ rectfill(x,y,x2,y2,0)
+ rect(x,y,x2,y2,7)
 end
 
 function ui_draw()
+ local top=wins[#wins]
  for w in all(wins) do
   box(w.x,w.y,w.w,w.h)
   if w.txt then
@@ -95,36 +92,31 @@ function ui_draw()
    for i,s in ipairs(w.it) do
     print(s,w.x+9,w.y+i*7-3,7)
    end
-   if (w==wins[#wins]) print(">",w.x+3,w.y+w.sel*7-3,10)
+   if (w==top) print(">",w.x+3,w.y+w.sel*7-3,10)
   end
  end
- local top=wins[#wins]
- if top and top.desc and top.desc[top.sel] then
-  box(2,102,124,24)
-  print(top.desc[top.sel],6,106,10)
- end
+ local d=top and top.desc and top.desc[top.sel]
+ if (d) box(2,102,124,24) print(d,6,106,10)
 end
 
 -- bandeau d'etat en haut de l'ecran
 -- couleur pv : vert si >50%, jaune si 25..50%, rouge si <25%
 -- bip d'alerte si pv<25% (toutes les 90 frames env.)
 -- 4 mesures du programme : nouvelle france(cyan 12), blocage des prix(jaune 10), eco-region(vert 11), 6e rep(rouge 8)
-gem_col=split("12,10,11,8")
-bip_cd=0
+gem_col,bip_cd=split"12,10,11,8",0
 function hud()
  rectfill(0,0,127,7,0)
- local pct=h.hp/h.pv
- local hcol=pct<.25 and 8 or pct<.5 and 10 or 11
- if pct<.25 then
+ local p=h.hp/h.pv
+ local hcol=p<.25 and 8 or p<.5 and 10 or 11
+ if p<.25 then
   bip_cd-=1
-  if bip_cd<=0 then sfx(53) bip_cd=90 end
+  if (bip_cd<=0) sfx(53) bip_cd=90
  else
   bip_cd=0
  end
  print("pv "..h.hp.."/"..h.pv,2,1,hcol)
  print("pm "..h.mp.."/"..h.pm,44,1,7)
  print(h.gold.."e",80,1,10)
- if ((h.ferv or 0)>=100) print("!",73,1,flr(time()*4)%2==0 and 10 or 7)
  -- 4 gemmes a droite (x 111..125) : losange colore si possedee,
  -- simple point gris sinon
  for i=0,3 do

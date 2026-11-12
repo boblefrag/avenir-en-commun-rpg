@@ -73,12 +73,7 @@ function title.init()
  local it={"nouvelle partie"}
  if (@0x5e00==1) add(it,"continuer",1)
  menu(it,30,70,function(i)
-  if it[i]=="continuer" then
-   load_game()
-   start()
-  else
-   go(intro)
-  end
+  if (it[i]=="continuer") load_game() start() else go(intro)
  end,true)
 end
 
@@ -96,14 +91,14 @@ intro={mus=0,notime=true}
 function intro.init()
  sy=128
  stars={}
- for i=1,30 do add(stars,{x=rnd(128),y=rnd(128),c=rnd({5,6,7})}) end
+ for i=1,30 do add(stars,{rnd(128),rnd(128),5+rnd(3)}) end
 end
 
 function intro.update()
- if #wins>0 then return end
+ if (#wins>0) return
  local spd=btn(4) and 2 or 0.4
  sy-=spd
- if (flr(sy)%6==0) sfx(54,3)
+ if (sy\1%6==0) sfx(54,3)
  if btnp(5) or sy<-#intro_lines*8-10 then
   choose_class()
  end
@@ -121,7 +116,7 @@ function intro.draw()
 end
 
 function stars_draw()
- for s in all(stars) do pset(s.x,s.y,s.c) end
+ for s in all(stars) do pset(s[1],s[2],s[3]) end
 end
 
 -- texte qui defile vers le haut sur fond etoile, et s'estompe en haut
@@ -152,16 +147,16 @@ function credits.draw()
 end
 
 function choose_class()
- menu(split("militant,streamer,street medic,fact-checker"),26,60,function(c)
+ menu(split"militant,streamer,street medic,fact-checker",26,60,function(c)
   new_hero(c)
   save()
-  start()
+  start(true)
  end,true)
 end
 
 -- place le heros a la ville de depart (ou de sauvegarde)
-function start()
+function start(first)
  local p=places[h.town]
  px,py=p.x,p.y
- go(world)
+ if (first) go(town,p) chain(qg_intro) else go(world)
 end

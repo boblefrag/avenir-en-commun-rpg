@@ -10,7 +10,7 @@ function battle.init(m)
  -- (boss : pv x1.3, degats x0.75) ; mmax = pv max du monstre
  local b=m[8]\10==1
  mmax,mdk=flr(m[2]*(b and 1.3 or 2)),b and .75 or .55
- mo,mhp,bt,shd,hid,hit,blk,bonom,mstat=m,mmax,0,0,false,0,0,nil,nil
+ mo,mhp,bt,shd,hid,hit,blk=m,mmax,0,0,false,0,0
  -- decor (decor.lua) : donjon, ou selon la case du heros sur la carte
  local t=mget(px,py)
  bk=prev==dungeon and 4 or (t==4 or t==5) and 2 or (t==2 or t==9) and 3 or 1
@@ -18,8 +18,10 @@ function battle.init(m)
 end
 
 function bmenu()
- local it,d=split("convaincre,"..(h.cl==4 and "recul" or "mobilisation")..",materiel,retrait"),split("debat d'idees,"..(h.cl==4 and "esquive et contre" or "actions collectives")..",sacoche militante,se replier")
- if ((h.ferv or 0)>=100) add(it,"coup d'eclat") add(d,"ferveur populaire !")
+ local c=h.cl==4
+ local it=split(c and "convaincre,recul,materiel,retrait" or "convaincre,mobilisation,materiel,retrait")
+ local d=split(c and "debat d'idees,esquive et contre,sacoche militante,se replier" or "debat d'idees,actions collectives,sacoche militante,se replier")
+ if (h.ferv>=100) add(it,"coup d'eclat") add(d,"ferveur populaire !")
  menu(it,4,#it>4 and 58 or 66,bact,true,d)
 end
 
@@ -28,17 +30,18 @@ function bact(i)
  if i==1 then
   turn()
  elseif i==2 then
-  if h.cl==4 then hide() else bmagic() end
+  if (h.cl==4) hide() else bmagic()
  elseif i==3 then
   hid=false
   local it,ds=items()
   menu(it,4,50,function(o)
    close()
-   local t,u=use_item(iid[o])
+   local id=iid[o]
+   local t,u=use_item(id)
    if not t then
     bmenu()
    else
-    msg(t,u and function() monster_turn(bmenu) end or bmenu)
+    msg(t,(u or id==5) and function() monster_turn(bmenu) end or bmenu)
    end
   end,true,ds)
  elseif i==4 then
@@ -54,15 +57,15 @@ function b_eclat()
  h.ferv,blk,bonom=0,12,"POPULAIRE !"
  sfx(52,3)
  local c,n=h.cl,0
- if (c==1) n=dmg(h.att*2,mo[4])+10 mo[4]=flr(mo[4]/2)
- if (c==2) n=dmg(h.att,mo[4])+12 mo[3]=max(1,flr(mo[3]/2))
+ if (c==1) n=dmg(h.att*2,mo[4])+10 mo[4]=mo[4]\2
+ if (c==2) n=dmg(h.att,mo[4])+12 mo[3]=max(1,mo[3]\2)
  if (c==3) h.hp,shd=h.pv,max(shd,40)
  if (c==4) n=dmg(mo[3]*2,mo[4])+10
  mhp-=n
- local t=split("megaphone populaire !,clip viral : bad buzz !,solidarite citoyenne !,dementi en direct !")[c]
+ local t=split"megaphone populaire !,clip viral : bad buzz !,solidarite citoyenne !,dementi en direct !"[c]
  if (n>0) t..="\n"..mo[1].."\nperd "..n.." conviction"
  msg(t,function()
-  if (mhp<=0) then win() elseif (c==4) then bmenu() else monster_turn(bmenu) end
+  if mhp<=0 then win() elseif c==4 then bmenu() else monster_turn(bmenu) end
  end)
 end
 
@@ -106,8 +109,7 @@ function bmagic()
    if e==1 or e==7 then
     local n=s[3]+flr(rnd(s[3]/4))
     mhp-=n
-    blk=10
-    bonom="DEBAT !"
+    blk,bonom=10,"DEBAT !"
     if (rnd()<.4 and not mstat) mstat="indignation"
     if (e==7) t..="appel a la 6e !\n"
     t..=mo[1].."\nperd "..n.." conviction"
@@ -135,8 +137,8 @@ function hero_turn(k)
  mhp-=n
  blk=10
  sfx(49,3)
- h.ferv=min(100,(h.ferv or 0)+15)
- bonom=hid and "IMPARABLE !" or rnd(split("ARGUMENT !,49.3 !,REPLIQUE !"))
+ add_ferv(15)
+ bonom=hid and "IMPARABLE !" or rnd(split"ARGUMENT !,CONVICTION !,REPLIQUE !")
  if (n>12 and rnd()<.35 and not mstat) mstat="doute"
  local s=hid and "fact-checking imparable !" or hatk[h.cl].." !"
  hid=false
@@ -159,7 +161,7 @@ function monster_turn(k,x)
   msg(mo[1].." hesite :\n'je dois relire mes fiches...'\nil passe son tour !",bmenu)
   return
  end
- local sp,n,s,c=mo[12],max(1,flr(dmg(mo[3],h.def,4)*mdk))*(x or 1),"",bt%3==0
+ local sp,n,s,c=mo[12],max(1,dmg(mo[3],h.def,4)*mdk\1)*(x or 1),"",bt%3==0
  if sp==4 and bt%3==2 then
   n,s=0,"l'oligarque prepare\nson offensive..."
  elseif sp==5 then
@@ -176,17 +178,13 @@ function monster_turn(k,x)
  end
  if (n>0) n=max(1,n-shd)
  h.hp=max(0,h.hp-n)
- -- animation et son d'impact (voir battle.draw)
+ if (s=="") s=mo[1].."\n"..(matk[mo[9]] or "polemique").." !\n"
  if n>0 then
-  hit=12
-  bonom="INTOX !"
+  hit,bonom=12,"INTOX !"
   sfx(55,3)
-  h.ferv=min(100,(h.ferv or 0)+n*2)
+  add_ferv(n*2)
+  s..="vous perdez "..n.." conviction"
  end
- if s=="" then
-  s=mo[1].."\n"..(matk[mo[9]] or "polemique").." !\n"
- end
- if (n>0) s..="vous perdez "..n.." conviction"
  msg(s,function()
   if mhp<=0 then win()
   elseif h.hp<=0 then lose()
@@ -210,8 +208,7 @@ function win()
   go(epilog)
   return
  end
- local olv=h.lv
- local up=gain(mo[6],mo[7])
+ local olv,up=h.lv,gain(mo[6],mo[7])
  local function fin()
   if up then
    jingle(43,-1)
@@ -222,7 +219,7 @@ function win()
     t..=s[1].." ("..s[4].." pm)\n"..sdesc[s[2]].."\n"
    end
    msg("niveau "..h.lv.." !\npv "..h.pv.." pm "..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi,function()
-    if t>"" then msg("nouveau :\n"..t,back) else back() end
+    if (t>"") msg("nouveau :\n"..t,back) else back()
    end)
   else
    back()
@@ -245,16 +242,17 @@ end
 
 -- soutien militant : 25% des debats (40% pour le fact-checker, toujours sur un boss)
 function loot()
- if (rnd(100)>=(mo[8]\10==1 and 100 or h.cl==4 and 40 or 25)) return ""
+ if (mo[8]\10!=1 and rnd()>=(h.cl==4 and .4 or .25)) return ""
  if rnd()<.4 then
   local big=mo[7]>=25
-  local k=h.pm>0 and rnd()<.5 and (big and "spe" or "eth") or big and "spo" or "pot"
+  local i=h.pm>0 and rnd()<.5 and (big and 4 or 3) or big and 2 or 1
+  local k=it_k[i]
   if h[k]<9 then
    h[k]+=1
-   return "\ndon : "..it_nm[k]
+   return "\ndon : "..it_nm[i]
   end
  end
- local i=flr(rnd(min(6,1+mo[7]\12)))+1
+ local i=rnd(min(6,1+mo[7]\12))\1+1
  h.tr[i]=min(99,h.tr[i]+1)
  return "\ndon : "..tres[i][1]
 end
@@ -280,24 +278,25 @@ function battle.update() end
 function battle.draw()
  if (hit>0) hit-=1
  if (blk>0) blk-=1
- if (hit>4 and hit<10) camera(flr(rnd(5))-2,flr(rnd(5))-2) else camera()
- if hit>5 and hit<9 then
-  cls(8)
- else
-  backdrop(bk)
- end
+ if (hit>4 and hit<10) camera(rnd(5)\1-2,rnd(5)\1-2) else camera()
+ if (hit>5 and hit<9) cls(8) else backdrop(bk)
  pal(11,mo[10])
  pal(3,mo[11])
  pal(13,0)
  -- 16x16 agrandi x3, boss 32x32 agrandi x2
- local n=mo[9]
- local s,w=16,48
+ local n,s,w=mo[9],16,48
  if (mo[8]\10==1) s,w=32,64
- local bob=flr(sin(time()*.8)*1.5)
+ local bob=sin(time()*.8)*1.5\1
  if (blk%4<2) sspr(n%16*8,n\16*8,s,s,64-w/2-sin(hit/24)*10,44-w/2+bob,w,w)
  pal()
  if (bonom and (blk>4 or hit>4)) print(bonom,64-#bonom*2,20,blk>4 and 10 or 8)
  if (mstat) print("["..mstat.."]",64-#mstat*2-4,10,12)
  camera()
  hud()
+ local f,bw,mf=h.ferv,28*max(0,mhp)/mmax\1,h.ferv>=100
+ for x in all(split"2,95") do rect(x,9,x+30,13,0) rectfill(x+1,10,x+29,12,1) end
+ if (f>0) rectfill(3,10,3+f*.29,12,mf and 10 or 8)
+ print(mf and "MAX !" or "ferveur",37,9,mf and 10 or 6)
+ print("conv",77,9,6)
+ if (bw>0) rectfill(96,10,96+bw,12,mhp<=mmax/4 and 8 or 11)
 end

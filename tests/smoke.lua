@@ -39,8 +39,10 @@ function reach_from(x0,y0)
  return seen
 end
 local r=reach_from(k.x,k.y)
-for i,want in pairs({[2]=true,[3]=false,[4]=false,[5]=false,[6]=true,[7]=true,[8]=false,[9]=false,[10]=false}) do
+local w=split"0,1,0,0,0,1,1,0,0,0"
+for i=2,10 do
  local p=places[i]
+ local want=w[i]>0
  ok((r[p.y*128+p.x] or false)==want,"sans gemme, "..p.n..(want and " accessible" or " inaccessible"))
 end
 ok(h.pv==30 and h.att==8,"militant niv 1 : pv "..h.pv.." att "..h.att)
@@ -120,11 +122,6 @@ new_hero(2)
 h.eth,h.mp=1,0
 local t,u=use_item(3)
 ok(u and h.eth==0 and h.mp==min(15,h.pm),"cahier thematique : pm rendus")
-h.eth=3
-save()
-h=nil
-load_game()
-ok(h.eth==3,"cahiers thematiques sauvegardes")
 h.spo,h.hp=1,1
 use_item(2)
 ok(h.spo==0 and h.hp==min(81,h.pv),"repas solidaire : +80 conviction")
@@ -134,10 +131,11 @@ stats()
 h.spe,h.mp=2,0
 local t,u=use_item(4)
 ok(u and h.spe==1 and h.mp==50,"revue : +50 pm")
+h.eth,h.spe=3,1
 save()
 h=nil
 load_game()
-ok(h.spe==1,"revues sauvegardees")
+ok(h.eth==3 and h.spe==1,"cahiers et revues sauvegardes")
 new_hero(1)
 local l=items()
 ok(#l==4 and iid[3]==5,"militant : pas de revue dans le menu")
@@ -182,6 +180,13 @@ ok(#dtxt==5,"messages d'entree des donjons")
 -- programme lfi : toujours la, un message, rien de consomme
 local t,u=use_item(5)
 ok(t and not u and #items()==(h.pm>0 and 6 or 4),"programme : "..(t or "?"))
+
+-- tortue insoumise
+tx,ty,px,py=20,20,20,20
+h.pot=0
+if (px==tx and py==ty) tx=nil h.pot=1 msg("tortue")
+ok(tx==nil and h.pot==1 and #wins>0,"tortue insoumise : bonus offert")
+wins={}
 
 -- donjons : sortie et boss presents
 px,py=0,0

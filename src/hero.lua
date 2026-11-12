@@ -1,15 +1,13 @@
 -- heros : stats, niveaux, sauvegarde
 -- h.pv/h.pm = maximums (recalcules), h.hp/h.mp = valeurs actuelles
 
-stn=split("pv,pm,att,def,agi")
+stn=split"pv,pm,att,def,agi"
 
 function stats()
  local c=classes[h.cl]
  for i=1,5 do h[stn[i]]=c[i+2]+c[i+7]*(h.lv-1) end
  if (h.wep>0) h.att+=wep_att[h.wep]-(h.cl==2 and 1 or 0)
- if h.arm then
-  for i=1,5 do h.def+=(h.arm[i] or 0)*arm_base[i] end
- end
+ for i=1,5 do h.def+=h.arm[i]*arm_base[i] end
 end
 
 -- nom de l'arme du palier t pour la classe du heros
@@ -18,10 +16,9 @@ function wep_name(t)
 end
 
 function new_hero(cl)
- h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,spo=0,eth=0,spe=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0},ferv=0}
+ h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=1,spo=0,eth=0,spe=0,wep=0,arm=split"0,0,0,0,0",tr=split"0,0,0,0,0,0",ferv=0,dth=0,mn=0,sc=0}
  stats()
  h.hp,h.mp=h.pv,h.pm
- h.dth,h.mn,h.sc=0,0,0
  clock()
 end
 
@@ -103,13 +100,13 @@ function ngems()
 -- 0 marqueur, 1 classe, 2 niveau, 3 gemmes, 4 ville, 5 pot, 6 wep
 -- 7..11 arm (5 pieces), 12 potions de magie, 13 super potions
 -- 16.. xp, or, pv, pm (2 octets chacun), 24..29 tresors (6 types)
-sv=split("cl,lv,gems,town,pot,wep")
+sv=split"cl,lv,gems,town,pot,wep"
 
 function save()
  poke(0x5e00,1)
- for i,k in ipairs(sv) do poke(0x5e00+i,h[k] or 0) end
- for i=1,5 do poke(0x5e06+i,h.arm and h.arm[i] or 0) end
- poke(0x5e0c,h.eth or 0,h.spo or 0,h.spe or 0)
+ for i,k in ipairs(sv) do poke(0x5e00+i,h[k]) end
+ for i=1,5 do poke(0x5e06+i,h.arm[i]) end
+ poke(0x5e0c,h.eth,h.spo,h.spe)
  poke2(0x5e10,h.xp,h.gold,h.hp,h.mp)
  for i=1,6 do poke(0x5e17+i,h.tr[i]) end
 end
@@ -143,6 +140,12 @@ function heal(n)
  return "+"..g.." conviction ("..h.hp.."/"..h.pv..")"
 end
 
+function add_ferv(v)
+ local o=h.ferv or 0
+ h.ferv=min(100,o+v)
+ if (o<100 and h.ferv>=100) sfx(52,3)
+end
+
 -- sorts connus dont l'effet passe le filtre f ; renvoie libelles et indices
 function spell_list(f)
  local it,ids,ds={},{},{}
@@ -161,14 +164,12 @@ end
 -- 3 potion de magie (+15 pm),
 -- 4 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
 function items()
- local t,l,c={},split("cafe militant,repas solidaire,cahier thematique,revue politique,le programme,retour"),{h.pot,h.spo,h.eth,h.spe}
- local d=split("rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation,l'avenir en commun,fermer la sacoche")
- local ds={}
+ local t,ds,l,d={},{},split"cafe militant,repas solidaire,cahier thematique,revue politique,le programme,retour",split"rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation,l'avenir en commun,fermer la sacoche"
  iid={}
  for i=1,6 do
   if h.pm>0 or i<3 or i>4 then
    add(iid,i)
-   add(t,l[i]..(c[i] and " (x"..c[i]..")" or ""))
+   add(t,l[i]..(i<5 and " (x"..h[it_k[i]]..")" or ""))
    add(ds,d[i])
   end
  end
@@ -179,17 +180,16 @@ end
 -- et true si l'objet a ete bu ou consulte
 function use_item(o)
  if o<3 then
-  local k=o==1 and "pot" or "spo"
+  local k=it_k[o]
   if (h[k]<1) return "plus de "..(o==1 and "cafe !" or "repas !").."\npassez au qg de campagne."
   if (h.hp>=h.pv) return "conviction deja au maximum !"
   h[k]-=1
   return (o==1 and "cafe militant savoure !" or "repas solidaire partage !").."\n"..heal(o==1 and 20 or 80),true
  elseif o==5 then
-  h.ferv=min(100,(h.ferv or 0)+25)
+  add_ferv(25)
   return rnd(towel)
  elseif o<5 then
-  -- cahier thematique (+15 pm) ou revue politique (+50 pm)
-  local k,n=o==3 and "eth" or "spe",(o==3 and "cahier thematique" or "revue politique")
+  local k,n=it_k[o],it_nm[o]
   if (h[k]<1) return "plus de\n"..n.." !"
   if (h.mp>=h.pm) return "mobilisation deja\nau maximum !"
   local g=min(o==3 and 15 or 50,h.pm-h.mp)

@@ -21,7 +21,7 @@ mons=tbl("polemiste tv,14,5,1,6,5,3,1,64,11,3,0|expert de plateau,16,7,2,5,6,4,1
 -- 1 frappe double, 2 se soigne, 3 frappe triple,
 -- 4 prend son elan (tour d'avant) puis frappe triple,
 -- 5 le monarque : 1 fois sur 4, son mepris lui revient dessus
-spn=split("edito incendiaire !\n,plan de renflouement !\n,regle d'or budgetaire !\n,le monopole charge !\n,son mepris de classe\nlui revient dessus !\n")
+spn=split"edito incendiaire !\n,plan de renflouement !\n,regle d'or budgetaire !\n,le monopole charge !\n,son mepris de classe\nlui revient dessus !\n"
 
 -- 4 mesures phares du programme aux donjons 1..4 (bits 1,2,4,8) :
 -- nom affiche, effet sur le pays (2 lignes de 27 car. max)
@@ -41,7 +41,7 @@ sdesc=split("arguments massue :\nfait baisser la conviction|bouclier social :\nr
 -- tresors et soutiens financiers pour la campagne
 -- nom,valeur de don
 tres=tbl("adhesion,15|don de soutien,30|recu fiscal,60|cotisation,100|cagnotte,180|mandat citoyen,350")
-it_nm={pot="cafe militant",spo="repas solidaire",eth="cahier thematique",spe="revue politique"}
+it_k,it_nm=split"pot,spo,eth,spe",split"cafe militant,repas solidaire,cahier thematique,revue politique"
 
 -- le programme de l'avenir en commun (source d'inspiration permanente)
 towel=split("l'avenir en commun.\nle programme populaire.|vous relisez le chapitre sur\nla 6e republique. limpide.|la bifurcation ecologique\nest chiffree au centime.|un militant sait toujours\nou est son programme.|vous agitez le programme.\nune idee en jaillit !|gardez espoir !\nl'harmonie humaine arrive.|vous cornez une page.\nelle est prete a debattre.","|")
@@ -53,7 +53,7 @@ ending=split("20h00 pile !\nles ecrans s'allument :\nl'union populaire gagne\nav
 dtxt=split("les projecteurs eblouissent.\nles micros sont ouverts.|l'argent coule a flot.\nca sent le paradis fiscal.|la rigueur est glaciale.\nles budgets sont rabotes.|les lobbies s'activent.\nles couloirs sont feutres.|un panneau : 'palais du\nmonarque. courbez l'echine.'","|")
 
 -- actions de base du heros selon sa classe
-hatk=split("presente ses arguments,debrief en direct,soin militant,fact-check eclair")
+hatk=split"presente ses arguments,debrief en direct,soin militant,fact-check eclair"
 
 -- attaques des opposants selon le numero de sprite (sans abreviations)
 matk={}
@@ -62,31 +62,34 @@ for r in all(tbl("64,cite une fausse nouvelle|66,coupe la parole|68,menace de pa
 end
 
 -- equipement militant : protections (5 pieces) et materiel de conviction
-arm_names=split("badge,gilet,casquette,sacoche,baskets")
-arm_prices=split("8,15,6,10,8")
-arm_base=split("1,3,1,1,1")
-mat=split("militant,syndical,citoyen,populaire")
-tier_mult=split("2,8,25,70")
-town_tier=split("1,2,3,3,4")
-arm_cap=split("4,2,3,3")
+arm_names=split"badge,gilet,casquette,sacoche,baskets"
+arm_prices=split"8,15,6,10,8"
+arm_base=split"1,3,1,1,1"
+mat=split"militant,syndical,citoyen,populaire"
+tier_mult=split"2,8,25,70"
+town_tier=split"1,2,3,3,4"
+arm_cap=split"4,2,3,3"
 
 -- materiel de conviction : palier 1 propre a la classe, 2..4 = type + matiere
-wep0=split("tract use,webcam basique,trousse usee,smartphone use")
-wep1=split("tract d'appel,micro de studio,kit de secours,source primaire")
-wep_kind=split("megaphone,stream,secourisme,dossier")
-wmat=split("populaire,citoyen,d'urgence")
-wep_prices=split("60,250,800,2400")
-wep_att=split("3,6,10,15")
+wep0=split"tract use,webcam basique,trousse usee,smartphone use"
+wep1=split"tract d'appel,micro de studio,kit de secours,source primaire"
+wep_kind=split"megaphone,stream,secourisme,dossier"
+wmat=split"populaire,citoyen,d'urgence"
+wep_prices=split"60,250,800,2400"
+wep_att=split"3,6,10,15"
 
-need=split("16,2,0,0,4,16,1,8,0,0,0,0,16,16,16,16,0,0,0,16,16,16,16")
-rate=split("0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,7,0,0,0,0,0,0")
-zone=split("0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
+need=split"16,2,0,0,4,16,1,8,0,0,0,0,16,16,16,16,0,0,0,16,16,16,16"
+rate=split"0,3,4,8,8,0,4,4,3,0,0,0,0,0,0,0,7,0,0,0,0,0,0"
+zone=split"0,5,1,2,2,0,2,2,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0"
 
 -- rumeurs d'agoras (# separe les villes, | les rumeurs)
 rumors=tbl("le sage dit que la tour\ndes medias est au nord-est.|une banque offshore se\ncache sur la cote ouest.|le monarque a tweete :\n'je sui le plu grant chef\ndu monde.'#le blocage des prix\npermet de passer les gues.|on dit qu'une ile au sud\nabrite un port populaire.|la nouvelle france ouvre\nles cols du grand nord.#la tour d'austerite garde\nle vote de l'eco-region.|au nord, rien que de la\nneige et des technocrates.|le monarque a encore\nvante le travail gratuit.#l'eco-region planifiee\nbrule les ronces du pays.|le lobby central dort sous\nla foret maudite.|ici on tracte tard le soir.\nla conviction est intacte.#le monarque craint le peuple.\nil l'appelle 'la foule'.|la chaine du pouvoir s'ouvre\navec la 6eme republique.|les meilleurs tracts\nsont ici a prix coutant.","#","|")
 
 -- texte d'introduction (style retro annees 80)
 intro_lines=split("annee electorale...|au coeur de la|veme republique...||le pays etait plonge|dans l'austerite.|le monarque presidentiel|regnait depuis son palais,|entoure d'oligarques|et de lobbyistes avides.||les services publics|s'effondraient, et les|plateaux tv repandaient|la division et la haine.||face a cette tourmente,|un mouvement populaire|se leva des quatre coins|du pays.||'nous sommes la force|du nombre !' proclamaient|les citoyens rassembles|dans les agoras.||mais pour vaincre|le systeme et instaurer|la 6eme republique,|il faut convaincre le pays,|briser les 4 verrous|des grands monopoles,||et battre le monarque|dans son bastion !||un vieux militant vous tend|le livre-programme|l'avenir en commun :|'c'est dangereux de militer|seul, prends ceci !'||'avec de la conviction|et de la solidarite,|nous allons tout changer.'||l'avenir est en commun.|la campagne commence !","|")
+
+-- accueil permanent saint-denis
+qg_intro=split("salut camarade ! bienvenue a\nla permanence saint-denis.\nla campagne commence ici !|sur la carte, deplace-toi\navec les fleches.\nface aux opposants, debats\npour les convaincre !|brise les 4 grands bastions\npour inscrire le programme\net ouvrir l'elysee !|si ta conviction faiblit,\nreviens vite ici te reposer\net sauvegarder la strategie.|ici, on ne meurt jamais !\nprends ce cafe militant et\nsors faire entendre ta voix !","|")
 
 -- generique de fin (32 caracteres max par ligne, sans accents)
 credits_lines=split("l'union populaire rpg|campagne presidentielle||- game design -|yohann gabory||- lead dev -|yohann gabory|||pour une 6e republique|democratique, ecologique|et sociale.||merci aux militantes|et militants du terrain :|tractages au petit matin,|collages nocturnes,|porte-a-porte courageux|et repas partages.||l'harmonie humaine|est a notre portee.|||victoire populaire !","|",false)

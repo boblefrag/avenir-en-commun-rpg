@@ -9,8 +9,8 @@ function town.init(p)
 end
 
 function tmenu()
- local d=split("reposer et sauvegarder,ravitaillement et dons,equipements de defense,materiel de conviction,rumeurs et temoignages,repartir sur la carte")
- menu(split("qg militant,materiel,protections,arguments,rumeurs,sortir"),4,44,tact,true,d)
+ local d=split"reposer et sauvegarder,ravitaillement et dons,equipements de defense,materiel de conviction,rumeurs et temoignages,repartir sur la carte"
+ menu(split"qg militant,materiel,protections,arguments,rumeurs,sortir",4,44,tact,true,d)
 end
 
 function tact(i)
@@ -23,18 +23,21 @@ function tact(i)
    msg("forces retrouvees !\nstrategie sauvegardee.",tmenu)
   end,tmenu)
  else
-  ({item_shop,armor_shop,weapon_shop,function() msg(rnd(rumors[tw.r]),tmenu) end,function() go(world) end})[i-1]()
+  ({item_shop,armor_shop,weapon_shop,function()
+   local rl=rumors[tw.r]
+   tw.ri=(tw.ri or 0)%#rl+1
+   msg(rl[tw.ri],tmenu)
+  end,function() go(world) end})[i-1]()
  end
 end
 
 -- materiel : cafe (10e), repas solidaire (60e), cahier thematique (25e), revue (100e)
 -- militant et fact-checker (0 pm) : pas de cahiers thematiques en rayon
 function item_shop()
- local ks,pr,nm=split("pot,spo,eth,spe"),split("10,60,25,100"),split("cafe militant,repas solidaire,cahier thematique,revue politique")
- local it,ids,ds,idesc={},{},{},split("rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation")
+ local pr,it,ids,ds,idesc=split"10,60,25,100",{},{},{},split"rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation"
  for i=1,4 do
   if h.pm>0 or i<3 then
-   add(it,nm[i].." "..pr[i].."e ("..h[ks[i]].."/9)")
+   add(it,it_nm[i].." "..pr[i].."e ("..h[it_k[i]].."/9)")
    add(ids,i)
    add(ds,idesc[i])
   end
@@ -48,7 +51,7 @@ function item_shop()
    if (o==#it) tmenu() else sell_shop()
    return
   end
-  local k,p,n=ks[i],pr[i],nm[i]
+  local k,p,n=it_k[i],pr[i],it_nm[i]
   if h[k]>=9 then
    msg("sacoche pleine !",item_shop)
   else
@@ -68,30 +71,29 @@ function sell_shop()
  add(it,"retour")
  menu(it,4,24,function(o)
   close()
-  if o>7 then item_shop() return end
+  if (o>7) item_shop() return
   local g=0
-  for i=1,6 do
-   if o==i or o==7 then
+  if o==7 then
+   for i=1,6 do
     g+=h.tr[i]*tres[i][2]
-    if (o==7) h.tr[i]=0
+    h.tr[i]=0
    end
+  elseif h.tr[o]>0 then
+   g,h.tr[o]=tres[o][2],h.tr[o]-1
   end
-  if g==0 then
-   msg("aucun don a verser !",sell_shop)
-  else
-   if (o<7) g=tres[o][2] h.tr[o]-=1
-   h.gold=min(9999,h.gold+g)
-   sfx(51,3)
-   msg("don verse ! +"..g.."e",sell_shop)
-  end
+  if (g==0) msg("aucun don a verser !",sell_shop) return
+  h.gold=min(9999,h.gold+g)
+  sfx(51,3)
+  msg("don verse ! +"..g.."e",sell_shop)
  end,true)
 end
 
 -- armurier : les 5 pieces au palier de la ville (town_tier)
 function armor_shop()
  local t,it,ds=town_tier[tw.i],{},{}
+ local m=mat[t]
  for p=1,5 do
-  add(it,arm_names[p].." "..mat[t].." - "..(h.arm[p]>=t and "equipe" or arm_prices[p]*tier_mult[t].."e"))
+  add(it,arm_names[p].." "..m.." - "..(h.arm[p]>=t and "equipe" or arm_prices[p]*tier_mult[t].."e"))
   add(ds,"defense +"..(arm_base[p]*t))
  end
  add(it,"retour")
@@ -104,7 +106,7 @@ function armor_shop()
   elseif t>arm_cap[h.cl] then
    msg("inadapte pour un\n"..classes[h.cl][1].." !",armor_shop)
   else
-   local n,pr=arm_names[o].." "..mat[t],arm_prices[o]*tier_mult[t]
+   local n,pr=arm_names[o].." "..m,arm_prices[o]*tier_mult[t]
    confirm("acheter "..n.."\n("..pr.."e) ?",pr,function()
     h.arm[o]=t
     stats()

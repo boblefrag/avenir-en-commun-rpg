@@ -38,10 +38,7 @@ function map_init()
 end
 
 -- deplacement case par case, partage par le monde et les donjons
-dx,dy,mv=split("-1,1,0,0"),split("0,0,-1,1"),0
-walk_f=0   -- frame marche : 0 ou 1 (alterne a chaque pas)
-safe=0     -- pas restants sans rencontre apres un combat
-rep=0      -- pas restants sous le sort repousse
+dx,dy,mv,walk_f,safe,rep=split"-1,1,0,0",split"0,0,-1,1",0,0,0,0
 
 function pass(s)
  local n=need[s]
@@ -98,8 +95,7 @@ end
 
 -- menu hors combat (x)
 function field_menu()
- local d=split("fiche du militant,ouvrir la sacoche,actions du programme")
- menu(split("statut,materiel,mobilisation"),4,12,function(i)
+ menu(split"statut,materiel,mobilisation",4,12,function(i)
   close()
   if i==1 then
    msg(classes[h.cl][1].." (niv "..h.lv..")\npv "..h.hp.."/"..h.pv.."  pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep_name(h.wep).." | "..h.gold.."e")
@@ -113,7 +109,7 @@ function field_menu()
   else
    field_magic()
   end
- end,nil,d)
+ end,nil,split"fiche du militant,ouvrir la sacoche,actions du programme")
 end
 
 -- mobilisation hors combat : debrayage, retour, cordon syndical, soin
@@ -169,11 +165,21 @@ function world.init()
 end
 
 function world.update()
- if btnp(5) then
-  field_menu()
-  return
- end
+ if btnp(5) then field_menu() return end
  if walk() then
+  if px==tx and py==ty then
+   tx=nil sfx(50,3)
+   local b=rnd(3)\1
+   if (b==0) h.pot=min(9,h.pot+1) b="un cafe militant !"
+   if (b==1) b="+40 xp !"..(gain(40,0) and " (up !)" or "")
+   if (b==2) add_ferv(100) b="100% de ferveur !"
+   msg("la tortue insoumise :\nelle vous offre\n"..b)
+   return
+  end
+  if not tx and rnd()<.08 or rnd()<.01 then
+   local x,y=px+rnd(11)\1-5,py+rnd(11)\1-5
+   if (pass(mget(x,y))) tx,ty=x,y
+  end
   for p in all(places) do
    if p.x==px and p.y==py then
     go(p.t=="v" and town or dungeon,p)
@@ -203,6 +209,7 @@ function world.draw()
  for c=0,15 do pal(c,tonum("0x"..sub(s,c+1,c+1))) end
  map(px-8,py-8,px*8-64,py*8-64,18,18)
  pal()
+ if (tx) spr(34,tx*8,ty*8)
  hero_spr()
  camera()
  hud()

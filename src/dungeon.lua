@@ -8,12 +8,11 @@ dungeon={mus=16}
 function dungeon.init(p)
  dp,wx,wy,seen=p,px,py,{}
  msg(p.n.." !\n"..dtxt[p.d])
- local n=48
  -- efface le donjon precedent (48 lignes max) puis decode
  memset(0xc000,0,6144)
- rle(dun[p.d],n,n,128,16)
- for y=128,127+n do
-  for x=0,n-1 do
+ rle(dun[p.d],48,48,128,16)
+ for y=128,175 do
+  for x=0,47 do
    local s=mget(x,y)
    if (s==18) px,py=x,y
    -- boss deja battu : la gemme est deja la
@@ -26,10 +25,7 @@ function dungeon.update()
  for y=py-2,py+2 do
   for x=px-2,px+2 do seen[y*128+x]=true end
  end
- if btnp(5) then
-  field_menu()
-  return
- end
+ if (btnp(5)) field_menu() return
  if walk() then
   local s=mget(px,py)
   if s==18 then
@@ -55,9 +51,7 @@ function dungeon.draw()
  for y=py-8,py+9 do
   for x=px-8,px+9 do
    -- la distance evite un clignotement juste apres un pas
-   if max(abs(x-px),abs(y-py))>2 and not seen[y*128+x] then
-    rectfill(x*8,y*8,x*8+7,y*8+7,0)
-   end
+   if (max(abs(x-px),abs(y-py))>2 and not seen[y*128+x]) rectfill(x*8,y*8,x*8+7,y*8+7,0)
   end
  end
  hero_spr()
