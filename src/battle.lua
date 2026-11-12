@@ -1,17 +1,16 @@
 -- combat au tour par tour, un monstre face au joueur
 -- mo = ligne de la table mons, mhp = ses pv actuels
 
-battle={mus=8}
+battle={mus=24}
 
 function battle.init(m)
- music(8)
- mus_cur=8
+ jingle(40,m[8]==15 and 32 or 24)
  -- shd : bouclier actif, hid : voleur cache (prochain coup x3)
  -- combats de 3-4 tours : pv des monstres x2 et leurs degats x0.55
  -- (boss : pv x1.3, degats x0.75) ; mmax = pv max du monstre
  local b=m[8]\10==1
  mmax,mdk=flr(m[2]*(b and 1.3 or 2)),b and .75 or .55
- mo,mhp,bt,shd,hid,hit,blk=m,mmax,0,0,false,0,0
+ mo,mhp,bt,shd,hid,hit,blk,bonom,mstat=m,mmax,0,0,false,0,0,nil,nil
  -- decor (decor.lua) : donjon, ou selon la case du heros sur la carte
  local t=mget(px,py)
  bk=prev==dungeon and 4 or (t==4 or t==5) and 2 or (t==2 or t==9) and 3 or 1
@@ -19,8 +18,9 @@ function battle.init(m)
 end
 
 function bmenu()
- local d=split("debat d'idees direct pour\nconvaincre l'opposant,"..(h.cl==4 and "prend du recul pour esquiver\net contrer au prochain tour" or "actions collectives et\nmesures fortes du programme")..",utiliser un objet utile de\nvotre sacoche militante,quitter le debat et se\nreplier strategiquement")
- menu(split("convaincre,"..(h.cl==4 and "recul" or "mobilisation")..",materiel,retrait"),4,66,bact,true,d)
+ local it,d=split("convaincre,"..(h.cl==4 and "recul" or "mobilisation")..",materiel,retrait"),split("debat d'idees,"..(h.cl==4 and "esquive et contre" or "actions collectives")..",sacoche militante,se replier")
+ if ((h.ferv or 0)>=100) add(it,"coup d'eclat") add(d,"ferveur populaire !")
+ menu(it,4,#it>4 and 58 or 66,bact,true,d)
 end
 
 function bact(i)
@@ -42,15 +42,28 @@ function bact(i)
    end
   end,true,ds)
  elseif i==4 then
-  -- cache, le fact-checker se replie bien plus facilement (agi x6)
-  local a=h.agi*(hid and 6 or 1)
-  hid=false
-  if rnd(a+mo[5])<a then
-   msg("vous vous repliez !",back)
-  else
-   msg("retrait impossible !",function() monster_turn(bmenu) end)
-  end
+  local a=h.agi*(hid and 6 or 1) hid=false
+  if (rnd(a+mo[5])<a) msg("vous vous repliez !",back) else msg("retrait impossible !",function() monster_turn(bmenu) end)
+ elseif i==5 then
+  b_eclat()
  end
+end
+
+-- coup d'eclat de ferveur populaire (limit break a 100%)
+function b_eclat()
+ h.ferv,blk,bonom=0,12,"POPULAIRE !"
+ sfx(52,3)
+ local c,n=h.cl,0
+ if (c==1) n=dmg(h.att*2,mo[4])+10 mo[4]=flr(mo[4]/2)
+ if (c==2) n=dmg(h.att,mo[4])+12 mo[3]=max(1,flr(mo[3]/2))
+ if (c==3) h.hp,shd=h.pv,max(shd,40)
+ if (c==4) n=dmg(mo[3]*2,mo[4])+10
+ mhp-=n
+ local t=split("megaphone populaire !,clip viral : bad buzz !,solidarite citoyenne !,dementi en direct !")[c]
+ if (n>0) t..="\n"..mo[1].."\nperd "..n.." conviction"
+ msg(t,function()
+  if (mhp<=0) then win() elseif (c==4) then bmenu() else monster_turn(bmenu) end
+ end)
 end
 
 -- fact-checker : test agi contre agi de l'opposant, bonus x1.5 en donjon.
@@ -61,23 +74,15 @@ function hide()
  local a=h.agi*(prev==dungeon and 1.5 or 1)
  if rnd(a+mo[5])<a then
   hid=true
-  msg("recul mediatique reussi !\n"..mo[1].."\ns'epuise dans le vide.",bmenu)
+  msg("recul reussi !\n"..mo[1].."\ns'epuise.",bmenu)
  else
-  msg("la polemique enfle !\n"..mo[1].."\nvous assaille !",function() monster_turn(bmenu,2) end)
+  msg("polemique enfle !\n"..mo[1].."\nvous assaille !",function() monster_turn(bmenu,2) end)
  end
 end
 
 -- actions politiques en combat : conviction, bouclier, soutien, constituante
 function bmagic()
- local it,ids,ds={},{},{}
- for i=1,nspells() do
-  local s=sp(i)
-  if s[2]<3 or s[2]>5 then
-   add(it,s[1].." "..s[4].."pm")
-   add(ids,i)
-   add(ds,sdesc[s[2]])
-  end
- end
+ local it,ids,ds=spell_list(function(e) return e<3 or e>5 end)
  if #it==0 then
   msg("aucun argument pret !",bmenu)
   return
@@ -96,11 +101,14 @@ function bmagic()
    msg("conviction deja au maximum !",bmenu)
   else
    h.mp-=s[4]
+   sfx(50,3)
    local t=s[1].." !\n"
    if e==1 or e==7 then
     local n=s[3]+flr(rnd(s[3]/4))
     mhp-=n
     blk=10
+    bonom="DEBAT !"
+    if (rnd()<.4 and not mstat) mstat="indignation"
     if (e==7) t..="appel a la 6e !\n"
     t..=mo[1].."\nperd "..n.." conviction"
    elseif e==6 then
@@ -126,6 +134,10 @@ function hero_turn(k)
  local n=dmg(h.att,mo[4])*(hid and 3 or 1)
  mhp-=n
  blk=10
+ sfx(49,3)
+ h.ferv=min(100,(h.ferv or 0)+15)
+ bonom=hid and "IMPARABLE !" or rnd(split("ARGUMENT !,49.3 !,REPLIQUE !"))
+ if (n>12 and rnd()<.35 and not mstat) mstat="doute"
  local s=hid and "fact-checking imparable !" or hatk[h.cl].." !"
  hid=false
  s..="\n"..mo[1].."\nperd "..n.." conviction"
@@ -137,6 +149,16 @@ end
 -- x : multiplicateur des degats (2 si le voleur rate sa cachette)
 function monster_turn(k,x)
  bt+=1
+ if mstat=="indignation" then
+  mhp-=8
+  bonom="CLAMEUR !"
+  blk=8
+  if (mhp<=0) win() return
+ end
+ if mstat=="doute" and rnd()<.35 then
+  msg(mo[1].." hesite :\n'je dois relire mes fiches...'\nil passe son tour !",bmenu)
+  return
+ end
  local sp,n,s,c=mo[12],max(1,flr(dmg(mo[3],h.def,4)*mdk))*(x or 1),"",bt%3==0
  if sp==4 and bt%3==2 then
   n,s=0,"l'oligarque prepare\nson offensive..."
@@ -157,7 +179,9 @@ function monster_turn(k,x)
  -- animation et son d'impact (voir battle.draw)
  if n>0 then
   hit=12
+  bonom="INTOX !"
   sfx(55,3)
+  h.ferv=min(100,(h.ferv or 0)+n*2)
  end
  if s=="" then
   s=mo[1].."\n"..(matk[mo[9]] or "polemique").." !\n"
@@ -180,8 +204,7 @@ function turn()
 end
 
 function win()
- music(-1)
- mus_cur=-1
+ jingle(41,-1)
  safe=5  -- 5 pas sans rencontre apres le combat
  if mo[8]==15 then
   go(epilog)
@@ -191,13 +214,14 @@ function win()
  local up=gain(mo[6],mo[7])
  local function fin()
   if up then
+   jingle(43,-1)
    -- nouvelles competences apprises avec ce(s) niveau(x)
    local t=""
    for i=olv+1,nspells() do
     local s=sp(i)
     t..=s[1].." ("..s[4].." pm)\n"..sdesc[s[2]].."\n"
    end
-   msg("niveau "..h.lv.." !\nconviction "..h.pv.."  pm "..h.pm.."\natt "..h.att.."  def "..h.def.."  agi "..h.agi,function()
+   msg("niveau "..h.lv.." !\npv "..h.pv.." pm "..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi,function()
     if t>"" then msg("nouveau :\n"..t,back) else back() end
    end)
   else
@@ -209,6 +233,7 @@ function win()
  -- les opposants de donjon (zones 21..25) n'en donnent pas
  if mo[8]>10 and mo[8]<15 then
   h.gems|=dp.g
+  sfx(52,3)
   mset(px,py,17)
   local g=gems[dp.d]
   k=function()
@@ -226,7 +251,7 @@ function loot()
   local k=h.pm>0 and rnd()<.5 and (big and "spe" or "eth") or big and "spo" or "pot"
   if h[k]<9 then
    h[k]+=1
-   return "\ndon : "..({pot="cafe militant",spo="repas solidaire",eth="cahier thematique",spe="revue politique"})[k]
+   return "\ndon : "..it_nm[k]
   end
  end
  local i=flr(rnd(min(6,1+mo[7]\12)))+1
@@ -236,8 +261,7 @@ end
 
 -- repli militant en cas de perte de conviction : rechargement du dernier QG
 function lose()
- music(-1)
- mus_cur=-1
+ jingle(42,-1)
  msg("conviction epuisee...\nrepli strategique vers le\ndernier qg de campagne.",function()
   -- le repli est compte avant de recharger (load_game le relit)
   h.dth+=1
@@ -256,6 +280,7 @@ function battle.update() end
 function battle.draw()
  if (hit>0) hit-=1
  if (blk>0) blk-=1
+ if (hit>4 and hit<10) camera(flr(rnd(5))-2,flr(rnd(5))-2) else camera()
  if hit>5 and hit<9 then
   cls(8)
  else
@@ -268,7 +293,11 @@ function battle.draw()
  local n=mo[9]
  local s,w=16,48
  if (mo[8]\10==1) s,w=32,64
- if (blk%4<2) sspr(n%16*8,n\16*8,s,s,64-w/2-sin(hit/24)*10,44-w/2,w,w)
+ local bob=flr(sin(time()*.8)*1.5)
+ if (blk%4<2) sspr(n%16*8,n\16*8,s,s,64-w/2-sin(hit/24)*10,44-w/2+bob,w,w)
  pal()
+ if (bonom and (blk>4 or hit>4)) print(bonom,64-#bonom*2,20,blk>4 and 10 or 8)
+ if (mstat) print("["..mstat.."]",64-#mstat*2-4,10,12)
+ camera()
  hud()
 end

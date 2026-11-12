@@ -6,7 +6,7 @@ stn=split("pv,pm,att,def,agi")
 function stats()
  local c=classes[h.cl]
  for i=1,5 do h[stn[i]]=c[i+2]+c[i+7]*(h.lv-1) end
- if (h.wep and h.wep>0) h.att+=wep_att[h.wep]-(h.cl==2 and 1 or 0)
+ if (h.wep>0) h.att+=wep_att[h.wep]-(h.cl==2 and 1 or 0)
  if h.arm then
   for i=1,5 do h.def+=(h.arm[i] or 0)*arm_base[i] end
  end
@@ -14,13 +14,11 @@ end
 
 -- nom de l'arme du palier t pour la classe du heros
 function wep_name(t)
- if (t<1) return wep0[h.cl]
- if (t<2) return wep1[h.cl]
- return wep_kind[h.cl].." "..wmat[t-1]
+ return t<1 and wep0[h.cl] or t<2 and wep1[h.cl] or wep_kind[h.cl].." "..wmat[t-1]
 end
 
 function new_hero(cl)
- h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,spo=0,eth=0,spe=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0}}
+ h={cl=cl,lv=1,xp=0,gold=20,gems=0,town=1,pot=0,spo=0,eth=0,spe=0,wep=0,arm={0,0,0,0,0},tr={0,0,0,0,0,0},ferv=0}
  stats()
  h.hp,h.mp=h.pv,h.pm
  h.dth,h.mn,h.sc=0,0,0
@@ -111,9 +109,7 @@ function save()
  poke(0x5e00,1)
  for i,k in ipairs(sv) do poke(0x5e00+i,h[k] or 0) end
  for i=1,5 do poke(0x5e06+i,h.arm and h.arm[i] or 0) end
- poke(0x5e0c,h.eth or 0)
- poke(0x5e0d,h.spo or 0)
- poke(0x5e0e,h.spe or 0)
+ poke(0x5e0c,h.eth or 0,h.spo or 0,h.spe or 0)
  poke2(0x5e10,h.xp,h.gold,h.hp,h.mp)
  for i=1,6 do poke(0x5e17+i,h.tr[i]) end
 end
@@ -123,9 +119,7 @@ function load_game()
  for i=1,6 do h.tr[i]=@(0x5e17+i) end
  for i,k in ipairs(sv) do h[k]=@(0x5e00+i) end
  for i=1,5 do h.arm[i]=@(0x5e06+i) end
- h.eth=@0x5e0c
- h.spo=@0x5e0d
- h.spe=@0x5e0e
+ h.eth,h.spo,h.spe=@0x5e0c,@0x5e0d,@0x5e0e
  h.dth,h.mn,h.sc=@0x5e1e,peek2(0x5e20),@0x5e22
  h.xp,h.gold,h.hp,h.mp=peek2(0x5e10,4)
  stats()
@@ -151,25 +145,24 @@ end
 
 -- sorts connus dont l'effet passe le filtre f ; renvoie libelles et indices
 function spell_list(f)
- local it,ids={},{}
+ local it,ids,ds={},{},{}
  for i=1,nspells() do
   local s=sp(i)
   if f(s[2]) then
    add(it,s[1].." "..s[4].."pm")
    add(ids,i)
+   add(ds,sdesc[s[2]])
   end
  end
- return it,ids
+ return it,ids,ds
 end
 
 -- objets : 1 potion (+20 pv), 2 super potion (+80 pv),
 -- 3 potion de magie (+15 pm),
 -- 4 serviette (ne sert a rien, ne s'use pas, ne coute pas de tour)
 function items()
- -- iid[i] : numero d'objet (pour use_item) de la ligne i du menu ;
- -- syndicaliste et fact-checker (0 pm) ne voient pas les cahiers thematiques
  local t,l,c={},split("cafe militant,repas solidaire,cahier thematique,revue politique,le programme,retour"),{h.pot,h.spo,h.eth,h.spe}
- local d=split("cafe chaud et revigorant :\nrend 20 pts de conviction|grand banquet fraternel :\nrend 80 pts de conviction|cahier thematique etudie :\nrend 15 pts de mobilisation|revue d'analyse politique :\nrend 50 pts de mobilisation|l'avenir en commun :\nle lire donne de l'espoir !|refermer la sacoche militante","|")
+ local d=split("rend 20 conviction,rend 80 conviction,rend 15 mobilisation,rend 50 mobilisation,l'avenir en commun,fermer la sacoche")
  local ds={}
  iid={}
  for i=1,6 do
@@ -192,6 +185,7 @@ function use_item(o)
   h[k]-=1
   return (o==1 and "cafe militant savoure !" or "repas solidaire partage !").."\n"..heal(o==1 and 20 or 80),true
  elseif o==5 then
+  h.ferv=min(100,(h.ferv or 0)+25)
   return rnd(towel)
  elseif o<5 then
   -- cahier thematique (+15 pm) ou revue politique (+50 pm)

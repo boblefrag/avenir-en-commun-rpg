@@ -6,7 +6,7 @@ function ok(c,s)
  if (not c) nok+=1
 end
 
-cartdata("legend_of_the_gems_test")
+cartdata("union_populaire_rpg_test")
 
 -- chrono, morts et score
 new_hero(3)

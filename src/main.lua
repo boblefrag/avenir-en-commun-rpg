@@ -37,7 +37,7 @@ function back()
 end
 
 function _init()
- cartdata("legend_of_the_gems_v1")
+ cartdata("union_populaire_rpg_v1")
  map_init()
  -- raccourci de test : pico8 -run legend_of_the_gems.p8 -p fin
  -- lance directement la cinematique de fin (avec un guerrier)
@@ -139,7 +139,7 @@ function crawl(t)
 end
 
 -- generique de fin, apres la cinematique
-credits={mus=16,notime=true}
+credits={mus=48,notime=true}
 credits.init=intro.init
 
 function credits.update()
@@ -152,9 +152,7 @@ function credits.draw()
 end
 
 function choose_class()
- local cl={}
- for c in all(classes) do add(cl,c[1]) end
- menu(cl,26,60,function(c)
+ menu(split("militant,streamer,street medic,fact-checker"),26,60,function(c)
   new_hero(c)
   save()
   start()

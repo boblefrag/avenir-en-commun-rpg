@@ -354,7 +354,7 @@ BELOW_HTML = """
   </section>
 
   <footer class="up-footer">
-    L'Union Populaire RPG — Conception &amp; développement : Yohann Gabory • Propulsé par PICO-8
+    L'Union Populaire RPG — Conception &amp; développement : Yohann Gabory • Propulsé par PICO-8 • Licence libre AGPLv3
   </footer>
 </div>
 """
@@ -373,11 +373,11 @@ def main():
 
     HTML_PATH.write_text(html, encoding="utf-8")
 
-    # Synchronise aussi union_popuaire.html et union_popuaire.js pour compatibilite des liens
-    shutil.copyfile(ROOT / "index.js", ROOT / "union_popuaire.js")
-    up_html = html.replace('e.src = "index.js";', 'e.src = "union_popuaire.js";')
-    (ROOT / "union_popuaire.html").write_text(up_html, encoding="utf-8")
-    print("index.html et union_popuaire.html enrichis avec succes !")
+    # Synchronise aussi union_populaire.html et union_populaire.js pour compatibilite des liens
+    shutil.copyfile(ROOT / "index.js", ROOT / "union_populaire.js")
+    up_html = html.replace('e.src = "index.js";', 'e.src = "union_populaire.js";')
+    (ROOT / "union_populaire.html").write_text(up_html, encoding="utf-8")
+    print("index.html et union_populaire.html enrichis avec succes !")
 
 
 if __name__ == "__main__":

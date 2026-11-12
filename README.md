@@ -32,3 +32,7 @@ Parcourez le pays de **Saint-Denis** à **Marseille** en passant par **Lille**, 
 | Lancer les tests | `./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke.p8 && ./pico-8/PICO-8.app/Contents/MacOS/pico8 -x tests/smoke_story.p8` |
 
 Jouer sur console portable rétro (TrimUI Brick, Miyoo, Anbernic…) : voir [docs/trimui.md](docs/trimui.md).
+
+## ⚖️ Licence
+Ce projet est un commun numérique militant distribué sous licence libre **GNU Affero General Public License v3.0 (AGPLv3)** — voir le fichier [LICENSE](LICENSE).  
+Tout le monde est libre de jouer, d'étudier, de modifier et de redistribuer le code et le jeu, sous réserve de conserver cette même licence libre et d'en partager les sources.

@@ -41,6 +41,7 @@ sdesc=split("arguments massue :\nfait baisser la conviction|bouclier social :\nr
 -- tresors et soutiens financiers pour la campagne
 -- nom,valeur de don
 tres=tbl("adhesion,15|don de soutien,30|recu fiscal,60|cotisation,100|cagnotte,180|mandat citoyen,350")
+it_nm={pot="cafe militant",spo="repas solidaire",eth="cahier thematique",spe="revue politique"}
 
 -- le programme de l'avenir en commun (source d'inspiration permanente)
 towel=split("l'avenir en commun.\nle programme populaire.|vous relisez le chapitre sur\nla 6e republique. limpide.|la bifurcation ecologique\nest chiffree au centime.|un militant sait toujours\nou est son programme.|vous agitez le programme.\nune idee en jaillit !|gardez espoir !\nl'harmonie humaine arrive.|vous cornez une page.\nelle est prete a debattre.","|")
@@ -55,7 +56,10 @@ dtxt=split("les projecteurs eblouissent.\nles micros sont ouverts.|l'argent coul
 hatk=split("presente ses arguments,debrief en direct,soin militant,fact-check eclair")
 
 -- attaques des opposants selon le numero de sprite (sans abreviations)
-matk={[64]="cite une fausse nouvelle",[66]="coupe la parole",[68]="menace de panique",[70]="offre un cadeau fiscal",[72]="snipe sur le plateau",[74]="menace d'exil fiscal",[76]="lance un spin d'influence",[78]="vise l'antenne",[96]="specule a haute frequence",[98]="chantage a l'emploi",[100]="assene un edito",[102]="lance un spin mediatique",[104]="vocifere au micro",[106]="invoque la dette",[108]="audite avec rigueur",[110]="propage la panique",[196]="betonne a tout va",[198]="accuse a charge",[200]="inonde le web d'intox",[202]="crache sa bile",[204]="impose un plan du fmi",[206]="exige de l'austerite",[228]="traque les deniers",[128]="tirade calomnieuse",[132]="specule contre l'etat",[136]="degaine la regle d'or",[140]="rachete les ondes",[192]="degaine le 49.3"}
+matk={}
+for r in all(tbl("64,cite une fausse nouvelle|66,coupe la parole|68,menace de panique|70,offre un cadeau fiscal|72,snipe sur le plateau|74,menace d'exil fiscal|76,lance un spin d'influence|78,vise l'antenne|96,specule a haute frequence|98,chantage a l'emploi|100,assene un edito|102,lance un spin mediatique|104,vocifere au micro|106,invoque la dette|108,audite avec rigueur|110,propage la panique|196,betonne a tout va|198,accuse a charge|200,inonde le web d'intox|202,crache sa bile|204,impose un plan du fmi|206,exige de l'austerite|228,traque les deniers|128,tirade calomnieuse|132,specule contre l'etat|136,degaine la regle d'or|140,rachete les ondes|192,degaine le 49.3")) do
+ matk[r[1]]=r[2]
+end
 
 -- equipement militant : protections (5 pieces) et materiel de conviction
 arm_names=split("badge,gilet,casquette,sacoche,baskets")

@@ -32,7 +32,7 @@ function map_init()
  dun={}
  for i=1,5 do
   dun[i]=a
-  a=rle(a,dsz[i],dsz[i],128,16)
+  a=rle(a,48,48,128,16)
  end
  for p in all(places) do mset(p.x,p.y,p.s) end
 end
@@ -65,8 +65,28 @@ function walk()
  end
 end
 
+-- agora spontanee : evenement citoyen chaleureux au lieu d'un combat
+function agora()
+ local e,s=flr(rnd(4)),"agora citoyenne !\n"
+ if e==0 then
+  s..="piquet de greve solidaire !\ncafe partage : "..heal(20)
+ elseif e==1 then
+  local g=gain(25,0)
+  s..="echange sur le smic 1700e !\n+25 xp"..(g and " (niveau up !)" or "")
+ elseif e==2 then
+  h.gold=min(9999,h.gold+20); sfx(51,3)
+  s..="colleurs d'affiches !\n+20e de dons pour la caisse"
+ else
+  h.ferv=100; sfx(52,3)
+  s..="fanfare : bella ciao !\nferveur populaire a 100% !"
+ end
+ sfx(50,3)
+ msg(s)
+end
+
 -- lance un combat contre un monstre de la zone z
 function fight(z)
+ if st==world and rnd()<.25 then agora() return end
  local l={}
  for m in all(mons) do
   if (m[8]==z) add(l,m)
@@ -78,18 +98,12 @@ end
 
 -- menu hors combat (x)
 function field_menu()
- local d=split("fiche du militant : stats,\nmobilisation et equipement,ouvrir la sacoche pour\nutiliser vivres et cahiers,actions collectives du\nprogramme sur le terrain")
+ local d=split("fiche du militant,ouvrir la sacoche,actions du programme")
  menu(split("statut,materiel,mobilisation"),4,12,function(i)
   close()
   if i==1 then
-   local wep=wep_name(h.wep)
-   local arm_cnt=0
-   for p=1,5 do
-    if (h.arm[p] or 0)>0 then arm_cnt+=1 end
-   end
-   msg(classes[h.cl][1].." (niv "..h.lv..")\npv "..h.hp.."/"..h.pv.."  pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep.." | "..h.gold.."e")
+   msg(classes[h.cl][1].." (niv "..h.lv..")\npv "..h.hp.."/"..h.pv.."  pm "..h.mp.."/"..h.pm.."\natt "..h.att.." def "..h.def.." agi "..h.agi.."\n"..wep_name(h.wep).." | "..h.gold.."e")
   elseif i==2 then
-   -- jamais vide : il reste toujours la serviette
    local it,ds=items()
    menu(it,4,12,function(o)
     close()
@@ -104,15 +118,7 @@ end
 
 -- mobilisation hors combat : debrayage, retour, cordon syndical, soin
 function field_magic()
- local it,ids,ds={},{},{}
- for i=1,nspells() do
-  local s=sp(i)
-  if s[2]>2 and s[2]<7 then
-   add(it,s[1].." "..s[4].."pm")
-   add(ids,i)
-   add(ds,sdesc[s[2]])
-  end
- end
+ local it,ids,ds=spell_list(function(e) return e>2 and e<7 end)
  if #it==0 then
   msg("aucune mobilisation\npossible ici !")
   return

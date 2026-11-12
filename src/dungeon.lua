@@ -3,12 +3,12 @@
 -- seen = cases deja vues, qui restent visibles (perdues en quittant
 -- le donjon) ; le reste est noir
 
-dungeon={mus=0}
+dungeon={mus=16}
 
 function dungeon.init(p)
  dp,wx,wy,seen=p,px,py,{}
  msg(p.n.." !\n"..dtxt[p.d])
- local n=dsz[p.d]
+ local n=48
  -- efface le donjon precedent (48 lignes max) puis decode
  memset(0xc000,0,6144)
  rle(dun[p.d],n,n,128,16)

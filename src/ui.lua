@@ -44,6 +44,7 @@ function confirm(txt,price,yes,no)
     msg("fonds insuffisants !",no)
    else
     h.gold-=price
+    sfx(51,3)
     yes()
    end
   else
@@ -58,19 +59,21 @@ function ui_update()
  if (not w) return false
  if w.txt then
   if btnp(4) or btnp(5) then
+   sfx(47,3)
    close()
    if (w.cb) w.cb()
   end
  else
   local n=#w.it
-  if (btnp(2)) w.sel=(w.sel-2)%n+1
-  if (btnp(3)) w.sel=w.sel%n+1
+  if (btnp(2) or btnp(3)) w.sel=(w.sel-(btnp(2) and 2 or 0))%n+1 sfx(46,3)
   if btnp(4) then
+   sfx(47,3)
    w.cb(w.sel)
   elseif btnp(5) then
    if w.onx then
     w.cb(w.onx)
    elseif not w.nox then
+    sfx(48,3)
     close()
    end
   end
@@ -111,10 +114,8 @@ bip_cd=0
 function hud()
  rectfill(0,0,127,7,0)
  local pct=h.hp/h.pv
- local hcol=11
- if pct<0.5 then hcol=10 end
- if pct<0.25 then
-  hcol=8
+ local hcol=pct<.25 and 8 or pct<.5 and 10 or 11
+ if pct<.25 then
   bip_cd-=1
   if bip_cd<=0 then sfx(53) bip_cd=90 end
  else
@@ -123,6 +124,7 @@ function hud()
  print("pv "..h.hp.."/"..h.pv,2,1,hcol)
  print("pm "..h.mp.."/"..h.pm,44,1,7)
  print(h.gold.."e",80,1,10)
+ if ((h.ferv or 0)>=100) print("!",73,1,flr(time()*4)%2==0 and 10 or 7)
  -- 4 gemmes a droite (x 111..125) : losange colore si possedee,
  -- simple point gris sinon
  for i=0,3 do

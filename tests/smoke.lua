@@ -6,12 +6,12 @@ function ok(c,s)
  if (not c) nok+=1
 end
 
-cartdata("legend_of_the_gems_test")
+cartdata("union_populaire_rpg_test")
 map_init()
 
 -- carte : lieux poses, depart praticable
 local k=places[1]
-ok(mget(k.x,k.y)==10,"kalden pose sur la carte")
+ok(mget(k.x,k.y)==10,"saint-denis pose sur la carte")
 ok(mget(places[10].x,places[10].y)==12,"chateau pose sur la carte")
 local cnt={}
 for y=0,127 do for x=0,127 do local s=mget(x,y) cnt[s]=(cnt[s] or 0)+1 end end
@@ -22,7 +22,7 @@ ok((cnt[7] or 0)>0 and (cnt[2] or 0)>0 and (cnt[5] or 0)>0 and (cnt[8] or 0)>0,"
 -- heros
 new_hero(1)
 
--- depuis kalden, sans gemme : ce qu'on atteint vraiment en jeu (pass())
+-- depuis saint-denis, sans gemme : ce qu'on atteint vraiment en jeu (pass())
 function reach_from(x0,y0)
  local seen,q={},{{x0,y0}}
  seen[y0*128+x0]=true
@@ -63,7 +63,7 @@ h=nil
 load_game()
 ok(h.lv==lv and h.town==3 and h.hp==17 and h.pot==2 and h.wep==1 and h.arm[2]==1,"sauvegarde rechargee avec equipement")
 
--- mort : rechargement de la derniere sauvegarde (auberge de port-sel)
+-- mort : rechargement de la derniere sauvegarde (qg de marseille)
 new_hero(2)
 h.gold,h.town,h.hp=70,2,20
 save()
@@ -72,7 +72,7 @@ mo=mons[1]
 lose()
 wins[#wins].cb()
 ok(h.gold==70 and h.town==2 and h.hp==20,"mort : derniere sauvegarde restauree (70 or)")
-ok(px==places[2].x and py==places[2].y and st==world,"mort : reveil a port-sel")
+ok(px==places[2].x and py==places[2].y and st==world,"mort : reveil a marseille")
 
 -- equipement et stats
 new_hero(1)
@@ -157,6 +157,14 @@ hero_turn()
 ok(not hid and mhp<1000,"fact-checking : "..(1000-mhp).." degats")
 wins={}
 
+-- ferveur populaire et coup d'eclat
+new_hero(1)
+mo,mhp,prev,wins=mons[1],1000,world,{}
+h.ferv=100
+b_eclat()
+ok(h.ferv==0 and mhp<1000,"ferveur populaire : coup d'eclat militant")
+wins={}
+
 -- butin et vente
 new_hero(4)
 for m in all(mons) do if (m[8]==11) mo=m end
@@ -180,7 +188,7 @@ px,py=0,0
 for d=1,5 do
  dungeon.init(places[5+d])
  local b=0
- for y=128,127+dsz[d] do for x=0,dsz[d]-1 do if (mget(x,y)==19) b+=1 end end
+ for y=128,175 do for x=0,47 do if (mget(x,y)==19) b+=1 end end
  ok(mget(px,py)==18 and b==1,"donjon "..d.." : sortie et boss")
 end
 

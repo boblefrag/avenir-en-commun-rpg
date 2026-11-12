@@ -28,7 +28,7 @@ def main():
     tiles = []  # (pixels, legende)
     for m in mons():
         n, c1, c2 = int(m[8]), int(m[9]), int(m[10])
-        size = 16 if n < 128 else 32
+        size = 32 if n in (128, 132, 136, 140, 192) else 16
         sx, sy = n % 16 * 8, n // 16 * 8
         px = [[{11: c1, 3: c2}.get(g[sy + j][sx + i], g[sy + j][sx + i]) for i in range(size)]
               for j in range(size)]

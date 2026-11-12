@@ -1,29 +1,48 @@
 #!/usr/bin/env python3
-"""Genere music_test.p8 : les 5 musiques du jeu + un lecteur pour les essayer.
+"""Genere les musiques et bruitages du jeu pour PICO-8.
 
 Usage : python3 tools/gen_music.py   (ecrit music_test.p8 a la racine)
 
-Notation des partitions
-- "a3*4" : la3 pendant 4 pas ; "a3" seul = 1 pas ; ".*2" = 2 pas de silence.
-- Octaves standard : c4 = do du milieu (= pitch PICO-8 24). Plage : c2 .. d#7.
-- Un sfx = 32 pas = 2 mesures de 16 doubles-croches.
-- Batterie : k (grosse caisse), s (caisse claire), h (charleston), . (silence).
+Organisation des 64 slots SFX :
+- 00..09 : Bella Ciao (5 patterns x 2 canaux) -> carte du monde / exterieur
+- 10..17 : L'Internationale (4 patterns x 2 canaux) -> villes / QG de campagne
+- 18..23 : Donjon (6 SFX) -> ambiance oppressante en Re phrygien
+- 24..31 : Combat (8 SFX) -> debats nerveux en Mi mineur
+- 32..40 : Boss final (9 SFX) -> marche en Do mineur pour le Monarque
+- 41     : Jingle debut de combat (pattern 40)
+- 42..43 : Jingle victoire de debat (pattern 41)
+- 44     : Jingle defaite / repli militant (pattern 42)
+- 45     : Jingle gain de niveau (pattern 43)
+- 46     : SFX micro-bip curseur de menu
+- 47     : SFX ding de confirmation / validation
+- 48     : SFX annulation / fermeture menu
+- 49     : SFX argument massue / coup du heros
+- 50     : SFX mobilisation / action collective
+- 51     : SFX pieces / don militant / achat
+- 52     : SFX mesure au programme / gemme debloquee
+- 53     : SFX alerte PV faibles
+- 54     : SFX typewriter / defilement texte
+- 55     : SFX impact attaque adverse
+- 56..63 : La Marseillaise (4 patterns x 2 canaux) -> epilogue / 6e Republique
 
-Les musiques n'utilisent que les canaux 0 a 2 : le canal 3 reste libre
-pour les bruitages (music(n, fade, 7) reserve les canaux 0-2).
+Total : EXACTEMENT 64 SFX sur 64 slots materiels !
 """
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import compose_anthems as ca
 
 SEMI = {"c": 0, "c#": 1, "d": 2, "d#": 3, "e": 4, "f": 5, "f#": 6,
         "g": 7, "g#": 8, "a": 9, "a#": 10, "b": 11}
 WAVES = dict(tri=0, tilt=1, saw=2, sqr=3, pulse=4, organ=5, noise=6, phaser=7)
 FX = dict(none=0, slide=1, vib=2, drop=3, fadein=4, fadeout=5, arpf=6, arps=7)
 
-# pitch brut, onde, volume, effet
 DRUMS = {
-    "k": (30, 0, 7, 3),  # triangle qui chute
-    "s": (40, 6, 5, 5),  # bruit, fondu
-    "h": (60, 6, 2, 5),  # bruit aigu, fondu
+    "k": (30, 0, 7, 3),  # kick chute
+    "s": (40, 6, 5, 5),  # caisse claire
+    "h": (60, 6, 2, 5),  # charleston
 }
 REST = (0, 0, 0, 0)
 
@@ -56,60 +75,49 @@ def rep(s, n):
     return " ".join([s] * n)
 
 
-# ---------------------------------------------------------------- musiques
-# Chaque piste : nom, vitesse (plus grand = plus lent), sfx, patterns.
-# Un pattern = liste des sfx joues ensemble (1 par canal, 3 max).
+def hex_sfx(speed, notes):
+    head = f"01{speed:02x}0000"
+    body = "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in notes)
+    if len(notes) < 32:
+        body += "00000" * (32 - len(notes))
+    assert len(body) == 160
+    return head + body
 
+
+# ---------------------------------------------------------------- musiques
 TRACKS = []
 
-# 1. Exterieur : la mineur, nuit, aventure melancolique. Am F / C G / Am F / Dm E
-lead = dict(wave="pulse", vol=4, tr=12)
-TRACKS.append(dict(name="exterieur", speed=16, sfx={
-    "m0": voice("e3*4 a3*4 b3*2 c4*2 b3*2 a3*2 c4*6 b3*2 a3*4 f3*4", **lead),
-    "m1": voice("e3*4 g3*4 c4*4 e4*4 d4*6 c4*2 b3*4 g3*4", **lead),
-    "m2": voice("a3*2 b3*2 c4*4 e4*4 d4*2 c4*2 c4*4 a3*4 f3*4 a3*4", **lead),
-    "m3": voice("d4*4 f4*4 e4*4 d4*2 c4*2 b3*8 g#3*4 e3*4", **lead),
-    "b_amf": voice("a2*3 . a2*2 e3*2 a3*3 . e3*4 f2*3 . f2*2 c3*2 f3*3 . c3*4", "tri", 5),
-    "b_cg": voice("c3*3 . c3*2 g3*2 c4*3 . g3*4 g2*3 . g2*2 d3*2 g3*3 . d3*4", "tri", 5),
-    "b_dme": voice("d3*3 . d3*2 a3*2 d4*3 . a3*4 e2*3 . e2*2 b2*2 e3*3 . b2*4", "tri", 5),
-    "a_amf": voice(rep("a3*2 c4*2 e4*2 c4*2", 2) + " " + rep("f3*2 a3*2 c4*2 a3*2", 2), "tri", 2),
-    "a_cg": voice(rep("c4*2 e4*2 g4*2 e4*2", 2) + " " + rep("g3*2 b3*2 d4*2 b3*2", 2), "tri", 2),
-    "a_dme": voice(rep("d4*2 f4*2 a4*2 f4*2", 2) + " " + rep("b3*2 e4*2 g#4*2 e4*2", 2), "tri", 2),
-}, patterns=[
-    ["m0", "b_amf", "a_amf"],
-    ["m1", "b_cg", "a_cg"],
-    ["m2", "b_amf", "a_amf"],
-    ["m3", "b_dme", "a_dme"],
+# 0. Exterieur / Carte de France : BELLA CIAO (La mineur, 100 BPM, speed=18)
+bella_sfx = {}
+for i in range(5):
+    bella_sfx[f"m{i}"] = ca.BELLA_SFX[f"m{i}"]
+    bella_sfx[f"b{i}"] = ca.BELLA_SFX[f"b{i}"]
+TRACKS.append(dict(name="bella ciao (exterieur)", speed=18, sfx=bella_sfx, patterns=[
+    ["m0", "b0"],
+    ["m1", "b1"],
+    ["m2", "b2"],
+    ["m3", "b3"],
+    ["m4", "b4"],
 ]))
 
-# 2. Ville : do majeur, chaleureux et pose. C Am / F G / C Am / F G C
-lead = dict(wave="organ", vol=4, tr=12)
-pluck = dict(wave="tilt", vol=2, fx="fadeout")
-TRACKS.append(dict(name="ville", speed=20, sfx={
-    "m0": voice("g3*2 e3*2 g3*2 c4*2 b3*2 c4*2 d4*4 c4*4 a3*4 e3*4 a3*4", **lead),
-    "m1": voice("a3*2 c4*2 f4*4 e4*2 d4*2 c4*4 b3*4 d4*4 g3*8", **lead),
-    "m2": voice("g3*2 e3*2 g3*2 c4*2 e4*4 d4*4 c4*2 b3*2 a3*4 c4*4 e4*4", **lead),
-    "m3": voice("f4*4 e4*4 d4*4 b3*4 c4*12 .*4", **lead),
-    "b_cam": voice("c3*4 g3*4 e3*4 g3*4 a2*4 e3*4 c3*4 e3*4", "tri", 5),
-    "b_fg": voice("f2*4 c3*4 a2*4 c3*4 g2*4 d3*4 b2*4 d3*4", "tri", 5),
-    "b_fgc": voice("f2*4 a2*4 g2*4 b2*4 c3*4 g3*4 c3*4 .*4", "tri", 5),
-    "c_cam": voice(rep(".*2 e4 . .*2 g4 .", 2) + " " + rep(".*2 c4 . .*2 e4 .", 2), **pluck),
-    "c_fg": voice(rep(".*2 a3 . .*2 c4 .", 2) + " " + rep(".*2 b3 . .*2 d4 .", 2), **pluck),
-    "c_fgc": voice(".*2 a3 . .*2 c4 . .*2 b3 . .*2 d4 . "
-                   ".*2 e4 . .*2 g4 . .*2 e4 . .*4", **pluck),
-}, patterns=[
-    ["m0", "b_cam", "c_cam"],
-    ["m1", "b_fg", "c_fg"],
-    ["m2", "b_cam", "c_cam"],
-    ["m3", "b_fgc", "c_fgc"],
+# 1. Villes / QG : L'INTERNATIONALE (Do majeur, 110 BPM, speed=16)
+inter_sfx = {}
+for i in range(4):
+    inter_sfx[f"r{i}"] = ca.INTER_SFX[f"r{i}"]
+    inter_sfx[f"rb{i}"] = ca.INTER_SFX[f"rb{i}"]
+TRACKS.append(dict(name="l'internationale (ville)", speed=16, sfx=inter_sfx, patterns=[
+    ["r0", "rb0"],
+    ["r1", "rb1"],
+    ["r2", "rb2"],
+    ["r3", "rb3"],
 ]))
 
-# 3. Donjon : re phrygien, lent et inquietant, bourdon grave + gouttes
-lead = dict(wave="tri", vol=4, fx="vib", tr=12)
+# 2. Donjon : Re phrygien, lent et angoissant, bourdon phaser + gouttes d'eau
+lead_donjon = dict(wave="tri", vol=4, fx="vib", tr=12)
 TRACKS.append(dict(name="donjon", speed=28, sfx={
-    "m0": voice("d3*6 .*2 f3*4 e3*4 d3*8 .*8", **lead),
-    "m1": voice("a3*6 .*2 a#3*4 a3*4 g3*4 f3*4 e3*8", **lead),
-    "m2": voice("f3*4 e3*4 c#3*8 d3*16", **lead),
+    "m0": voice("d3*6 .*2 f3*4 e3*4 d3*8 .*8", **lead_donjon),
+    "m1": voice("a3*6 .*2 a#3*4 a3*4 g3*4 f3*4 e3*8", **lead_donjon),
+    "m2": voice("f3*4 e3*4 c#3*8 d3*16", **lead_donjon),
     "b_d": voice("d2*32", "phaser", 3),
     "b_eb": voice("d#2*32", "phaser", 3),
     "drip": voice(".*6 a5 .*9 .*3 d5 .*12", "tri", 2, fx="fadeout"),
@@ -120,19 +128,19 @@ TRACKS.append(dict(name="donjon", speed=28, sfx={
     ["m2", "b_d", "drip"],
 ]))
 
-# 4. Combat : mi mineur, rapide. Em C / D B / Em C / Am B
-lead = dict(wave="sqr", vol=4, tr=12)
-bass = dict(wave="saw", vol=4)
-beat = drums(rep("k . h . s . h . k k h . s . h .", 2))
+# 3. Combat : Mi mineur, nerveux et dynamique
+lead_combat = dict(wave="sqr", vol=4, tr=12)
+bass_combat = dict(wave="saw", vol=4)
+beat_combat = drums(rep("k . h . s . h . k k h . s . h .", 2))
 TRACKS.append(dict(name="combat", speed=11, sfx={
-    "m0": voice("e3*2 g3*2 b3*2 e4*4 d4*2 b3*2 g3*2 c4*4 b3*2 a3*2 g3*4 e3*4", **lead),
-    "m1": voice("f#3*2 a3*2 d4*4 c4*2 b3*2 a3*4 b3*4 d#4*4 f#4*4 d#4*4", **lead),
-    "m2": voice("e4*4 d4*2 e4*2 g4*4 f#4*2 e4*2 c4*2 d4*2 e4*4 g3*4 c4*4", **lead),
-    "m3": voice("a3*2 c4*2 e4*4 d4*2 c4*2 a3*4 b3*8 f#3*4 d#3*4", **lead),
-    "b_emc": voice(rep("e2*2 e3*2", 4) + " " + rep("c2*2 c3*2", 4), **bass),
-    "b_db": voice(rep("d2*2 d3*2", 4) + " " + rep("b2*2 b3*2", 4), **bass),
-    "b_amb": voice(rep("a2*2 a3*2", 4) + " " + rep("b2*2 b3*2", 4), **bass),
-    "dr": beat,
+    "m0": voice("e3*2 g3*2 b3*2 e4*4 d4*2 b3*2 g3*2 c4*4 b3*2 a3*2 g3*4 e3*4", **lead_combat),
+    "m1": voice("f#3*2 a3*2 d4*4 c4*2 b3*2 a3*4 b3*4 d#4*4 f#4*4 d#4*4", **lead_combat),
+    "m2": voice("e4*4 d4*2 e4*2 g4*4 f#4*2 e4*2 c4*2 d4*2 e4*4 g3*4 c4*4", **lead_combat),
+    "m3": voice("a3*2 c4*2 e4*4 d4*2 c4*2 a3*4 b3*8 f#3*4 d#3*4", **lead_combat),
+    "b_emc": voice(rep("e2*2 e3*2", 4) + " " + rep("c2*2 c3*2", 4), **bass_combat),
+    "b_db": voice(rep("d2*2 d3*2", 4) + " " + rep("b2*2 b3*2", 4), **bass_combat),
+    "b_amb": voice(rep("a2*2 a3*2", 4) + " " + rep("b2*2 b3*2", 4), **bass_combat),
+    "dr": beat_combat,
 }, patterns=[
     ["m0", "b_emc", "dr"],
     ["m1", "b_db", "dr"],
@@ -140,18 +148,18 @@ TRACKS.append(dict(name="combat", speed=11, sfx={
     ["m3", "b_amb", "dr"],
 ]))
 
-# 5. Boss final (Grumdor) : do mineur, pompeux et menacant. Cm Ab / Bb G / Cm Db / G
-lead = dict(wave="organ", vol=5)
-bass = dict(wave="saw", vol=5)
+# 4. Boss final (Grumdor / Monarque) : Do mineur, autoritaire et pompeux
+lead_boss = dict(wave="organ", vol=5)
+bass_boss = dict(wave="saw", vol=5)
 TRACKS.append(dict(name="boss final", speed=10, sfx={
-    "m0": voice("c4*4 d#4*4 g4*6 f4*2 g#4*4 g4*4 f4*4 d#4*4", **lead),
-    "m1": voice("d4*4 f4*4 a#4*6 g#4*2 g4*8 b3*4 d4*4", **lead),
-    "m2": voice("c4*2 d4*2 d#4*2 g4*2 c5*6 a#4*2 g#4*4 f4*4 c#4*8", **lead),
-    "m3": voice("b3*2 c4*2 d4*4 f4*4 d4*4 b3*2 c4*2 d4*2 f4*2 g4*8", **lead),
-    "b_cmab": voice(rep("c2 c3", 8) + " " + rep("g#2 g#3", 8), **bass),
-    "b_bbg": voice(rep("a#2 a#3", 8) + " " + rep("g2 g3", 8), **bass),
-    "b_cmdb": voice(rep("c2 c3", 8) + " " + rep("c#2 c#3", 8), **bass),
-    "b_g": voice(rep("g2 g3", 8) + " g2 g2 g3 g3 f3 f3 d3 d3 b2 b2 c3 c3 d3 d3 f3 f3", **bass),
+    "m0": voice("c4*4 d#4*4 g4*6 f4*2 g#4*4 g4*4 f4*4 d#4*4", **lead_boss),
+    "m1": voice("d4*4 f4*4 a#4*6 g#4*2 g4*8 b3*4 d4*4", **lead_boss),
+    "m2": voice("c4*2 d4*2 d#4*2 g4*2 c5*6 a#4*2 g#4*4 f4*4 c#4*8", **lead_boss),
+    "m3": voice("b3*2 c4*2 d4*4 f4*4 d4*4 b3*2 c4*2 d4*2 f4*2 g4*8", **lead_boss),
+    "b_cmab": voice(rep("c2 c3", 8) + " " + rep("g#2 g#3", 8), **bass_boss),
+    "b_bbg": voice(rep("a#2 a#3", 8) + " " + rep("g2 g3", 8), **bass_boss),
+    "b_cmdb": voice(rep("c2 c3", 8) + " " + rep("c#2 c#3", 8), **bass_boss),
+    "b_g": voice(rep("g2 g3", 8) + " g2 g2 g3 g3 f3 f3 d3 d3 b2 b2 c3 c3 d3 d3 f3 f3", **bass_boss),
     "dr": drums(rep("k h k h s h k h k k k h s h s s", 2)),
 }, patterns=[
     ["m0", "b_cmab", "dr"],
@@ -161,64 +169,43 @@ TRACKS.append(dict(name="boss final", speed=10, sfx={
 ]))
 
 # ---------------------------------------------------------------- jingles
-# Joues une fois (pas de boucle), a partir du pattern 40 :
-# 40 debut de combat, 41 victoire, 42 defaite, 43 niveau gagne.
+# 40. Debut de combat : montee tendue puis coup sec (~0,7 s)
+TRACKS.append(dict(name="jingle combat", speed=4, jingle=True, sfx={
+    "m": voice("e3*2 g3*2 b3*2 d#4*2 e4*8 .*16", "sqr", 5, tr=12),
+}, patterns=[["m"]]))
 
-# 40. Debut de combat : montee tendue puis coup sec (~1,3 s)
-TRACKS.append(dict(name="jingle combat", speed=5, jingle=True, sfx={
-    "m": voice("e3*2 g3*2 b3*2 d#4*2 e4*12 .*12", "sqr", 5, tr=12),
-    "b": voice("e2*2 .*2 e2*2 .*2 e2*16 .*8", "saw", 5),
-    "d": drums("k . . . k . . . s s s s k . . . . . . . . . . . . . . . . . . ."),
-}, patterns=[["m", "b", "d"]]))
-
-# 41. Victoire : fanfare majeure qui monte (~2,4 s)
+# 41. Victoire : fanfare majeure qui monte en Do (~2,4 s)
 TRACKS.append(dict(name="jingle victoire", speed=9, jingle=True, sfx={
     "m": voice("g3*2 c4*2 e4*2 g4*6 e4*2 g4*2 c5*16", "pulse", 5, tr=12),
-    "h": voice("e3*2 g3*2 c4*2 e4*6 c4*2 e4*2 e4*16", "tri", 3, tr=12),
     "b": voice("c3*8 g2*8 c3*16", "tri", 5),
-}, patterns=[["m", "h", "b"]]))
-
-# 42. Defaite : descente lente en mineur (~3,7 s)
-TRACKS.append(dict(name="jingle defaite", speed=14, jingle=True, sfx={
-    "m": voice("a3*6 g3*2 f3*6 e3*2 d3*8 c#3*8", "organ", 4, fx="vib", tr=12),
-    "b": voice("d3*16 a2*8 d2*8", "phaser", 4),
 }, patterns=[["m", "b"]]))
 
-# 43. Niveau gagne : arpege qui scintille (~1,6 s)
-TRACKS.append(dict(name="jingle niveau", speed=6, jingle=True, sfx={
-    "m": voice("c4 e4 g4 c5 e4 g4 c5 e5 g4 c5 e5 g5 c5*4 g5*16", "tri", 5, tr=12),
-    "h": voice("c3*4 e3*4 g3*4 c4*4 c4*16", "pulse", 3, tr=12),
-}, patterns=[["m", "h"]]))
+# 42. Defaite : descente mineure de repli (~2,5 s)
+TRACKS.append(dict(name="jingle defaite", speed=14, jingle=True, sfx={
+    "m": voice("a3*6 g3*2 f3*6 e3*2 d3*8 c#3*8", "organ", 4, fx="vib", tr=12),
+}, patterns=[["m"]]))
 
-# 53. Alerte PV faibles : bip court et aigu x2 (~0,4 s)
-TRACKS.append(dict(name="jingle danger", speed=4, jingle=True, sfx={
-    "m": voice("a5*2 .*2 a5*2 .*26", "sqr", 6, tr=0),
+# 43. Niveau gagne : arpege scintillant (~1,3 s)
+TRACKS.append(dict(name="jingle niveau", speed=5, jingle=True, sfx={
+    "m": voice("c4*2 e4*2 g4*2 c5*2 e5*2 g5*2 c6*8 .*12", "pulse", 5, tr=12, fx="vib"),
 }, patterns=[["m"]]))
 
 # ---------------------------------------------------------------- fin
-# 48. Generique de fin : reprise triomphale en do majeur. C G / Am F / C G / F G C
-# Pattern 48 (start), et ses sfx viennent APRES les sfx 53-55
-# (late=True) pour ne pas decaler les numeros deja utilises dans le code.
-lead = dict(wave="pulse", vol=5, tr=12)
-TRACKS.append(dict(name="fin", speed=14, start=48, late=True, sfx={
-    "m0": voice("c4*4 e4*4 g4*6 e4*2 d4*4 b3*4 d4*8", **lead),
-    "m1": voice("c4*4 e4*4 a4*6 g4*2 f4*4 a4*4 c5*8", **lead),
-    "m3": voice("a4*4 c5*4 b4*4 d5*4 c5*16", **lead),
-    "b_cg": voice("c3*4 g3*4 e3*4 g3*4 g2*4 d3*4 b2*4 d3*4", "tri", 5),
-    "b_amf": voice("a2*4 e3*4 c3*4 e3*4 f2*4 c3*4 a2*4 c3*4", "tri", 5),
-    "b_fgc": voice("f2*4 c3*4 g2*4 d3*4 c3*8 g2*4 c3*4", "tri", 5),
-    "dr": drums(rep("k . h . s . h .", 4)),
-}, patterns=[
-    ["m0", "b_cg", "dr"],
-    ["m1", "b_amf", "dr"],
-    ["m0", "b_cg", "dr"],
-    ["m3", "b_fgc", "dr"],
+# 48. Epilogue / Fin : LA MARSEILLAISE (Sol majeur, 112 BPM, speed=16)
+mars_sfx = {}
+for i in range(3, 7):
+    mars_sfx[f"m{i}"] = ca.MARSEILLAISE_SFX[f"m{i}"]
+    mars_sfx[f"b{i}"] = ca.MARSEILLAISE_SFX[f"b{i}"]
+TRACKS.append(dict(name="la marseillaise (fin)", speed=16, start=48, late=True, sfx=mars_sfx, patterns=[
+    ["m3", "b3"],
+    ["m4", "b4"],
+    ["m5", "b5"],
+    ["m6", "b6"],
 ]))
 
 # ---------------------------------------------------------------- export
-
-PATTERN_STRIDE = 8  # piste i commence au pattern 8*i (marge pour allonger)
-JINGLE_START = 40   # les jingles se suivent a partir de ce pattern
+PATTERN_STRIDE = 8  # piste i commence au pattern 8*i
+JINGLE_START = 40   # les jingles se suivent a partir de pattern 40
 
 
 def build():
@@ -226,25 +213,58 @@ def build():
     lua_tracks = []
     nj = 0
     late = [t for t in TRACKS if t.get("late")]
+
     for i, t in enumerate(TRACKS):
         if t.get("late"):
             continue
         add_track(i, t, sfx_lines, music_lines, nj)
         if t.get("jingle"):
             nj += len(t["patterns"])
-    # sfx 54 : petit bruit de texte defilant (typewriter blip)
-    text_sfx = "01020000" + "2a023" + "00000" * 31
-    sfx_lines.append(text_sfx)
-    # sfx 55 : impact quand un monstre frappe (bruit qui chute, ~0,1 s)
+
+    assert len(sfx_lines) == 46, f"{len(sfx_lines)} sfx avant bruitages au lieu de 46"
+
+    # SFX 46 : Micro-bip curseur de menu (haut/bas)
+    sfx_lines.append(hex_sfx(3, [(38, 0, 3, 3), (34, 0, 2, 5)]))
+
+    # SFX 47 : Ding validation / confirmation de menu
+    sfx_lines.append(hex_sfx(3, [(36, 4, 4, 0), (43, 4, 5, 5)]))
+
+    # SFX 48 : Bruit d'annulation / fermeture de menu
+    sfx_lines.append(hex_sfx(4, [(31, 3, 3, 1), (24, 3, 3, 5)]))
+
+    # SFX 49 : Argument massue / coup du heros
+    sfx_lines.append(hex_sfx(2, [(28, 6, 7, 3), (20, 2, 6, 3), (12, 0, 5, 5)]))
+
+    # SFX 50 : Mobilisation / competence politique / repos QG
+    sfx_lines.append(hex_sfx(3, [(24, 4, 4, 0), (31, 4, 5, 0), (36, 4, 5, 0), (40, 4, 5, 2)]))
+
+    # SFX 51 : Monnaie / don militant / achat
+    sfx_lines.append(hex_sfx(3, [(47, 4, 4, 6), (52, 4, 5, 5)]))
+
+    # SFX 52 : Mesure au programme / gemme debloquee
+    sfx_lines.append(hex_sfx(4, [(31, 4, 5, 0), (36, 4, 5, 0), (40, 4, 5, 0), (43, 4, 6, 2), (48, 4, 6, 5)]))
+
+    # SFX 53 : Alerte danger PV faibles
+    s53_notes = voice("a5*2 .*2 a5*2 .*26", "sqr", 6, tr=0)
+    sfx_lines.append("01040000" + "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in s53_notes))
+
+    # SFX 54 : Typewriter / defilement du texte de l'intro
+    sfx_lines.append("01020000" + "2a023" + "00000" * 31)
+
+    # SFX 55 : Impact quand un opposant frappe
     hit = [(24, 6, 7, 0), (16, 6, 6, 3), (10, 0, 5, 3), (6, 0, 3, 5)]
     sfx_lines.append("01030000" + "".join(f"{p:02x}{w:x}{v:x}{e:x}" for p, w, v, e in hit)
                      + "00000" * (32 - len(hit)))
-    # pistes ajoutees apres coup (sfx 56+)
+
+    assert len(sfx_lines) == 56, f"{len(sfx_lines)} sfx avant late au lieu de 56"
+
+    # Pistes late (SFX 56..63 : La Marseillaise)
     for t in late:
         add_track(None, t, sfx_lines, music_lines, nj)
-    assert len(sfx_lines) <= 64, f"{len(sfx_lines)} sfx, max 64"
+
+    assert len(sfx_lines) == 64, f"{len(sfx_lines)} sfx au lieu de 64 !"
     used = len(sfx_lines)
-    sfx_lines += ["01100000" + "0" * 160] * (64 - used)
+
     music_lines = [m or "00 41424344" for m in music_lines]
     return sfx_lines, music_lines, lua_tracks, used
 
@@ -274,7 +294,7 @@ def add_track(i, t, sfx_lines, music_lines, nj):
         music_lines[start + j] = f"{flags:02x} " + "".join(ch)
 
 
-LUA = """-- legend of the gems : test des musiques
+LUA = """-- l'union populaire rpg : test des musiques et sfx
 -- haut/bas : choisir  o : jouer  x : stop
 t={%s}
 sel,cur=1,nil
@@ -286,7 +306,7 @@ function _update()
 end
 function _draw()
  cls(1)
- print("legend of the gems",8,6,7)
+ print("l'union populaire rpg",8,6,7)
  print("test des musiques",8,14,6)
  for i,m in ipairs(t) do
   local y=24+i*10
@@ -309,7 +329,7 @@ def main():
         + "__sfx__\n" + "\n".join(sfx) + "\n"
         + "__music__\n" + "\n".join(music) + "\n"
     )
-    print(f"{out} : {used} sfx utilises sur 64 ({64 - used} libres pour les bruitages)")
+    print(f"{out} : {used} sfx utilises sur 64 (completement alloue !)")
 
 
 if __name__ == "__main__":
